@@ -1,0 +1,171 @@
+﻿@model MVC_SYSTEM.ModelsBudget.PagedList<MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesLeviListViewModel>
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("E11");
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "Levi",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+}
+
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/AjaxModal.js")
+}
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom: 16px">
+        @using (Ajax.BeginForm("_Index", "Levi", null, options, new { @id = "" }))
+        {
+            <div class="row">
+                <div class="col-sm-3">
+                    @Html.Label("Tahun Bajet")
+                    @Html.DropDownList("BudgetYear", new SelectList(ViewBag.BudgetYear, "Value", "Text"), htmlAttributes: new { @class = "form-control", @id = "BudgetYear" })
+                </div>
+                <div class="col-sm-3">
+                    @Html.Label("Keterangan Cost Center")
+                    @Html.TextBox("CostCenter", ViewBag.CostCenter as string, htmlAttributes: new { @class = "form-control", placeholder = "", @id = "CostCenter" })
+                </div>
+                <div class="col-sm-1" style="padding-top:25px;">
+                    <input class="btn btn-primary btn-block" type="submit" name="Lihat" id="Lihat" value="@GlobalResEstate.btnView" onclick="return DisplayProgressMessage(this);" />
+                </div>
+                <div class="col-sm-5" style="padding-top:25px;" id="AllDownload">
+                    <a class="btn btn-default btn-sm" href="#" id="downloadpdflistinglevi">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                    </a>
+                    <a class="btn btn-default btn-sm" href="#" id="downloadexcellistinglevi">
+                        <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well" style="margin-top: 7px;">
+        <div class="modal-body">
+            <div class="panel panel-success">
+                <div class="panel-heading">@GetBudgetClass.GetScreenName("E11")</div>
+                <div class="panel-body">
+                    <div id="Levi">
+                        @Html.Action("_Index", new { BudgetYear = year })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-warning" href="@Url.Action("Index", "ExpensesCC")" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnBack.ToUpper()</a>
+        </div>
+    </div>
+</section>
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog" style="width: 99%">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostCenterDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .Amount {
+        width: 90px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 100px;
+        text-align: center;
+    }
+</style>
+
+<script>
+    $("#downloadpdflistinglevi").click(function () {
+        //$("#AllDownload").hide();
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter;
+        @*PDFObject.embed("@Url.Action("exportPDF", "Levi")" + param, "#searchResult", { height: "400px" });*@
+        location.href = "@Url.Action("PrintList", "Levi")" + param;
+         return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+
+    @*$("#downloadpdflistinglevi").click(function () {
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter;
+        var controller = 'Levi';
+        var action = 'PrintLeviPdf';
+
+                var ajxfn = {};
+                ajxfn.url = "@Url.Action("PDFIndetifier", "PdfCreator")";
+                ajxfn.type = "POST";
+                ajxfn.data = JSON.stringify({ controller: controller, action: action, param: param });
+                ajxfn.datatype = "json";
+                ajxfn.contentType = "application/json";
+                ajxfn.success = function (result) {
+                    PDFObject.embed(result.link, "#searchResult", { height: "450px" });
+                };
+
+                ajxfn.error = function () {
+                    $.simplyToast('@GlobalResEstate.msgError', 'danger');
+                    $("#UpdateProgress1").css("display", "none");
+                };
+                $.ajax(ajxfn);
+
+                return false;
+            });*@
+
+    $("#downloadexcellistinglevi").click(function () {
+        //$("#AllDownload").hide();
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter + '&format=EXCEL';
+        @*PDFObject.embed("@Url.Action("ExportExcel", "Levi")" + param);*@
+        //return location.reload();
+        location.href = "@Url.Action("PrintList", "Levi")" + param;
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+</script>

@@ -1,0 +1,49 @@
+﻿@using MVC_SYSTEM.ClassBudget;
+@{ 
+    bgtApproval bgtapproval = new bgtApproval();
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (@grid.TotalRowCount > 0)
+    {
+        @grid.GetHtml(
+            htmlAttributes: new { id = "grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                //grid.Column(GlobalResEstate.hdrNo, style: "text-center col-md-1", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex),
+                grid.Column(GlobalResEstate.hdrNo, style: "text-center", format: (item) => (grid.PageIndex * grid.RowsPerPage) + grid.Rows.IndexOf(item) + 1),
+                grid.Column("CostCenterCode", "Kod Cost Center", style: "text-center"),
+                grid.Column("CostCenterDesc", "Keterangan Cost Center"),
+                grid.Column("Total", "Jumlah (RM)", style: "text-right", format: @<text>@item.Total.ToString("#,##0.00")</text>),
+                grid.Column("BudgetYear", "Tahun Bajet", style: "text-center"),
+                grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "text-center text-nowrap col-md-1", format: @<text>
+                @if (bgtapproval.GetBlockStatus(item.CostCenterCode, item.BudgetYear) == true) {
+                    @Html.Raw("<a href='" + @Url.Action("Details", new { BudgetYear = item.BudgetYear, CostCenter = item.CostCenterCode }) + "' class='btn btn-primary btn-sm' data-modal2=''><i class='fa fa-list'></i></a>&nbsp;")
+                    @Html.Raw("<a disabled class='btn btn-success btn-sm'><i class='fa fa-edit'></i></a>&nbsp;")
+                    @Html.Raw("<a disabled class='btn btn-danger btn-sm'><i class='fa fa-trash'></i></a>")
+                }
+                else
+                {
+                    @Html.Raw("<a href='" + @Url.Action("Details", new { BudgetYear = item.BudgetYear, CostCenter = item.CostCenterCode }) + "' class='btn btn-primary btn-sm' data-modal2=''><i class='fa fa-list'></i></a>&nbsp;")
+                    @Html.Raw("<a href='" + @Url.Action("Edit", new { BudgetYear = item.BudgetYear, CostCenter = item.CostCenterCode }) + "' class='btn btn-success btn-sm'><i class='fa fa-edit'></i></a>&nbsp;")
+                    @Html.Raw("<a href='" + @Url.Action("Delete", new { BudgetYear = item.BudgetYear, CostCenter = item.CostCenterCode }) + "' class='btn btn-danger btn-sm' data-modal1=''><i class='fa fa-trash'></i></a>")
+                }
+                </text>)))
+    }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label(GlobalResEstate.msgErrorSearch)
+        </div>
+        <hr />
+    }
+}

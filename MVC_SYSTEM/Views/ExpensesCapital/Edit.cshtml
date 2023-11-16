@@ -1,0 +1,216 @@
+﻿@using MVC_SYSTEM.ClassBudget;
+@{
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var cc = ViewBag.CostCenter as string;
+    var yr = int.Parse(ViewBag.BudgetYear);
+    bgtApproval bgtapproval = new bgtApproval();
+}
+
+<style type="text/css">
+    /* Remove arrow input number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    /* Remove arrow input number */
+
+    input[type="number"] {
+        text-align: right;
+    }
+
+    .btn.disabled, [disabled].btn, fieldset[disabled] .btn {
+        opacity: 0.65 !important;
+    }
+
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    tr.webgrid-header th {
+        text-align: center;
+    }
+
+    .modal-lg {
+        width: 99% !important;
+    }
+    @@media only screen and (max-width: 768px) {
+        .modal-lg {
+            width: inherit !important;
+        }
+    }
+</style>
+
+<section class="content-wrapper main-content clear-fix">
+    @using (Html.BeginForm("Edit", "ExpensesCapital", FormMethod.Get, htmlAttributes: new { id = "FormExpensesCapitalEdit" }))
+    {
+        <div class="well" style="margin-bottom: 20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">@ViewBag.Title</div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.Label("Budget Year", htmlAttributes: new { @class = "text-nowrap" })
+                                        @Html.TextBox("BudgetYear", null, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly", @Value = ViewBag.BudgetYear })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.Label(GlobalResEstate.lblCostCenter, htmlAttributes: new { @class = "text-nowrap" })
+                                        @Html.TextBox("CostCenter", null, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly", @Value = ViewBag.CostCenter })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.Label("Unit", htmlAttributes: new { @class = "text-nowrap" })
+                                        @Html.TextBox("Unit", null, htmlAttributes: new { @class = "form-control input-sm", @disabled = "disabled", @Value = ViewBag.CostCenterDesc })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="well">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">@ViewBag.Title - DETAILS</div>
+                        <div class="panel-body">
+                            <div id="RecordsPartial">
+                                @Html.Action("RecordsGL", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr style="margin-top:0;" />
+            <div class="row">
+                <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                    @if (bgtapproval.GetBlockStatus(cc, yr) == true)
+                    {
+                        <a disabled class="btn btn-success">ADD DETAILS</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("CreateDetail")" class="btn btn-success" data-create="">ADD DETAILS</a>
+                    }
+                    <a href="@Url.Action("Index")" class="btn btn-warning">@GlobalResEstate.btnBack.ToUpper()</a>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+<!-- modal placeholder -->
+<div id="myModal1" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="myModalContent1"></div>
+        </div>
+    </div>
+</div>
+<div id="myModal2" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="myModalContent2"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                cache: false
+            });
+
+            $(document).on('click', 'a[data-create]', function (e) {
+                var year = $('#BudgetYear').val();
+                var costCenter = $('#CostCenter').val();
+                var url = this.href + '?BudgetYear=' + year + '&CostCenter=' + costCenter;
+                $('#myModalContent1').load(url, function () {
+                    $('#myModal1').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+
+            $(document).on('click', 'a[data-edit]', function (e) {
+                $('#myModalContent1').load(this.href, function () {
+                    $('#myModal2').modal('hide');
+                    $('#myModal1').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+
+            $(document).on('click', 'a[data-delete]', function (e) {
+                $('#myModalContent2').load(this.href, function () {
+                    $('#myModal1').modal('hide');
+                    $('#myModal2').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+        });
+
+        function bindForm(dialog) {
+            $('form', dialog).submit(function () {
+                $('#progress').show();
+                $.ajax({
+                    url: this.action,
+                    type: this.method,
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        $('#progress').hide();
+                        if (result.success) {
+                            $('#myModal1').modal('hide');
+                            $('#myModal2').modal('hide');
+                            var url = '';
+                            if (result.controller && result.action && result.rooturl) {
+                                if (result.paramName1 && result.paramValue1) {
+                                    if (result.paramName2 && result.paramValue2) {
+                                        url = result.rooturl + '/' + result.controller + '/' + result.action + '?' + result.paramName1 + '=' + result.paramValue1 + '&' + result.paramName2 + '=' + result.paramValue2;
+                                    } else {
+                                        url = result.rooturl + '/' + result.controller + '/' + result.action + '?' + result.paramName1 + '=' + result.paramValue1;
+                                    }
+                                } else {
+                                    url = result.rooturl + '/' + result.controller + '/' + result.action;
+                                }
+                            }
+                            if (result.div && url != '') {
+                                $('#' + result.div).load(url);
+                            }
+                            if (result.msg && result.status) {
+                                $.simplyToast(result.msg, result.status);
+                            }
+                        } else {
+                            if (result.msg && result.status) {
+                                $.simplyToast(result.msg, result.status);
+                            }
+                        }
+                    }
+                });
+                return false;
+            });
+        }
+    </script>
+}

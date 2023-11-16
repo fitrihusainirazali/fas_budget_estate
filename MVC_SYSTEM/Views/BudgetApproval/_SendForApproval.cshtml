@@ -1,0 +1,33 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.BudgetApprovalViewModel
+
+@using (Html.BeginForm("SendForApproval", "BudgetApproval", FormMethod.Post, htmlAttributes: new { id = "" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("CostCenter", null, htmlAttributes: new { @class = "form-control", @Value = ViewBag.CostCenter })
+    @Html.HiddenFor(model => model.aprv_budgeting_year, htmlAttributes: new { @class = "form-control", @Value = ViewBag.BudgetYear })
+
+    <div class="modal-header">
+        @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>*@
+        @*<h3 class="modal-title"></h3>*@
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 style="margin-top:0;">
+                    <span class="label label-success">Are you sure to send for approval?</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">@GlobalResEstate.btnYes.ToUpper()</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnNo.ToUpper()</button>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#RecordsPartial').find('table').find('thead tr:first-child th:last-child').remove();
+        $('#RecordsPartial').find('table').find('tbody tr td:last-child').remove();
+    });
+</script>

@@ -1,0 +1,84 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesGajiCreateViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.Year as string;
+}
+
+<section class="content-wrapper main-content clear-fix">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="well" style="margin-bottom: 20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">@ViewBag.Title</div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BudgetYear)
+                                        @Html.EditorFor(model => model.BudgetYear, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @Value = year } })
+                                        @Html.ValidationMessageFor(model => model.BudgetYear, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CostCenter)
+                                        @Html.DropDownListFor(model => model.CostCenter, new SelectList(ViewBag.CostCenters, "Value", "Text"), GlobalResEstate.lblCostCenter, htmlAttributes: new { @class = "form-control select2" })
+                                        @Html.ValidationMessageFor(model => model.CostCenter, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Unit)
+                                        @Html.EditorFor(model => model.Unit, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                        @Html.ValidationMessageFor(model => model.Unit, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.Label("Luas(Hektar)", htmlAttributes: new { @class = "text-nowrap" })
+                                        @Html.EditorFor(model => model.Hectare, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Hectare, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr style="margin-top:0;" />
+            <div class="row">
+                <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                    <button id="btn_submit" type="submit" class="btn btn-primary">@GlobalResEstate.btnAdd.ToUpper()</button>
+                    <a href="@Url.Action("Index")" class="btn btn-warning">@GlobalResEstate.btnBack.ToUpper()</a>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            costCenterChange();
+
+            $('.select2').select2({
+                width: '100%'
+            });
+
+            $('#CostCenter').on('change', function () {
+                costCenterChange();
+            });
+        });
+
+        function costCenterChange() {
+            var val = $('#CostCenter').find('option:selected').val();
+            var text = $('#CostCenter').find('option:selected').text();
+            
+            if (val) {
+                $('#Unit').val(text.substr(12));
+            } else {
+                $('#Unit').val(null);
+            }
+        }
+    </script>
+}

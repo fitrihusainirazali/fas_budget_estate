@@ -1,0 +1,98 @@
+﻿@model List<MVC_SYSTEM.ModelsBudget.bgt_expenses_KhidCor>
+
+@{
+    int yearW = DateTime.Now.Year;
+    int i = 1;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">@GlobalResEstate.titleDelete</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Year</label>
+                                <div class="col-md-9">
+                                    @Html.Editor("abcs_budgeting_year", new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Cost Center</label>
+                                <div class="col-md-9">
+                                    @Html.DropDownList("abcs_cost_center", new SelectList(ViewBag.abcs_cost_center, "Value", "Text"), htmlAttributes: new { @class = "CostCenter form-control", @data_val = "true", @required = "required", @readonly = "@readonly", disabled = "disabled", @Value = ViewBag.abcs_cost_center })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Jumlah Keseluruhan</label>
+                                <div class="col-md-9">
+                                    @Html.Editor("abcs_jumlah_keseluruhan", new { htmlAttributes = new { @class = "form-control", disabled = "disabled", @Value = @Model.Sum(m => m.abcs_jumlah_keseluruhan).Value.ToString("N") } })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title - Details</div>
+                    <table class="table table-bordered" id="scrollArea2" style="font-size: 11px;" cellspacing="0" border="0" width="100%">
+                        <tr>
+                            <th style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;font-size:small; padding:5px" border="1">
+                                No.
+                            </th>
+                            <th style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;font-size:small; padding:5px" border="1">
+                                Kod GL
+                            </th>
+                            <th style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;font-size:small; padding:5px" border="1">
+                                Penerangan GL
+                            </th>
+                            <th style="color:white;text-align:center;vertical-align:middle !important;border:1px solid black;color:black;font-size:small; padding:5px" border="1">
+                                Jumlah (RM)
+                            </th>
+
+                        </tr>
+                        @foreach (var a in Model.Where(wx => wx.abcs_Deleted == false))
+                        {
+                            <tr>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;font-size:small; padding:5px" border="1">
+                                    @i
+                                </td>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;font-size:small; padding:5px" border="1">
+                                    @a.abcs_gl_code
+                                </td>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;font-size:small; padding:5px" border="1">
+                                    @a.abcs_gl_desc
+                                </td>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;font-size:small; padding:5px" border="1">
+                                   @a.abcs_jumlah_setahun.Value.ToString("#,##0.00")
+                                </td>
+
+                            </tr>
+                            i++;
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 style="margin-top:0;">
+                    <span class="label label-danger">@GlobalResEstate.msgDelete</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">@GlobalResEstate.btnYes.ToUpper()</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnNo.ToUpper()</button>
+    </div>
+}

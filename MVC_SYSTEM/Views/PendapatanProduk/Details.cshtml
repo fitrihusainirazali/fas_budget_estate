@@ -1,0 +1,507 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_income_product
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>bgt_income_product</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_revision)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_revision)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_history)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_history)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_budgeting_year)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_budgeting_year)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_syarikat_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_syarikat_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_syarikat_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_syarikat_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_ladang_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_ladang_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_ladang_code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_ladang_code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_ladang_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_ladang_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_wilayah_id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_wilayah_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_wilayah_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_wilayah_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_company_category)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_company_category)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_company_code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_company_code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_company_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_company_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_product_code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_product_code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_product_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_product_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_station_code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_station_code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_station_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_station_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_cost_center)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_cost_center)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_cost_center_desc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_cost_center_desc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_gl_code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_gl_code)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_gl_desc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_gl_desc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_uom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_uom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_unit_price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_unit_price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_4)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_4)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_5)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_5)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_6)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_6)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_7)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_7)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_8)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_8)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_9)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_9)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_10)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_10)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_11)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_11)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_qty_12)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_qty_12)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_4)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_4)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_5)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_5)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_6)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_6)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_7)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_7)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_8)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_8)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_9)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_9)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_10)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_10)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_11)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_11)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_amount_12)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_amount_12)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_total_qty_a)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_total_qty_a)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_total_qty_b)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_total_qty_b)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_total_amount_a)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_total_amount_a)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_total_amount_b)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_total_amount_b)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_grand_amount1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_grand_amount1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_grand_amount2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_grand_amount2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_grand_quantity1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_grand_quantity1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_grand_quantity2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_grand_quantity2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_grand_total_quantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_grand_total_quantity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_grand_total_amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_grand_total_amount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.abip_created_by)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.abip_created_by)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.last_modified)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.last_modified)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.fld_Deleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.fld_Deleted)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.abip_id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

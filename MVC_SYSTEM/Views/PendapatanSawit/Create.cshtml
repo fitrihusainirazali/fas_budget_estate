@@ -1,0 +1,2054 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.IncomeSawitCreateViewModel[]
+@using MVC_SYSTEM.ClassBudget;
+@{
+    ViewBag.Title = "Create Sawit";
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    int SyarikatID = ViewBag.SyarikatID;
+    int budgetyear = GetBudgetClass.GetBudgetYear();
+    var GetCompany = GetBudgetClass.GetFeldaGrp(SyarikatID);
+
+    int no = 1;
+    int no_amt = 1;
+    int a = 1;
+    int b = 1;
+    int p = 1;
+    int p1 = 1;
+    int p2 = 1;
+    int pa = 1;
+    int pb = 1;
+    int no_amta = 1;
+    int no_amtb = 1;
+    int no_amtasave = 1;
+    int no_amtbsave = 1;
+    int i = 0;
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.Hidden("bgtlocation", null, new { @class = "form-control", @readonly = "true" });
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="panel panel-success">
+                    <div class="panel-heading">@GetBudgetClass.GetScreenName("I1")</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label>Tahun</label>
+                                @Html.TextBox("budgetyear", budgetyear, new { @class = "form-control", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m[i].abio_budgeting_year, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Produk</label>
+                                @Html.DropDownList("product_code", new SelectList(ViewBag.ProductList, "Value", "Text"), htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m[i].abio_product_name, "", new { @class = "text-danger" })
+                                @Html.ValidationMessage("ProductList", "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-4">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label>@GlobalResEstate.lblCostCenter</label>
+                                @Html.DropDownList("abiocostcenter", new SelectList(ViewBag.CostCenterList, "Value", "Text"), "Please Select", htmlAttributes: new { @class = "CostCenter form-control select2", @required = "true" })
+                                @Html.ValidationMessage("abiocostcenter", "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Stesen</label>
+                                @Html.Hidden("stationcode", null, new { @class = "form-control", @readonly = "true" })
+                                @Html.TextBox("stationname", null, new { @class = "form-control", @readonly = "true" })
+                            </div>
+                            <div class="col-sm-4">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label>@GlobalResEstate.hdrUnit</label>
+                                @Html.TextBox("abio_cost_center_desc", null, new { @class = "form-control", @readonly = "true", @id = "CCDesc" })
+                                @Html.Hidden("costcenter", null, new { @class = "form-control", @readonly = "true", @id = "CCTrim" })
+                                @Html.ValidationMessageFor(m => m[i].abio_cost_center_desc, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-4">
+                                <label>GL Pendapatan Syarikat Kumpulan</label>
+                                @Html.TextBox("GLCode_GLDesc", null, new { @class = "form-control", @readonly = "true", @id = "GLCode_GLDesc", @Value = ViewBag.GLcodeSK + " - " + ViewBag.GLdescSK })
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Jumlah (RM)</label>
+                                @Html.TextBox("sk", null, new { @class = "form-control frm2", @readonly = "true", id = "grand_total_amount_syarikat_kumpulan" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                &nbsp;
+                            </div>
+                            <div class="col-sm-4">
+                                <label>GL Pendapatan Bandar Luar</label>
+                                @Html.TextBox("GLCode_GLDesc", null, new { @class = "form-control", @readonly = "true", @id = "GLCode_GLDesc", @Value = ViewBag.GLcodeBL + " - " + ViewBag.GLdescBL })
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Jumlah (RM)</label>
+                                @Html.TextBox("bl", null, new { @class = "form-control frm2", @readonly = "true", id = "grand_total_amount_bandar_luar" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">MONTHLY CALCULATION</div>
+                <table class="table table-hover table-bordered" style="font-size: 11px;" border="0" width="100%">
+                    <tr>
+                        <th style="text-align:center">KUANTITI (PER MT)</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jan</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Feb</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Mac</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Apr</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Mei</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jun</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jul</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Ogos</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Sept</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Okt</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Nov</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Dis</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jumlah</th>
+                    </tr>
+                    @foreach (var itemA in GetCompany.Where(w => w.CC_Sort == 1))
+                    {
+                        <tr>
+                            <th style="text-align:left;vertical-align:middle !important;">@no@Html.Raw(".")@itemA.Co_List </th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].fld_WilayahID, new { @Class = "form-control", id = "wilayahida" + @a })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_budgeting_year, new { @Class = "form-control", @Value = budgetyear })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_fld_ID, new { @Class = "form-control", @Value = itemA.fld_ID })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_company_category, new { @Class = "form-control", @Value = itemA.Co_Category })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_company_name, new { @Class = "form-control", @Value = itemA.Co_List })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_company_code, new { @Class = "form-control", @Value = itemA.CC_Sort })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_product_code, new { @class = "form-control", @readonly = "readonly", @id = "fld_ProductCode", @Value = ViewBag.PrdCode })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_product_name, new { @class = "form-control", @readonly = "readonly", @id = "fld_ProductName", @Value = ViewBag.PrdName })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_gl_code, new { @class = "form-control", @readonly = "readonly", @Value = itemA.GLSawit })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_gl_desc, new { @class = "form-control", @readonly = "readonly", @Value = ViewBag.GLdescSK })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_uom, new { @class = "form-control", @readonly = "readonly", @id = "abio_uom", @Value = ViewBag.UOM })</th>
+
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_1, null, new { @Class = "form-control frm", id = "qtya1" + @a, type = "number", onkeyup = "setTotal1()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_2, null, new { @Class = "form-control frm", id = "qtya2" + @a, type = "number", onkeyup = "setTotal2()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_3, null, new { @Class = "form-control frm", id = "qtya3" + @a, type = "number", onkeyup = "setTotal3()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_4, null, new { @Class = "form-control frm", id = "qtya4" + @a, type = "number", onkeyup = "setTotal4()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_5, null, new { @Class = "form-control frm", id = "qtya5" + @a, type = "number", onkeyup = "setTotal5()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_6, null, new { @Class = "form-control frm", id = "qtya6" + @a, type = "number", onkeyup = "setTotal6()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_7, null, new { @Class = "form-control frm", id = "qtya7" + @a, type = "number", onkeyup = "setTotal7()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_8, null, new { @Class = "form-control frm", id = "qtya8" + @a, type = "number", onkeyup = "setTotal8()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_9, null, new { @Class = "form-control frm", id = "qtya9" + @a, type = "number", onkeyup = "setTotal9()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_10, null, new { @Class = "form-control frm", id = "qtya10" + @a, type = "number", onkeyup = "setTotal10()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_11, null, new { @Class = "form-control frm", id = "qtyaI1" + @a, type = "number", onkeyup = "setTotal11()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_12, null, new { @Class = "form-control frm", id = "qtya12" + @a, type = "number", onkeyup = "setTotal12()" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_total_qty_a, null, new { @Class = "form-control frm", @readonly = "true", id = "qty_totala" + @a })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_grand_total_quantity, null, new { @Class = "form-control frm", @readonly = "true", id = "abio_grand_total_quantity_a" + @a })</th>
+
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_1, null, new { @Class = "form-control frm", id = "amtasave1" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_2, null, new { @Class = "form-control frm", id = "amtasave2" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_3, null, new { @Class = "form-control frm", id = "amtasave3" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_4, null, new { @Class = "form-control frm", id = "amtasave4" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_5, null, new { @Class = "form-control frm", id = "amtasave5" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_6, null, new { @Class = "form-control frm", id = "amtasave6" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_7, null, new { @Class = "form-control frm", id = "amtasave7" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_8, null, new { @Class = "form-control frm", id = "amtasave8" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_9, null, new { @Class = "form-control frm", id = "amtasave9" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_10, null, new { @Class = "form-control frm", id = "amtasave10" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_11, null, new { @Class = "form-control frm", id = "amtasave11" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_12, null, new { @Class = "form-control frm", id = "amtasave12" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_total_amount_a, null, new { @Class = "form-control frm", @readonly = "readonly", id = "total_amtasave" + @no_amtasave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_grand_total_amount, new { @Class = "form-control frm", @readonly = "readonly", id = "grand_total_amount_a_save" + @no_amtasave })</th>
+                             
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_1, null, new { @Class = "form-control frm", id = "abio_pricea1" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_2, null, new { @Class = "form-control frm", id = "abio_pricea2" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_3, null, new { @Class = "form-control frm", id = "abio_pricea3" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_4, null, new { @Class = "form-control frm", id = "abio_pricea4" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_5, null, new { @Class = "form-control frm", id = "abio_pricea5" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_6, null, new { @Class = "form-control frm", id = "abio_pricea6" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_7, null, new { @Class = "form-control frm", id = "abio_pricea7" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_8, null, new { @Class = "form-control frm", id = "abio_pricea8" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_9, null, new { @Class = "form-control frm", id = "abio_pricea9" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_10, null, new { @Class = "form-control frm", id = "abio_pricea10" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_11, null, new { @Class = "form-control frm", id = "abio_pricea1I" + @p1, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_12, null, new { @Class = "form-control frm", id = "abio_pricea12" + @p1, type = "number" })</th>
+                        </tr>
+                        i++; no++; a++; no_amtasave++; p1++;
+                    }
+
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;">Jumlah Kecil (a)</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_1k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_1k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_2k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_2k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_3k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_3k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_4k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_4k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_5k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_5k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_6k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_6k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_7k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_7k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_8k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_8k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_9k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_9k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_10k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_10k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_11k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_11k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_12k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_12k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_qty_totalk", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_qty_totalk" })</th>
+                    </tr>
+
+                    <tr>
+                        <th style="text-align:left;vertical-align:middle !important;">2. Bandar Luar</th>
+                        @for (int bl = 1; bl <= 13; bl++)
+                        {
+                            <th style="text-align:center;vertical-align:middle !important;"></th>
+                        }
+                    </tr>
+
+                    @foreach (var itemB in GetCompany.Where(w => w.CC_Sort == 2))
+                    {
+                        <tr>
+                            <th style="text-align:right;vertical-align:middle !important;">@no@Html.Raw(".") @itemB.Co_List </th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].fld_WilayahID, new { @Class = "form-control", id = "wilayahidb" + @b })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_budgeting_year, new { @Class = "form-control", @Value = budgetyear })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_fld_ID, new { @Class = "form-control", @Value = itemB.fld_ID })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_company_category, new { @Class = "form-control", @Value = itemB.Co_Category })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_company_name, new { @Class = "form-control", @Value = itemB.Co_List })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_company_code, new { @Class = "form-control", @Value = itemB.CC_Sort })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_product_code, new { @class = "form-control", @readonly = "readonly", @id = "fld_ProductCode" + @i, @Value = ViewBag.PrdCode })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_product_name, new { @class = "form-control", @readonly = "readonly", @id = "fld_ProductName" + @i, @Value = ViewBag.PrdName })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_gl_code, new { @class = "form-control", @readonly = "readonly", @id = "fld_GLCode" + @i, @Value = itemB.GLSawit })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_gl_desc, new { @class = "form-control", @readonly = "readonly", @id = "fld_GLDesc" + @i, @Value = ViewBag.GLdescBL })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_uom, new { @class = "form-control", @readonly = "readonly", @id = "abio_uom" + @i, @Value = ViewBag.UOM })</th>
+
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_1, null, new { @Class = "form-control frm", id = "qtyb1" + @b, onkeyup = "setTotalB1()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_2, null, new { @Class = "form-control frm", id = "qtyb2" + @b, onkeyup = "setTotalB2()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_3, null, new { @Class = "form-control frm", id = "qtyb3" + @b, onkeyup = "setTotalB3()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_4, null, new { @Class = "form-control frm", id = "qtyb4" + @b, onkeyup = "setTotalB4()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_5, null, new { @Class = "form-control frm", id = "qtyb5" + @b, onkeyup = "setTotalB5()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_6, null, new { @Class = "form-control frm", id = "qtyb6" + @b, onkeyup = "setTotalB6()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_7, null, new { @Class = "form-control frm", id = "qtyb7" + @b, onkeyup = "setTotalB7()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_8, null, new { @Class = "form-control frm", id = "qtyb8" + @b, onkeyup = "setTotalB8()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_9, null, new { @Class = "form-control frm", id = "qtyb9" + @b, onkeyup = "setTotalB9()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_10, null, new { @Class = "form-control frm", id = "qtyb10" + @b, onkeyup = "setTotalB10()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_11, null, new { @Class = "form-control frm", id = "qtybI1" + @b, onkeyup = "setTotalB11()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_qty_12, null, new { @Class = "form-control frm", id = "qtyb12" + @b, onkeyup = "setTotalB12()", type = "number" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_total_qty_b, null, new { @Class = "form-control frm", @readonly = "true", id = "qty_totalb" + @b })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_grand_total_quantity, null, new { @Class = "form-control frm", @readonly = "true", id = "abio_grand_total_quantity_b" + @b })</th>
+                            
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_1, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave1" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_2, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave2" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_3, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave3" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_4, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave4" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_5, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave5" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_6, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave6" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_7, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave7" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_8, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave8" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_9, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave9" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_10, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave10" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_11, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave11" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_amount_12, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave12" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_total_amount_b, null, new { @Class = "form-control frm", @readonly = "true", id = "amtbsave_total" + @no_amtbsave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_grand_total_amount, new { @Class = "form-control frm", @readonly = "readonly", @id = "grand_total_amount_b_save" + @no_amtbsave })</th>
+
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_1, null, new { @Class = "form-control frm", id = "abio_priceb1" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_2, null, new { @Class = "form-control frm", id = "abio_priceb2" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_3, null, new { @Class = "form-control frm", id = "abio_priceb3" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_4, null, new { @Class = "form-control frm", id = "abio_priceb4" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_5, null, new { @Class = "form-control frm", id = "abio_priceb5" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_6, null, new { @Class = "form-control frm", id = "abio_priceb6" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_7, null, new { @Class = "form-control frm", id = "abio_priceb7" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_8, null, new { @Class = "form-control frm", id = "abio_priceb8" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_9, null, new { @Class = "form-control frm", id = "abio_priceb9" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_10, null, new { @Class = "form-control frm", id = "abio_priceb10" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_11, null, new { @Class = "form-control frm", id = "abio_priceb1I" + @p2, type = "number" })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[i].abio_price_12, null, new { @Class = "form-control frm", id = "abio_priceb12" + @p2, type = "number" })</th>
+                        </tr>
+                        i++; no++; b++; no_amtbsave++; p2++;
+                    }
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;">Jumlah Kecil (b)</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_1k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_1k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_2k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_2k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_3k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_3k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_4k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_4k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_5k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_5k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_6k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_6k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_7k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_7k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_8k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_8k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_9k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_9k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_10k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_10k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_11k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_11k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_12k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_12k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_qty_totalk", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_qty_totalk" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;">Jumlah Besar (a) + (b)</th>
+                        @for (int z = 1; z <= 12; z++)
+                        {
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jb_qty_ab", null, new { @Class = "form-control frm", @readonly = "true", id = "jb_qty_ab" + @z })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jb_qty_abk", null, new { @Class = "form-control frm", @readonly = "true", id = "jb_qty_abk" + @z })</th>
+                        }
+                        <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jb_qty_ab_total", null, new { @Class = "form-control frm", @readonly = "true", id = "jb_qty_ab_total" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jb_qty_totalk", null, new { @Class = "form-control frm", @readonly = "true", id = "jb_qty_totalk" })</th>
+                    </tr>
+                </table>
+
+
+
+                <!---------------------------AMOUNT----------------------------->
+                <br /><br />
+                <!---------------------------AMOUNT----------------------------->
+
+
+
+                <table class="table table-hover table-bordered" style="font-size: 11px;" border="0" width="100%">
+                    <tr>
+                        <th style="text-align:center">NILAI (RM)</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jan</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Feb</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Mac</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Apr</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Mei</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jun</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jul</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Ogos</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Sept</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Okt</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Nov</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Dis</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jumlah</th>
+                    </tr>
+                    @foreach (var itemA in GetCompany.Where(w => w.CC_Sort == 1))
+                    {
+                        <tr>
+                            <th style="text-align:left;vertical-align:middle !important;">@no_amt@Html.Raw(".")@itemA.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta1dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta1" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta2dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta2" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta3dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta3" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta4dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta4" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta5dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta5" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta6dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta6" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta7dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta7" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta8dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta8" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta9dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta9" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta10dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta10" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta11dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amtaI1" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amta12dis", null, new { @Class = "form-control frm", @readonly = "true", id = "amta12" + @no_amta })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("total_amtadis", null, new { @Class = "form-control frm", @readonly = "true", id = "total_amta" + @no_amta })</th>
+                        </tr>
+                        no_amt++; no_amta++;
+                    }
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;">Jumlah Kecil (a)</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_1k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_1k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_2k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_2k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_3k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_3k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_4k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_4k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_5k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_5k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_6k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_6k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_7k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_7k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_8k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_8k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_9k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_9k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_10k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_10k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_11k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_11k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_12k", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_12k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jka_amt_totalk", null, new { @Class = "form-control frm", @readonly = "true", id = "jka_amt_totalk" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:left;vertical-align:middle !important;">2. Bandar Luar</th>
+                        @for (int bl = 1; bl <= 13; bl++)
+                        {
+                            <th style="text-align:center;vertical-align:middle !important;"></th>
+                        }
+                    </tr>
+                    @foreach (var itemB in GetCompany.Where(w => w.CC_Sort == 2))
+                    {
+                        <tr>
+                            <th style="text-align:right;vertical-align:middle !important;">@no_amtb@Html.Raw(".") @itemB.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_1", null, new { @Class = "form-control frm", id = "amtb1" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_2", null, new { @Class = "form-control frm", id = "amtb2" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_3", null, new { @Class = "form-control frm", id = "amtb3" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_4", null, new { @Class = "form-control frm", id = "amtb4" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_5", null, new { @Class = "form-control frm", id = "amtb5" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_6", null, new { @Class = "form-control frm", id = "amtb6" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_7", null, new { @Class = "form-control frm", id = "amtb7" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_8", null, new { @Class = "form-control frm", id = "amtb8" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_9", null, new { @Class = "form-control frm", id = "amtb9" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_10", null, new { @Class = "form-control frm", id = "amtb10" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_11", null, new { @Class = "form-control frm", id = "amtbI1" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_amount_12", null, new { @Class = "form-control frm", id = "amtb12" + @no_amtb, @readonly = "readonly" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_total_amount_b", null, new { @Class = "form-control frm", id = "amtb_total" + @no_amtb, @readonly = "readonly" })</th>
+                        </tr>
+                        no_amtb++;
+                    }
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;">Jumlah Kecil (b)</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_1k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_1k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_2k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_2k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_3k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_3k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_4k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_4k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_5k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_5k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_6k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_6k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_7k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_7k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_8k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_8k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_9k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_9k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_10k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_10k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_11k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_11k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_12k", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_12k" })</th>
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jkb_amt_totalk", null, new { @Class = "form-control frm", @readonly = "true", id = "jkb_amt_totalk" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;">Jumlah Besar (a) + (b)</th>
+                        @for (int z = 1; z <= 12; z++)
+                        {
+                            @*<th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amt_ab", null, new { @Class = "form-control frm", @readonly = "true", id = "amt_ab" + @z })</th>*@
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("amt_abk", null, new { @Class = "form-control frm", @readonly = "true", id = "amt_abk" + @z })</th>
+                        }
+                        @*<th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jumamt_ab", null, new { @Class = "form-control frm", @readonly = "true", id = "jumamt_ab" })</th>*@
+                        <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("jumamt_abk", null, new { @Class = "form-control frm", @readonly = "true", id = "jumamt_abk" })</th>
+                    </tr>
+                </table>
+
+
+                <!----------------------------PRICE---------------------------->
+                <br /><br />
+                <!----------------------------PRICE---------------------------->
+
+
+                <table class="table table-hover table-bordered" style="font-size: 11px;" border="0" width="100%">
+                    <tr>
+                        <th style="text-align:center">HARGA (RM)</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jan</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Feb</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Mac</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Apr</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Mei</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jun</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Jul</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Ogos</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Sept</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Okt</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Nov</th>
+                        <th style="text-align:center; vertical-align:middle !important;">Dis</th>
+                    </tr>
+
+                    @foreach (var items in GetCompany)
+                    {
+                        <tr>
+                            <th style="text-align:left;vertical-align:middle !important;">@p@Html.Raw(".")@items.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price1", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price1" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price2", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price2" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price3", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price3" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price4", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price4" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price5", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price5" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price6", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price6" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price7", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price7" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price8", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price8" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price9", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price9" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price10", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price10" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price1I", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price1I" + @p })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("Price12", null, new { @Class = "form-control frm", type = "number", @readonly = "true", id = "Price12" + @p })</th>
+                        </tr>
+                        p++;
+                    }
+
+                    @foreach (var priceA in GetCompany)
+                    {
+                        <tr hidden>
+                            <th style="text-align:left;vertical-align:middle !important;">@pa@Html.Raw(".")@priceA.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_1", null, new { @Class = "form-control frm", id = "abio_pricea_1" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_2", null, new { @Class = "form-control frm", id = "abio_pricea_2" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_3", null, new { @Class = "form-control frm", id = "abio_pricea_3" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_4", null, new { @Class = "form-control frm", id = "abio_pricea_4" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_5", null, new { @Class = "form-control frm", id = "abio_pricea_5" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_6", null, new { @Class = "form-control frm", id = "abio_pricea_6" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_7", null, new { @Class = "form-control frm", id = "abio_pricea_7" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_8", null, new { @Class = "form-control frm", id = "abio_pricea_8" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_9", null, new { @Class = "form-control frm", id = "abio_pricea_9" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_10", null, new { @Class = "form-control frm", id = "abio_pricea_10" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_11", null, new { @Class = "form-control frm", id = "abio_pricea_1I" + @pa, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_12", null, new { @Class = "form-control frm", id = "abio_pricea_12" + @pa, type = "number", @readonly = "true" })</th>
+                        </tr>
+                        pa++;
+                    }
+
+                    @foreach (var priceB in GetCompany)
+                    {
+                        <tr hidden>
+                            <th style="text-align:left;vertical-align:middle !important;">@pb@Html.Raw(".")@priceB.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_1", null, new { @Class = "form-control frm", id = "abio_priceb_1" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_2", null, new { @Class = "form-control frm", id = "abio_priceb_2" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_3", null, new { @Class = "form-control frm", id = "abio_priceb_3" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_4", null, new { @Class = "form-control frm", id = "abio_priceb_4" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_5", null, new { @Class = "form-control frm", id = "abio_priceb_5" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_6", null, new { @Class = "form-control frm", id = "abio_priceb_6" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_7", null, new { @Class = "form-control frm", id = "abio_priceb_7" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_8", null, new { @Class = "form-control frm", id = "abio_priceb_8" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_9", null, new { @Class = "form-control frm", id = "abio_priceb_9" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_10", null, new { @Class = "form-control frm", id = "abio_priceb_10" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_1I", null, new { @Class = "form-control frm", id = "abio_priceb_1I" + @pb, type = "number", @readonly = "true" })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_12", null, new { @Class = "form-control frm", id = "abio_priceb_12" + @pb, type = "number", @readonly = "true" })</th>
+                        </tr>
+                        pb++;
+                    }
+
+                    @*@foreach (var items in ViewBag.getFeldaGrpPriceBTS)
+                    {
+                        <tr>
+                            <th style="text-align:left;vertical-align:middle !important;">@p@Html.Raw(".")@items.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price1", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price1 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price2", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price2 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price3", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price3 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price4", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price4 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price5", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price5 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price6", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price6 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price7", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price7 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price8", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price8 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price9", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price9 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price10", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price10 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price11", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price11 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("price12", null, new { @Class = "form-control frm", type = "number", @readonly = "true", @Value = items.Price12 })</th>
+                        </tr>
+                        p++;
+                    }*@
+
+                    @*@foreach (var priceA in ViewBag.PriceA)
+                    {
+                        <tr hidden>
+                            <th style="text-align:left;vertical-align:middle !important;">@pa@Html.Raw(".")@priceA.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_1", null, new { @Class = "form-control frm", id = "abio_pricea_1" + @pa, type = "number", @readonly = "true", @Value = priceA.Price1 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_2", null, new { @Class = "form-control frm", id = "abio_pricea_2" + @pa, type = "number", @readonly = "true", @Value = priceA.Price2 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_3", null, new { @Class = "form-control frm", id = "abio_pricea_3" + @pa, type = "number", @readonly = "true", @Value = priceA.Price3 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_4", null, new { @Class = "form-control frm", id = "abio_pricea_4" + @pa, type = "number", @readonly = "true", @Value = priceA.Price4 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_5", null, new { @Class = "form-control frm", id = "abio_pricea_5" + @pa, type = "number", @readonly = "true", @Value = priceA.Price5 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_6", null, new { @Class = "form-control frm", id = "abio_pricea_6" + @pa, type = "number", @readonly = "true", @Value = priceA.Price6 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_7", null, new { @Class = "form-control frm", id = "abio_pricea_7" + @pa, type = "number", @readonly = "true", @Value = priceA.Price7 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_8", null, new { @Class = "form-control frm", id = "abio_pricea_8" + @pa, type = "number", @readonly = "true", @Value = priceA.Price8 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_9", null, new { @Class = "form-control frm", id = "abio_pricea_9" + @pa, type = "number", @readonly = "true", @Value = priceA.Price9 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_10", null, new { @Class = "form-control frm", id = "abio_pricea_10" + @pa, type = "number", @readonly = "true", @Value = priceA.Price10 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_11", null, new { @Class = "form-control frm", id = "abio_pricea_11" + @pa, type = "number", @readonly = "true", @Value = priceA.Price11 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_pricea_12", null, new { @Class = "form-control frm", id = "abio_pricea_12" + @pa, type = "number", @readonly = "true", @Value = priceA.Price12 })</th>
+                        </tr>
+                        pa++;
+                    }*@
+
+                    @*@foreach (var priceB in ViewBag.PriceB)
+                    {
+                        <tr hidden>
+                            <th style="text-align:left;vertical-align:middle !important;">@pb@Html.Raw(".")@priceB.Co_List </th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_1", null, new { @Class = "form-control frm", id = "abio_priceb_1" + @pb, type = "number", @readonly = "true", @Value = priceB.Price1 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_2", null, new { @Class = "form-control frm", id = "abio_priceb_2" + @pb, type = "number", @readonly = "true", @Value = priceB.Price2 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_3", null, new { @Class = "form-control frm", id = "abio_priceb_3" + @pb, type = "number", @readonly = "true", @Value = priceB.Price3 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_4", null, new { @Class = "form-control frm", id = "abio_priceb_4" + @pb, type = "number", @readonly = "true", @Value = priceB.Price4 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_5", null, new { @Class = "form-control frm", id = "abio_priceb_5" + @pb, type = "number", @readonly = "true", @Value = priceB.Price5 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_6", null, new { @Class = "form-control frm", id = "abio_priceb_6" + @pb, type = "number", @readonly = "true", @Value = priceB.Price6 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_7", null, new { @Class = "form-control frm", id = "abio_priceb_7" + @pb, type = "number", @readonly = "true", @Value = priceB.Price7 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_8", null, new { @Class = "form-control frm", id = "abio_priceb_8" + @pb, type = "number", @readonly = "true", @Value = priceB.Price8 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_9", null, new { @Class = "form-control frm", id = "abio_priceb_9" + @pb, type = "number", @readonly = "true", @Value = priceB.Price9 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_10", null, new { @Class = "form-control frm", id = "abio_priceb_10" + @pb, type = "number", @readonly = "true", @Value = priceB.Price10 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_11", null, new { @Class = "form-control frm", id = "abio_priceb_11" + @pb, type = "number", @readonly = "true", @Value = priceB.Price11 })</th>
+                            <th style="text-align:center;vertical-align:middle !important;">@Html.TextBox("abio_priceb_12", null, new { @Class = "form-control frm", id = "abio_priceb_12" + @pb, type = "number", @readonly = "true", @Value = priceB.Price12 })</th>
+                        </tr>
+                        pb++;
+                    }*@
+
+                    <tr>
+                        <th style="text-align:left;vertical-align:middle !important;"> UNIT PERKIRAAN </th>
+                        <th style="text-align:left;vertical-align:middle !important;" colspan="13"> @ViewBag.UOM </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btnsave btn btn-primary" type="submit" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnSave.ToUpper()</button>
+            <a style="text-align:right" href="Sawit" class="btn btn-warning" title="Back to list">@GlobalResEstate.btnBack.ToUpper()</a>
+        </div>
+    }
+</section>
+
+<style>
+    .table tbody > tr > th, .table tfoot > tr > th, .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
+        padding: 3px;
+    }
+
+    .frm {
+        text-align: center;
+        vertical-align: middle !important;
+        font-size: 11px;
+    }
+
+    .frm2 {
+        text-align: right;
+        vertical-align: middle !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 30px;
+        border: 1px solid #cccccc;
+        font-size: 12px;
+    }
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-left: 15px;
+            padding-top: 1px;
+        }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 2px;
+    }
+</style>
+<link href="~/Asset/select2/css/select2.min.css" rel="stylesheet" />
+<script src="~/Asset/select2/js/select2.full.min.js"></script>
+<script>
+    $(document).find(".form-control").addClass("input-sm");
+    $("form").removeData("validator");
+    $("form").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse("form");
+
+    $('.select2').select2({
+        width: '100%'
+    });
+
+    $('input[type="number"]').on('keydown', function (e) {
+        if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+            e.preventDefault();
+        }
+        else if (e.key === "-" || e.key === "+" || e.key === "e" || e.key === "E") {
+            e.preventDefault();
+        }
+    });
+
+$(".btnsave").attr("disabled", true);
+
+$(".CostCenter").on("change",
+    function () {
+        var val = $(this).val();
+        if (val == null || val == '') {
+            $(".btnsave").attr("disabled", true);
+        }
+        else {
+            $(".btnsave").attr("disabled", false);
+        }
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetDataFromCostCenter", "PendapatanSawit")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ costcentercode: $(this).val() }),
+                success: function (result)
+                {
+                    if (result.success)
+                    {
+                        document.getElementById("CCDesc").value = result.costcenterdesc;
+                        document.getElementById("stationcode").value = result.stationcode;
+                        document.getElementById("stationname").value = result.stationdesc;
+                        document.getElementById("CCTrim").value = result.costcentertrim;
+
+                        for (var w = 1; w < 20; w++) {
+                            
+                            $('#wilayahida' + w).val(result.wilayahid);
+                            $('#wilayahidb' + w).val(result.wilayahid);
+                            $('#bgtlocation').val(result.bgtlocation);
+                            $('#Price1' + w).val(result.Price1);
+                            $('#Price2' + w).val(result.Price2);
+                            $('#Price3' + w).val(result.Price3);
+                            $('#Price4' + w).val(result.Price4);
+                            $('#Price5' + w).val(result.Price5);
+                            $('#Price6' + w).val(result.Price6);
+                            $('#Price7' + w).val(result.Price7);
+                            $('#Price8' + w).val(result.Price8);
+                            $('#Price9' + w).val(result.Price9);
+                            $('#Price10' + w).val(result.Price10);
+                            $('#Price1I' + w).val(result.Price11);
+                            $('#Price12' + w).val(result.Price12);
+
+                            $('#abio_pricea_1' + w).val(result.Price1);
+                            $('#abio_pricea_2' + w).val(result.Price2);
+                            $('#abio_pricea_3' + w).val(result.Price3);
+                            $('#abio_pricea_4' + w).val(result.Price4);
+                            $('#abio_pricea_5' + w).val(result.Price5);
+                            $('#abio_pricea_6' + w).val(result.Price6);
+                            $('#abio_pricea_7' + w).val(result.Price7);
+                            $('#abio_pricea_8' + w).val(result.Price8);
+                            $('#abio_pricea_9' + w).val(result.Price9);
+                            $('#abio_pricea_10' + w).val(result.Price10);
+                            $('#abio_pricea_1I' + w).val(result.Price11);
+                            $('#abio_pricea_12' + w).val(result.Price12);
+
+                            $('#abio_priceb_1' + w).val(result.Price1);
+                            $('#abio_priceb_2' + w).val(result.Price2);
+                            $('#abio_priceb_3' + w).val(result.Price3);
+                            $('#abio_priceb_4' + w).val(result.Price4);
+                            $('#abio_priceb_5' + w).val(result.Price5);
+                            $('#abio_priceb_6' + w).val(result.Price6);
+                            $('#abio_priceb_7' + w).val(result.Price7);
+                            $('#abio_priceb_8' + w).val(result.Price8);
+                            $('#abio_priceb_9' + w).val(result.Price9);
+                            $('#abio_priceb_10' + w).val(result.Price10);
+                            $('#abio_priceb_1I' + w).val(result.Price11);
+                            $('#abio_priceb_12' + w).val(result.Price12);
+
+                            $('#abio_pricea1' + w).val(result.Price1);
+                            $('#abio_pricea2' + w).val(result.Price2);
+                            $('#abio_pricea3' + w).val(result.Price3);
+                            $('#abio_pricea4' + w).val(result.Price4);
+                            $('#abio_pricea5' + w).val(result.Price5);
+                            $('#abio_pricea6' + w).val(result.Price6);
+                            $('#abio_pricea7' + w).val(result.Price7);
+                            $('#abio_pricea8' + w).val(result.Price8);
+                            $('#abio_pricea9' + w).val(result.Price9);
+                            $('#abio_pricea10' + w).val(result.Price10);
+                            $('#abio_pricea1I' + w).val(result.Price11);
+                            $('#abio_pricea12' + w).val(result.Price12);
+
+                            $('#abio_priceb1' + w).val(result.Price1);
+                            $('#abio_priceb2' + w).val(result.Price2);
+                            $('#abio_priceb3' + w).val(result.Price3);
+                            $('#abio_priceb4' + w).val(result.Price4);
+                            $('#abio_priceb5' + w).val(result.Price5);
+                            $('#abio_priceb6' + w).val(result.Price6);
+                            $('#abio_priceb7' + w).val(result.Price7);
+                            $('#abio_priceb8' + w).val(result.Price8);
+                            $('#abio_priceb9' + w).val(result.Price9);
+                            $('#abio_priceb10' + w).val(result.Price10);
+                            $('#abio_priceb1I' + w).val(result.Price11);
+                            $('#abio_priceb12' + w).val(result.Price12);
+                        }
+                    }
+                    else {
+                        document.getElementById("CCDesc").value = "";
+                        document.getElementById("stationcode").value = "";
+                        document.getElementById("stationname").value = "";
+                        document.getElementById("CCTrim").value = "";
+                    }
+                }
+            });
+    });
+
+    
+
+
+
+    //---QUANTITY A---
+
+    function setTotal1() {
+        var sum1 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya1 = $('#qtya1' + w).val() ? parseFloat($('#qtya1' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_1k').val((sum1 += qtya1).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt1();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal2() {
+        var sum2 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya2 = $('#qtya2' + w).val() ? parseFloat($('#qtya2' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_2k').val((sum2 += qtya2).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt2();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal3() {
+        var sum3 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya3 = $('#qtya3' + w).val() ? parseFloat($('#qtya3' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_3k').val((sum3 += qtya3).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt3();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal4() {
+        var sum4 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya4 = $('#qtya4' + w).val() ? parseFloat($('#qtya4' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_4k').val((sum4 += qtya4).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt4();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal5() {
+        var sum5 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya5 = $('#qtya5' + w).val() ? parseFloat($('#qtya5' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_5k').val((sum5 += qtya5).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt5();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal6() {
+        var sum6 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya6 = $('#qtya6' + w).val() ? parseFloat($('#qtya6' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_6k').val((sum6 += qtya6).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt6();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal7() {
+        var sum7 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya7 = $('#qtya7' + w).val() ? parseFloat($('#qtya7' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_7k').val((sum7 += qtya7).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt7();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal8() {
+        var sum8 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya8 = $('#qtya8' + w).val() ? parseFloat($('#qtya8' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_8k').val((sum8 += qtya8).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt8();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal9() {
+        var sum9 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya9 = $('#qtya9' + w).val() ? parseFloat($('#qtya9' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_9k').val((sum9 += qtya9).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt9();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal10() {
+        var sum10 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya10 = $('#qtya10' + w).val() ? parseFloat($('#qtya10' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_10k').val((sum10 += qtya10).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt10();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal11() {
+        var sum11 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya11 = $('#qtyaI1' + w).val() ? parseFloat($('#qtyaI1' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_11k').val((sum11 += qtya11).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt11();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotal12() {
+        var sum12 = 0;
+        for (var w = 1; w < 5; w++) {
+            var qtya12 = $('#qtya12' + w).val() ? parseFloat($('#qtya12' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_qty_12k').val((sum12 += qtya12).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAll();
+        setJumlahKecilA();
+        setJumlahBesarAB();
+        setAmountA();
+        setJumlahKecilAmt12();
+        setJumlahAmountA();
+        setJumlahKecilAmountA();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalAll() {
+        for (var w = 1; w < 5; w++) {
+            var qtyatot1 = $('#qtya1' + w).val() ? parseFloat($('#qtya1' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot2 = $('#qtya2' + w).val() ? parseFloat($('#qtya2' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot3 = $('#qtya3' + w).val() ? parseFloat($('#qtya3' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot4 = $('#qtya4' + w).val() ? parseFloat($('#qtya4' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot5 = $('#qtya5' + w).val() ? parseFloat($('#qtya5' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot6 = $('#qtya6' + w).val() ? parseFloat($('#qtya6' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot7 = $('#qtya7' + w).val() ? parseFloat($('#qtya7' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot8 = $('#qtya8' + w).val() ? parseFloat($('#qtya8' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot9 = $('#qtya9' + w).val() ? parseFloat($('#qtya9' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot10 = $('#qtya10' + w).val() ? parseFloat($('#qtya10' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot11 = $('#qtyaI1' + w).val() ? parseFloat($('#qtyaI1' + w).val().replace(/,/g, '')) : 0;
+            var qtyatot12 = $('#qtya12' + w).val() ? parseFloat($('#qtya12' + w).val().replace(/,/g, '')) : 0;
+            var qtytot = qtyatot1 + qtyatot2 + qtyatot3 + qtyatot4 + qtyatot5 + qtyatot6 + qtyatot7 + qtyatot8 + qtyatot9 + qtyatot10 + qtyatot11 + qtyatot12;
+            $('#qty_totala' + w).val((qtytot).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#abio_grand_total_quantity_a' + w).val((qtytot).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+    }
+    function setJumlahKecilA() {
+            var qtyjka1 = $('#jka_qty_1k').val() ? parseFloat($('#jka_qty_1k').val().replace(/,/g, '')) : 0;
+            var qtyjka2 = $('#jka_qty_2k').val() ? parseFloat($('#jka_qty_2k').val().replace(/,/g, '')) : 0;
+            var qtyjka3 = $('#jka_qty_3k').val() ? parseFloat($('#jka_qty_3k').val().replace(/,/g, '')) : 0;
+            var qtyjka4 = $('#jka_qty_4k').val() ? parseFloat($('#jka_qty_4k').val().replace(/,/g, '')) : 0;
+            var qtyjka5 = $('#jka_qty_5k').val() ? parseFloat($('#jka_qty_5k').val().replace(/,/g, '')) : 0;
+            var qtyjka6 = $('#jka_qty_6k').val() ? parseFloat($('#jka_qty_6k').val().replace(/,/g, '')) : 0;
+            var qtyjka7 = $('#jka_qty_7k').val() ? parseFloat($('#jka_qty_7k').val().replace(/,/g, '')) : 0;
+            var qtyjka8 = $('#jka_qty_8k').val() ? parseFloat($('#jka_qty_8k').val().replace(/,/g, '')) : 0;
+            var qtyjka9 = $('#jka_qty_9k').val() ? parseFloat($('#jka_qty_9k').val().replace(/,/g, '')) : 0;
+            var qtyjka10 = $('#jka_qty_10k').val() ? parseFloat($('#jka_qty_10k').val().replace(/,/g, '')) : 0;
+            var qtyjka11 = $('#jka_qty_11k').val() ? parseFloat($('#jka_qty_11k').val().replace(/,/g, '')) : 0;
+            var qtyjka12 = $('#jka_qty_12k').val() ? parseFloat($('#jka_qty_12k').val().replace(/,/g, '')) : 0;
+            var qtyjka = qtyjka1 + qtyjka2 + qtyjka3 + qtyjka4 + qtyjka5 + qtyjka6 + qtyjka7 + qtyjka8 + qtyjka9 + qtyjka10 + qtyjka11 + qtyjka12;
+        $('#jka_qty_totalk').val((qtyjka).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        //set default value 
+        $('#jka_qty_1k').val((qtyjka1).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_2k').val((qtyjka2).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_3k').val((qtyjka3).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_4k').val((qtyjka4).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_5k').val((qtyjka5).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_6k').val((qtyjka6).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_7k').val((qtyjka7).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_8k').val((qtyjka8).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_9k').val((qtyjka9).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_10k').val((qtyjka10).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_11k').val((qtyjka11).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jka_qty_12k').val((qtyjka12).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+    }
+
+
+    //---QUANTITY B---
+
+    function setTotalB1() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb1' + w).val() ? parseFloat($('#qtyb1' + w).val()) : 0;
+            $('#jkb_qty_1k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB1();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB2() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb2' + w).val() ? parseFloat($('#qtyb2' + w).val()) : 0;
+            $('#jkb_qty_2k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB2();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB3() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb3' + w).val() ? parseFloat($('#qtyb3' + w).val()) : 0;
+            $('#jkb_qty_3k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB3();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB4() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb4' + w).val() ? parseFloat($('#qtyb4' + w).val()) : 0;
+            $('#jkb_qty_4k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB4();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB5() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb5' + w).val() ? parseFloat($('#qtyb5' + w).val()) : 0;
+            $('#jkb_qty_5k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB5();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB6() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb6' + w).val() ? parseFloat($('#qtyb6' + w).val()) : 0;
+            $('#jkb_qty_6k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB6();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB7() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb7' + w).val() ? parseFloat($('#qtyb7' + w).val()) : 0;
+            $('#jkb_qty_7k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB7();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB8() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb8' + w).val() ? parseFloat($('#qtyb8' + w).val()) : 0;
+            $('#jkb_qty_8k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB8();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB9() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb9' + w).val() ? parseFloat($('#qtyb9' + w).val()) : 0;
+            $('#jkb_qty_9k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB9();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB10() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb10' + w).val() ? parseFloat($('#qtyb10' + w).val()) : 0;
+            $('#jkb_qty_10k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB10();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB11() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtybI1' + w).val() ? parseFloat($('#qtybI1' + w).val()) : 0;
+            $('#jkb_qty_11k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB11();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalB12() {
+        var sum = 0;
+        for (var w = 1; w < 15; w++) {
+            var qty = $('#qtyb12' + w).val() ? parseFloat($('#qtyb12' + w).val()) : 0;
+            $('#jkb_qty_12k').val((sum += qty).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+        setTotalAllB();
+        setJumlahKecilB();
+        setJumlahBesarAB();
+        setAmountB();
+        setJumlahKecilAmtB12();
+        setJumlahAmountB();
+        setJumlahKecilAmountB();
+        setJumlahBesarAmountAB();
+    }
+    function setTotalAllB() {
+        for (var w = 1; w < 15; w++) {
+            var qtyb1 = $('#qtyb1' + w).val() ? parseFloat($('#qtyb1' + w).val().replace(/,/g, '')) : 0;
+            var qtyb2 = $('#qtyb2' + w).val() ? parseFloat($('#qtyb2' + w).val().replace(/,/g, '')) : 0;
+            var qtyb3 = $('#qtyb3' + w).val() ? parseFloat($('#qtyb3' + w).val().replace(/,/g, '')) : 0;
+            var qtyb4 = $('#qtyb4' + w).val() ? parseFloat($('#qtyb4' + w).val().replace(/,/g, '')) : 0;
+            var qtyb5 = $('#qtyb5' + w).val() ? parseFloat($('#qtyb5' + w).val().replace(/,/g, '')) : 0;
+            var qtyb6 = $('#qtyb6' + w).val() ? parseFloat($('#qtyb6' + w).val().replace(/,/g, '')) : 0;
+            var qtyb7 = $('#qtyb7' + w).val() ? parseFloat($('#qtyb7' + w).val().replace(/,/g, '')) : 0;
+            var qtyb8 = $('#qtyb8' + w).val() ? parseFloat($('#qtyb8' + w).val().replace(/,/g, '')) : 0;
+            var qtyb9 = $('#qtyb9' + w).val() ? parseFloat($('#qtyb9' + w).val().replace(/,/g, '')) : 0;
+            var qtyb10 = $('#qtyb10' + w).val() ? parseFloat($('#qtyb10' + w).val().replace(/,/g, '')) : 0;
+            var qtyb11 = $('#qtybI1' + w).val() ? parseFloat($('#qtybI1' + w).val().replace(/,/g, '')) : 0;
+            var qtyb12 = $('#qtyb12' + w).val() ? parseFloat($('#qtyb12' + w).val().replace(/,/g, '')) : 0;
+            var qtytot = qtyb1 + qtyb2 + qtyb3 + qtyb4 + qtyb5 + qtyb6 + qtyb7 + qtyb8 + qtyb9 + qtyb10 + qtyb11 + qtyb12;
+            $('#qty_totalb' + w).val((qtytot).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#abio_grand_total_quantity_b' + w).val((qtytot).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+    }
+    function setJumlahKecilB() {
+        for (var w = 1; w < 15; w++) {
+            var jkb1 = $('#jkb_qty_1k').val() ? parseFloat($('#jkb_qty_1k').val().replace(/,/g, '')) : 0;
+            var jkb2 = $('#jkb_qty_2k').val() ? parseFloat($('#jkb_qty_2k').val().replace(/,/g, '')) : 0;
+            var jkb3 = $('#jkb_qty_3k').val() ? parseFloat($('#jkb_qty_3k').val().replace(/,/g, '')) : 0;
+            var jkb4 = $('#jkb_qty_4k').val() ? parseFloat($('#jkb_qty_4k').val().replace(/,/g, '')) : 0;
+            var jkb5 = $('#jkb_qty_5k').val() ? parseFloat($('#jkb_qty_5k').val().replace(/,/g, '')) : 0;
+            var jkb6 = $('#jkb_qty_6k').val() ? parseFloat($('#jkb_qty_6k').val().replace(/,/g, '')) : 0;
+            var jkb7 = $('#jkb_qty_7k').val() ? parseFloat($('#jkb_qty_7k').val().replace(/,/g, '')) : 0;
+            var jkb8 = $('#jkb_qty_8k').val() ? parseFloat($('#jkb_qty_8k').val().replace(/,/g, '')) : 0;
+            var jkb9 = $('#jkb_qty_9k').val() ? parseFloat($('#jkb_qty_9k').val().replace(/,/g, '')) : 0;
+            var jkb10 = $('#jkb_qty_10k').val() ? parseFloat($('#jkb_qty_10k').val().replace(/,/g, '')) : 0;
+            var jkb11 = $('#jkb_qty_11k').val() ? parseFloat($('#jkb_qty_11k').val().replace(/,/g, '')) : 0;
+            var jkb12 = $('#jkb_qty_12k').val() ? parseFloat($('#jkb_qty_12k').val().replace(/,/g, '')) : 0;
+            var qtyjkb = jkb1 + jkb2 + jkb3 + jkb4 + jkb5 + jkb6 + jkb7 + jkb8 + jkb9 + jkb10 + jkb11 + jkb12;
+            $('#jkb_qty_totalk').val((qtyjkb).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            //set default value 
+            $('#jkb_qty_1k').val((jkb1).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_2k').val((jkb2).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_3k').val((jkb3).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_4k').val((jkb4).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_5k').val((jkb5).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_6k').val((jkb6).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_7k').val((jkb7).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_8k').val((jkb8).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_9k').val((jkb9).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_10k').val((jkb10).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_11k').val((jkb11).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+            $('#jkb_qty_12k').val((jkb12).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        }
+    }
+    function setJumlahBesarAB() {
+        var qtya1 = $('#jka_qty_1k').val() ? parseFloat($('#jka_qty_1k').val().replace(/,/g, '')) : 0;
+        var qtya2 = $('#jka_qty_2k').val() ? parseFloat($('#jka_qty_2k').val().replace(/,/g, '')) : 0;
+        var qtya3 = $('#jka_qty_3k').val() ? parseFloat($('#jka_qty_3k').val().replace(/,/g, '')) : 0;
+        var qtya4 = $('#jka_qty_4k').val() ? parseFloat($('#jka_qty_4k').val().replace(/,/g, '')) : 0;
+        var qtya5 = $('#jka_qty_5k').val() ? parseFloat($('#jka_qty_5k').val().replace(/,/g, '')) : 0;
+        var qtya6 = $('#jka_qty_6k').val() ? parseFloat($('#jka_qty_6k').val().replace(/,/g, '')) : 0;
+        var qtya7 = $('#jka_qty_7k').val() ? parseFloat($('#jka_qty_7k').val().replace(/,/g, '')) : 0;
+        var qtya8 = $('#jka_qty_8k').val() ? parseFloat($('#jka_qty_8k').val().replace(/,/g, '')) : 0;
+        var qtya9 = $('#jka_qty_9k').val() ? parseFloat($('#jka_qty_9k').val().replace(/,/g, '')) : 0;
+        var qtya10 = $('#jka_qty_10k').val() ? parseFloat($('#jka_qty_10k').val().replace(/,/g, '')) : 0;
+        var qtya11 = $('#jka_qty_11k').val() ? parseFloat($('#jka_qty_11k').val().replace(/,/g, '')) : 0;
+        var qtya12 = $('#jka_qty_12k').val() ? parseFloat($('#jka_qty_12k').val().replace(/,/g, '')) : 0;
+
+        var qtyb1 = $('#jkb_qty_1k').val() ? parseFloat($('#jkb_qty_1k').val().replace(/,/g, '')) : 0;
+        var qtyb2 = $('#jkb_qty_2k').val() ? parseFloat($('#jkb_qty_2k').val().replace(/,/g, '')) : 0;
+        var qtyb3 = $('#jkb_qty_3k').val() ? parseFloat($('#jkb_qty_3k').val().replace(/,/g, '')) : 0;
+        var qtyb4 = $('#jkb_qty_4k').val() ? parseFloat($('#jkb_qty_4k').val().replace(/,/g, '')) : 0;
+        var qtyb5 = $('#jkb_qty_5k').val() ? parseFloat($('#jkb_qty_5k').val().replace(/,/g, '')) : 0;
+        var qtyb6 = $('#jkb_qty_6k').val() ? parseFloat($('#jkb_qty_6k').val().replace(/,/g, '')) : 0;
+        var qtyb7 = $('#jkb_qty_7k').val() ? parseFloat($('#jkb_qty_7k').val().replace(/,/g, '')) : 0;
+        var qtyb8 = $('#jkb_qty_8k').val() ? parseFloat($('#jkb_qty_8k').val().replace(/,/g, '')) : 0;
+        var qtyb9 = $('#jkb_qty_9k').val() ? parseFloat($('#jkb_qty_9k').val().replace(/,/g, '')) : 0;
+        var qtyb10 = $('#jkb_qty_10k').val() ? parseFloat($('#jkb_qty_10k').val().replace(/,/g, '')) : 0;
+        var qtyb11 = $('#jkb_qty_11k').val() ? parseFloat($('#jkb_qty_11k').val().replace(/,/g, '')) : 0;
+        var qtyb12 = $('#jkb_qty_12k').val() ? parseFloat($('#jkb_qty_12k').val().replace(/,/g, '')) : 0;
+
+        var jbqtyab1 = qtya1 + qtyb1;
+        var jbqtyab2 = qtya2 + qtyb2;
+        var jbqtyab3 = qtya3 + qtyb3;
+        var jbqtyab4 = qtya4 + qtyb4;
+        var jbqtyab5 = qtya5 + qtyb5;
+        var jbqtyab6 = qtya6 + qtyb6;
+        var jbqtyab7 = qtya7 + qtyb7;
+        var jbqtyab8 = qtya8 + qtyb8;
+        var jbqtyab9 = qtya9 + qtyb9;
+        var jbqtyab10 = qtya10 + qtyb10;
+        var jbqtyab11 = qtya11 + qtyb11;
+        var jbqtyab12 = qtya12 + qtyb12;
+
+        var jbab = jbqtyab1 + jbqtyab2 + jbqtyab3 + jbqtyab4 + jbqtyab5 + jbqtyab6 + jbqtyab7 + jbqtyab8 + jbqtyab9 + jbqtyab10 + jbqtyab11 + jbqtyab12;
+
+        $('#jb_qty_abk1').val((jbqtyab1).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk2').val((jbqtyab2).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk3').val((jbqtyab3).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk4').val((jbqtyab4).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk5').val((jbqtyab5).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk6').val((jbqtyab6).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk7').val((jbqtyab7).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk8').val((jbqtyab8).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk9').val((jbqtyab9).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk10').val((jbqtyab10).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk11').val((jbqtyab11).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_abk12').val((jbqtyab12).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        $('#jb_qty_totalk').val((jbab).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+    }
+
+
+    //---AMMOUNT A---
+    function setAmountA() {
+        for (var w = 1; w < 5; w++) {
+            var qtya1 = $('#qtya1' + w).val() ? parseFloat($('#qtya1' + w).val().replace(/,/g, '')) : 0;
+            var qtya2 = $('#qtya2' + w).val() ? parseFloat($('#qtya2' + w).val().replace(/,/g, '')) : 0;
+            var qtya3 = $('#qtya3' + w).val() ? parseFloat($('#qtya3' + w).val().replace(/,/g, '')) : 0;
+            var qtya4 = $('#qtya4' + w).val() ? parseFloat($('#qtya4' + w).val().replace(/,/g, '')) : 0;
+            var qtya5 = $('#qtya5' + w).val() ? parseFloat($('#qtya5' + w).val().replace(/,/g, '')) : 0;
+            var qtya6 = $('#qtya6' + w).val() ? parseFloat($('#qtya6' + w).val().replace(/,/g, '')) : 0;
+            var qtya7 = $('#qtya7' + w).val() ? parseFloat($('#qtya7' + w).val().replace(/,/g, '')) : 0;
+            var qtya8 = $('#qtya8' + w).val() ? parseFloat($('#qtya8' + w).val().replace(/,/g, '')) : 0;
+            var qtya9 = $('#qtya9' + w).val() ? parseFloat($('#qtya9' + w).val().replace(/,/g, '')) : 0;
+            var qtya10 = $('#qtya10' + w).val() ? parseFloat($('#qtya10' + w).val().replace(/,/g, '')) : 0;
+            var qtya11 = $('#qtyaI1' + w).val() ? parseFloat($('#qtyaI1' + w).val().replace(/,/g, '')) : 0;
+            var qtya12 = $('#qtya12' + w).val() ? parseFloat($('#qtya12' + w).val().replace(/,/g, '')) : 0;
+
+            var price1 = $('#abio_pricea_1' + w).val();
+            var price2 = $('#abio_pricea_2' + w).val();
+            var price3 = $('#abio_pricea_3' + w).val();
+            var price4 = $('#abio_pricea_4' + w).val();
+            var price5 = $('#abio_pricea_5' + w).val();
+            var price6 = $('#abio_pricea_6' + w).val();
+            var price7 = $('#abio_pricea_7' + w).val();
+            var price8 = $('#abio_pricea_8' + w).val();
+            var price9 = $('#abio_pricea_9' + w).val();
+            var price10 = $('#abio_pricea_10' + w).val();
+            var price11 = $('#abio_pricea_1I' + w).val();
+            var price12 = $('#abio_pricea_12' + w).val();
+
+            $('#amta1' + w).val((qtya1 * price1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta2' + w).val((qtya2 * price2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta3' + w).val((qtya3 * price3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta4' + w).val((qtya4 * price4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta5' + w).val((qtya5 * price5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta6' + w).val((qtya6 * price6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta7' + w).val((qtya7 * price7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta8' + w).val((qtya8 * price8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta9' + w).val((qtya9 * price9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta10' + w).val((qtya10 * price10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtaI1' + w).val((qtya11 * price11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amta12' + w).val((qtya12 * price12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+            $('#amtasave1' + w).val((qtya1 * price1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave2' + w).val((qtya2 * price2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave3' + w).val((qtya3 * price3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave4' + w).val((qtya4 * price4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave5' + w).val((qtya5 * price5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave6' + w).val((qtya6 * price6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave7' + w).val((qtya7 * price7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave8' + w).val((qtya8 * price8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave9' + w).val((qtya9 * price9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave10' + w).val((qtya10 * price10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave11' + w).val((qtya11 * price11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtasave12' + w).val((qtya12 * price12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt1() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta1' + w).val() ? parseFloat($('#amta1' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_1k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt2() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta2' + w).val() ? parseFloat($('#amta2' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_2k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt3() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta3' + w).val() ? parseFloat($('#amta3' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_3k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt4() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta4' + w).val() ? parseFloat($('#amta4' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_4k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt5() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta5' + w).val() ? parseFloat($('#amta5' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_5k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt6() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta6' + w).val() ? parseFloat($('#amta6' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_6k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt7() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta7' + w).val() ? parseFloat($('#amta7' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_7k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt8() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta8' + w).val() ? parseFloat($('#amta8' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_8k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt9() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta9' + w).val() ? parseFloat($('#amta9' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_9k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt10() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta10' + w).val() ? parseFloat($('#amta10' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_10k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt11() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtaI1' + w).val() ? parseFloat($('#amtaI1' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_11k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmt12() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amta12' + w).val() ? parseFloat($('#amta12' + w).val().replace(/,/g, '')) : 0;
+            $('#jka_amt_12k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahAmountA() {
+        for (var w = 1; w < 5; w++) {
+            var amta1 = $('#amta1' + w).val() ? parseFloat($('#amta1' + w).val().replace(/,/g, '')) : 0;
+            var amta2 = $('#amta2' + w).val() ? parseFloat($('#amta2' + w).val().replace(/,/g, '')) : 0;
+            var amta3 = $('#amta3' + w).val() ? parseFloat($('#amta3' + w).val().replace(/,/g, '')) : 0;
+            var amta4 = $('#amta4' + w).val() ? parseFloat($('#amta4' + w).val().replace(/,/g, '')) : 0;
+            var amta5 = $('#amta5' + w).val() ? parseFloat($('#amta5' + w).val().replace(/,/g, '')) : 0;
+            var amta6 = $('#amta6' + w).val() ? parseFloat($('#amta6' + w).val().replace(/,/g, '')) : 0;
+            var amta7 = $('#amta7' + w).val() ? parseFloat($('#amta7' + w).val().replace(/,/g, '')) : 0;
+            var amta8 = $('#amta8' + w).val() ? parseFloat($('#amta8' + w).val().replace(/,/g, '')) : 0;
+            var amta9 = $('#amta9' + w).val() ? parseFloat($('#amta9' + w).val().replace(/,/g, '')) : 0;
+            var amta10 = $('#amta10' + w).val() ? parseFloat($('#amta10' + w).val().replace(/,/g, '')) : 0;
+            var amta11 = $('#amtaI1' + w).val() ? parseFloat($('#amtaI1' + w).val().replace(/,/g, '')) : 0;
+            var amta12 = $('#amta12' + w).val() ? parseFloat($('#amta12' + w).val().replace(/,/g, '')) : 0;
+            var amtatot = amta1 + amta2 + amta3 + amta4 + amta5 + amta6 + amta7 + amta8 + amta9 + amta10 + amta11 + amta12;
+            $('#total_amta' + w).val((amtatot).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#grand_total_amount_a' + w).val((amtatot).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+            $('#total_amtasave' + w).val((amtatot).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#grand_total_amount_a_save' + w).val((amtatot).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmountA() {
+        var jka1 = $('#jka_amt_1k').val() ? parseFloat($('#jka_amt_1k').val().replace(/,/g, '')) : 0;
+        var jka2 = $('#jka_amt_2k').val() ? parseFloat($('#jka_amt_2k').val().replace(/,/g, '')) : 0;
+        var jka3 = $('#jka_amt_3k').val() ? parseFloat($('#jka_amt_3k').val().replace(/,/g, '')) : 0;
+        var jka4 = $('#jka_amt_4k').val() ? parseFloat($('#jka_amt_4k').val().replace(/,/g, '')) : 0;
+        var jka5 = $('#jka_amt_5k').val() ? parseFloat($('#jka_amt_5k').val().replace(/,/g, '')) : 0;
+        var jka6 = $('#jka_amt_6k').val() ? parseFloat($('#jka_amt_6k').val().replace(/,/g, '')) : 0;
+        var jka7 = $('#jka_amt_7k').val() ? parseFloat($('#jka_amt_7k').val().replace(/,/g, '')) : 0;
+        var jka8 = $('#jka_amt_8k').val() ? parseFloat($('#jka_amt_8k').val().replace(/,/g, '')) : 0;
+        var jka9 = $('#jka_amt_9k').val() ? parseFloat($('#jka_amt_9k').val().replace(/,/g, '')) : 0;
+        var jka10 = $('#jka_amt_10k').val() ? parseFloat($('#jka_amt_10k').val().replace(/,/g, '')) : 0;
+        var jka11 = $('#jka_amt_11k').val() ? parseFloat($('#jka_amt_11k').val().replace(/,/g, '')) : 0;
+        var jka12 = $('#jka_amt_12k').val() ? parseFloat($('#jka_amt_12k').val().replace(/,/g, '')) : 0;
+        var amtjka = jka1 + jka2 + jka3 + jka4 + jka5 + jka6 + jka7 + jka8 + jka9 + jka10 + jka11 + jka12;
+        $('#jka_amt_totalk').val((amtjka).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#grand_total_amount_syarikat_kumpulan').val((amtjka).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        //set default value
+        $('#jka_amt_1k').val((jka1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_2k').val((jka2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_3k').val((jka3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_4k').val((jka4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_5k').val((jka5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_6k').val((jka6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_7k').val((jka7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_8k').val((jka8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_9k').val((jka9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_10k').val((jka10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_11k').val((jka11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jka_amt_12k').val((jka12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    }
+
+
+    //---AMMOUNT B---
+
+    function setAmountB() {
+        for (var w = 1; w < 5; w++) {
+            var qtyb1 = $('#qtyb1' + w).val() ? parseFloat($('#qtyb1' + w).val().replace(/,/g, '')) : 0;
+            var qtyb2 = $('#qtyb2' + w).val() ? parseFloat($('#qtyb2' + w).val().replace(/,/g, '')) : 0;
+            var qtyb3 = $('#qtyb3' + w).val() ? parseFloat($('#qtyb3' + w).val().replace(/,/g, '')) : 0;
+            var qtyb4 = $('#qtyb4' + w).val() ? parseFloat($('#qtyb4' + w).val().replace(/,/g, '')) : 0;
+            var qtyb5 = $('#qtyb5' + w).val() ? parseFloat($('#qtyb5' + w).val().replace(/,/g, '')) : 0;
+            var qtyb6 = $('#qtyb6' + w).val() ? parseFloat($('#qtyb6' + w).val().replace(/,/g, '')) : 0;
+            var qtyb7 = $('#qtyb7' + w).val() ? parseFloat($('#qtyb7' + w).val().replace(/,/g, '')) : 0;
+            var qtyb8 = $('#qtyb8' + w).val() ? parseFloat($('#qtyb8' + w).val().replace(/,/g, '')) : 0;
+            var qtyb9 = $('#qtyb9' + w).val() ? parseFloat($('#qtyb9' + w).val().replace(/,/g, '')) : 0;
+            var qtyb10 = $('#qtyb10' + w).val() ? parseFloat($('#qtyb10' + w).val().replace(/,/g, '')) : 0;
+            var qtyb11 = $('#qtybI1' + w).val() ? parseFloat($('#qtybI1' + w).val().replace(/,/g, '')) : 0;
+            var qtyb12 = $('#qtyb12' + w).val() ? parseFloat($('#qtyb12' + w).val().replace(/,/g, '')) : 0;
+
+            var price1 = $('#abio_priceb_1' + w).val();
+            var price2 = $('#abio_priceb_2' + w).val();
+            var price3 = $('#abio_priceb_3' + w).val();
+            var price4 = $('#abio_priceb_4' + w).val();
+            var price5 = $('#abio_priceb_5' + w).val();
+            var price6 = $('#abio_priceb_6' + w).val();
+            var price7 = $('#abio_priceb_7' + w).val();
+            var price8 = $('#abio_priceb_8' + w).val();
+            var price9 = $('#abio_priceb_9' + w).val();
+            var price10 = $('#abio_priceb_10' + w).val();
+            var price11 = $('#abio_priceb_1I' + w).val();
+            var price12 = $('#abio_priceb_12' + w).val();
+
+            $('#amtb1' + w).val((qtyb1 * price1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb2' + w).val((qtyb2 * price2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb3' + w).val((qtyb3 * price3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb4' + w).val((qtyb4 * price4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb5' + w).val((qtyb5 * price5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb6' + w).val((qtyb6 * price6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb7' + w).val((qtyb7 * price7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb8' + w).val((qtyb8 * price8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb9' + w).val((qtyb9 * price9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb10' + w).val((qtyb10 * price10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbI1' + w).val((qtyb11 * price11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtb12' + w).val((qtyb12 * price12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+            $('#amtbsave1' + w).val((qtyb1 * price1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave2' + w).val((qtyb2 * price2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave3' + w).val((qtyb3 * price3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave4' + w).val((qtyb4 * price4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave5' + w).val((qtyb5 * price5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave6' + w).val((qtyb6 * price6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave7' + w).val((qtyb7 * price7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave8' + w).val((qtyb8 * price8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave9' + w).val((qtyb9 * price9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave10' + w).val((qtyb10 * price10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave11' + w).val((qtyb11 * price11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#amtbsave12' + w).val((qtyb12 * price12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB1() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb1' + w).val() ? parseFloat($('#amtb1' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_1k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB2() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb2' + w).val() ? parseFloat($('#amtb2' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_2k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB3() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb3' + w).val() ? parseFloat($('#amtb3' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_3k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB4() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb4' + w).val() ? parseFloat($('#amtb4' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_4k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB5() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb5' + w).val() ? parseFloat($('#amtb5' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_5k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB6() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb6' + w).val() ? parseFloat($('#amtb6' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_6k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB7() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb7' + w).val() ? parseFloat($('#amtb7' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_7k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB8() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb8' + w).val() ? parseFloat($('#amtb8' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_8k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB9() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb9' + w).val() ? parseFloat($('#amtb9' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_9k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB10() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb10' + w).val() ? parseFloat($('#amtb10' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_10k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB11() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtbI1' + w).val() ? parseFloat($('#amtbI1' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_11k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmtB12() {
+        var sumamt = 0;
+        for (var w = 1; w < 5; w++) {
+            var amt = $('#amtb12' + w).val() ? parseFloat($('#amtb12' + w).val().replace(/,/g, '')) : 0;
+            $('#jkb_amt_12k').val((sumamt += amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahAmountB() {
+        for (var w = 1; w < 5; w++) {
+            var amtb1 = $('#amtb1' + w).val() ? parseFloat($('#amtb1' + w).val().replace(/,/g, '')) : 0;
+            var amtb2 = $('#amtb2' + w).val() ? parseFloat($('#amtb2' + w).val().replace(/,/g, '')) : 0;
+            var amtb3 = $('#amtb3' + w).val() ? parseFloat($('#amtb3' + w).val().replace(/,/g, '')) : 0;
+            var amtb4 = $('#amtb4' + w).val() ? parseFloat($('#amtb4' + w).val().replace(/,/g, '')) : 0;
+            var amtb5 = $('#amtb5' + w).val() ? parseFloat($('#amtb5' + w).val().replace(/,/g, '')) : 0;
+            var amtb6 = $('#amtb6' + w).val() ? parseFloat($('#amtb6' + w).val().replace(/,/g, '')) : 0;
+            var amtb7 = $('#amtb7' + w).val() ? parseFloat($('#amtb7' + w).val().replace(/,/g, '')) : 0;
+            var amtb8 = $('#amtb8' + w).val() ? parseFloat($('#amtb8' + w).val().replace(/,/g, '')) : 0;
+            var amtb9 = $('#amtb9' + w).val() ? parseFloat($('#amtb9' + w).val().replace(/,/g, '')) : 0;
+            var amtb10 = $('#amtb10' + w).val() ? parseFloat($('#amtb10' + w).val().replace(/,/g, '')) : 0;
+            var amtb11 = $('#amtbI1' + w).val() ? parseFloat($('#amtbI1' + w).val().replace(/,/g, '')) : 0;
+            var amtb12 = $('#amtb12' + w).val() ? parseFloat($('#amtb12' + w).val().replace(/,/g, '')) : 0;
+            var amtbtot = amtb1 + amtb2 + amtb3 + amtb4 + amtb5 + amtb6 + amtb7 + amtb8 + amtb9 + amtb10 + amtb11 + amtb12;
+            $('#amtb_total' + w).val((amtbtot).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+            $('#amtbsave_total' + w).val((amtbtot).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#grand_total_amount_b_save' + w).val((amtbtot).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+    }
+
+    function setJumlahKecilAmountB() {
+        var jkb1 = $('#jkb_amt_1k').val() ? parseFloat($('#jkb_amt_1k').val().replace(/,/g, '')) : 0;
+        var jkb2 = $('#jkb_amt_2k').val() ? parseFloat($('#jkb_amt_2k').val().replace(/,/g, '')) : 0;
+        var jkb3 = $('#jkb_amt_3k').val() ? parseFloat($('#jkb_amt_3k').val().replace(/,/g, '')) : 0;
+        var jkb4 = $('#jkb_amt_4k').val() ? parseFloat($('#jkb_amt_4k').val().replace(/,/g, '')) : 0;
+        var jkb5 = $('#jkb_amt_5k').val() ? parseFloat($('#jkb_amt_5k').val().replace(/,/g, '')) : 0;
+        var jkb6 = $('#jkb_amt_6k').val() ? parseFloat($('#jkb_amt_6k').val().replace(/,/g, '')) : 0;
+        var jkb7 = $('#jkb_amt_7k').val() ? parseFloat($('#jkb_amt_7k').val().replace(/,/g, '')) : 0;
+        var jkb8 = $('#jkb_amt_8k').val() ? parseFloat($('#jkb_amt_8k').val().replace(/,/g, '')) : 0;
+        var jkb9 = $('#jkb_amt_9k').val() ? parseFloat($('#jkb_amt_9k').val().replace(/,/g, '')) : 0;
+        var jkb10 = $('#jkb_amt_10k').val() ? parseFloat($('#jkb_amt_10k').val().replace(/,/g, '')) : 0;
+        var jkb11 = $('#jkb_amt_11k').val() ? parseFloat($('#jkb_amt_11k').val().replace(/,/g, '')) : 0;
+        var jkb12 = $('#jkb_amt_12k').val() ? parseFloat($('#jkb_amt_12k').val().replace(/,/g, '')) : 0;
+        var amtjkb = jkb1 + jkb2 + jkb3 + jkb4 + jkb5 + jkb6 + jkb7 + jkb8 + jkb9 + jkb10 + jkb11 + jkb12;
+        $('#jkb_amt_totalk').val((amtjkb).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#grand_total_amount_bandar_luar').val((amtjkb).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        //set default value
+        $('#jkb_amt_1k').val((jkb1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_2k').val((jkb2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_3k').val((jkb3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_4k').val((jkb4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_5k').val((jkb5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_6k').val((jkb6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_7k').val((jkb7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_8k').val((jkb8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_9k').val((jkb9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_10k').val((jkb10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_11k').val((jkb11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jkb_amt_12k').val((jkb12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    }
+
+    function setJumlahBesarAmountAB() {
+        var amta1 = $('#jka_amt_1k').val() ? parseFloat($('#jka_amt_1k').val().replace(/,/g, '')) : 0;
+        var amta2 = $('#jka_amt_2k').val() ? parseFloat($('#jka_amt_2k').val().replace(/,/g, '')) : 0;
+        var amta3 = $('#jka_amt_3k').val() ? parseFloat($('#jka_amt_3k').val().replace(/,/g, '')) : 0;
+        var amta4 = $('#jka_amt_4k').val() ? parseFloat($('#jka_amt_4k').val().replace(/,/g, '')) : 0;
+        var amta5 = $('#jka_amt_5k').val() ? parseFloat($('#jka_amt_5k').val().replace(/,/g, '')) : 0;
+        var amta6 = $('#jka_amt_6k').val() ? parseFloat($('#jka_amt_6k').val().replace(/,/g, '')) : 0;
+        var amta7 = $('#jka_amt_7k').val() ? parseFloat($('#jka_amt_7k').val().replace(/,/g, '')) : 0;
+        var amta8 = $('#jka_amt_8k').val() ? parseFloat($('#jka_amt_8k').val().replace(/,/g, '')) : 0;
+        var amta9 = $('#jka_amt_9k').val() ? parseFloat($('#jka_amt_9k').val().replace(/,/g, '')) : 0;
+        var amta10 = $('#jka_amt_10k').val() ? parseFloat($('#jka_amt_10k').val().replace(/,/g, '')) : 0;
+        var amta11 = $('#jka_amt_11k').val() ? parseFloat($('#jka_amt_11k').val().replace(/,/g, '')) : 0;
+        var amta12 = $('#jka_amt_12k').val() ? parseFloat($('#jka_amt_12k').val().replace(/,/g, '')) : 0;
+
+        var amtb1 = $('#jkb_amt_1k').val() ? parseFloat($('#jkb_amt_1k').val().replace(/,/g, '')) : 0;
+        var amtb2 = $('#jkb_amt_2k').val() ? parseFloat($('#jkb_amt_2k').val().replace(/,/g, '')) : 0;
+        var amtb3 = $('#jkb_amt_3k').val() ? parseFloat($('#jkb_amt_3k').val().replace(/,/g, '')) : 0;
+        var amtb4 = $('#jkb_amt_4k').val() ? parseFloat($('#jkb_amt_4k').val().replace(/,/g, '')) : 0;
+        var amtb5 = $('#jkb_amt_5k').val() ? parseFloat($('#jkb_amt_5k').val().replace(/,/g, '')) : 0;
+        var amtb6 = $('#jkb_amt_6k').val() ? parseFloat($('#jkb_amt_6k').val().replace(/,/g, '')) : 0;
+        var amtb7 = $('#jkb_amt_7k').val() ? parseFloat($('#jkb_amt_7k').val().replace(/,/g, '')) : 0;
+        var amtb8 = $('#jkb_amt_8k').val() ? parseFloat($('#jkb_amt_8k').val().replace(/,/g, '')) : 0;
+        var amtb9 = $('#jkb_amt_9k').val() ? parseFloat($('#jkb_amt_9k').val().replace(/,/g, '')) : 0;
+        var amtb10 = $('#jkb_amt_10k').val() ? parseFloat($('#jkb_amt_10k').val().replace(/,/g, '')) : 0;
+        var amtb11 = $('#jkb_amt_11k').val() ? parseFloat($('#jkb_amt_11k').val().replace(/,/g, '')) : 0;
+        var amtb12 = $('#jkb_amt_12k').val() ? parseFloat($('#jkb_amt_12k').val().replace(/,/g, '')) : 0;
+
+        var jbamtab1 = amta1 + amtb1;
+        var jbamtab2 = amta2 + amtb2;
+        var jbamtab3 = amta3 + amtb3;
+        var jbamtab4 = amta4 + amtb4;
+        var jbamtab5 = amta5 + amtb5;
+        var jbamtab6 = amta6 + amtb6;
+        var jbamtab7 = amta7 + amtb7;
+        var jbamtab8 = amta8 + amtb8;
+        var jbamtab9 = amta9 + amtb9;
+        var jbamtab10 = amta10 + amtb10;
+        var jbamtab11 = amta11 + amtb11;
+        var jbamtab12 = amta12 + amtb12;
+
+        var jbab = jbamtab1 + jbamtab2 + jbamtab3 + jbamtab4 + jbamtab5 + jbamtab6 + jbamtab7 + jbamtab8 + jbamtab9 + jbamtab10 + jbamtab11 + jbamtab12;
+
+        $('#amt_abk1').val((jbamtab1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk2').val((jbamtab2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk3').val((jbamtab3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk4').val((jbamtab4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk5').val((jbamtab5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk6').val((jbamtab6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk7').val((jbamtab7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk8').val((jbamtab8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk9').val((jbamtab9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk10').val((jbamtab10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk11').val((jbamtab11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#amt_abk12').val((jbamtab12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#jumamt_abk').val((jbab).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        
+    }
+
+    //---PRICE-A--
+    //for (w = 1; w < 15; w++) {
+    //    //var pricea1 = $('#abio_pricea_1' + w).val() ?  $('#abio_pricea_1' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea2 = $('#abio_pricea_2' + w).val() ?  $('#abio_pricea_2' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea3 = $('#abio_pricea_3' + w).val() ?  $('#abio_pricea_3' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea4 = $('#abio_pricea_4' + w).val() ?  $('#abio_pricea_4' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea5 = $('#abio_pricea_5' + w).val() ?  $('#abio_pricea_5' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea6 = $('#abio_pricea_6' + w).val() ?  $('#abio_pricea_6' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea7 = $('#abio_pricea_7' + w).val() ?  $('#abio_pricea_7' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea8 = $('#abio_pricea_8' + w).val() ?  $('#abio_pricea_8' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea9 = $('#abio_pricea_9' + w).val() ?  $('#abio_pricea_9' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea10 = $('#abio_pricea_10' + w).val() ?  $('#abio_pricea_10' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea11 = $('#abio_pricea_1I' + w).val() ?  $('#abio_pricea_1I' + w).val().replace(/,/g, '') : 0;
+    //    //var pricea12 = $('#abio_pricea_12' + w).val() ?  $('#abio_pricea_12' + w).val().replace(/,/g, '') : 0;
+
+    //    //$('#abio_pricea1' + w).val((pricea1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea2' + w).val((pricea2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea3' + w).val((pricea3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea4' + w).val((pricea4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea5' + w).val((pricea5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea6' + w).val((pricea6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea7' + w).val((pricea7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea8' + w).val((pricea8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea9' + w).val((pricea9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea10' + w).val((pricea10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea11' + w).val((pricea11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_pricea12' + w).val((pricea12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //}
+
+    //---PRICE-B--
+    //for (w = 1; w < 15; w++) {
+    //    //var priceb1 = $('#abio_priceb_1' + w).val() ?  $('#abio_priceb_1' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb2 = $('#abio_priceb_2' + w).val() ?  $('#abio_priceb_2' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb3 = $('#abio_priceb_3' + w).val() ?  $('#abio_priceb_3' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb4 = $('#abio_priceb_4' + w).val() ?  $('#abio_priceb_4' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb5 = $('#abio_priceb_5' + w).val() ?  $('#abio_priceb_5' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb6 = $('#abio_priceb_6' + w).val() ?  $('#abio_priceb_6' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb7 = $('#abio_priceb_7' + w).val() ?  $('#abio_priceb_7' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb8 = $('#abio_priceb_8' + w).val() ?  $('#abio_priceb_8' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb9 = $('#abio_priceb_9' + w).val() ?  $('#abio_priceb_9' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb10 = $('#abio_priceb_10' + w).val() ?  $('#abio_priceb_10' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb11 = $('#abio_priceb_1I' + w).val() ?  $('#abio_priceb_1I' + w).val().replace(/,/g, '') : 0;
+    //    //var priceb12 = $('#abio_priceb_12' + w).val() ?  $('#abio_priceb_12' + w).val().replace(/,/g, '') : 0;
+
+    //    //$('#abio_priceb1' + w).val((priceb1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb2' + w).val((priceb2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb3' + w).val((priceb3).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb4' + w).val((priceb4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb5' + w).val((priceb5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb6' + w).val((priceb6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb7' + w).val((priceb7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb8' + w).val((priceb8).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb9' + w).val((priceb9).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb10' + w).val((priceb10).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb11' + w).val((priceb11).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //    //$('#abio_priceb12' + w).val((priceb12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    //}
+
+
+
+
+    ////Disabled txtfield
+    //var harga1 = document.getElementById('abio_price_11').value;
+    //var harga2 = document.getElementById('abio_price_21').value;
+    //var harga3 = document.getElementById('abio_price_31').value;
+    //var harga4 = document.getElementById('abio_price_41').value;
+    //var harga5 = document.getElementById('abio_price_51').value;
+    //var harga6 = document.getElementById('abio_price_61').value;
+    //var harga7 = document.getElementById('abio_price_71').value;
+    //var harga8 = document.getElementById('abio_price_81').value;
+    //var harga9 = document.getElementById('abio_price_91').value;
+    //var harga10 = document.getElementById('abio_price_101').value;
+    //var harga11 = document.getElementById('abio_price_111').value;
+    //var harga12 = document.getElementById('abio_price_121').value;
+    //if (harga1 == '') {
+    //    document.getElementById('qty1').readOnly = true;
+    //}
+    //if (harga2 == '') {
+    //    document.getElementById('qty2').readOnly = true;
+    //}
+    //if (harga3 == '') {
+    //    document.getElementById('qty3').readOnly = true;
+    //}
+    //if (harga4 == '') {
+    //    document.getElementById('qty4').readOnly = true;
+    //}
+    //if (harga5 == '') {
+    //    document.getElementById('qty5').readOnly = true;
+    //}
+    //if (harga6 == '') {
+    //    document.getElementById('qty6').readOnly = true;
+    //}
+    //if (harga7 == '') {
+    //    document.getElementById('qty7').readOnly = true;
+    //}
+    //if (harga8 == '') {
+    //    document.getElementById('qty8').readOnly = true;
+    //}
+    //if (harga9 == '') {
+    //    document.getElementById('qty9').readOnly = true;
+    //}
+    //if (harga10 == '') {
+    //    document.getElementById('qty10').readOnly = true;
+    //}
+    //if (harga11 == '') {
+    //    document.getElementById('qty11').readOnly = true;
+    //}
+    //if (harga12 == '') {
+    //    document.getElementById('qty12').readOnly = true;
+    //}
+
+    //var harga21 = document.getElementById('abio_price_12').value;
+    //var harga22 = document.getElementById('abio_price_22').value;
+    //var harga23 = document.getElementById('abio_price_32').value;
+    //var harga24 = document.getElementById('abio_price_42').value;
+    //var harga25 = document.getElementById('abio_price_52').value;
+    //var harga26 = document.getElementById('abio_price_62').value;
+    //var harga27 = document.getElementById('abio_price_72').value;
+    //var harga28 = document.getElementById('abio_price_82').value;
+    //var harga29 = document.getElementById('abio_price_92').value;
+    //var harga210 = document.getElementById('abio_price_102').value;
+    //var harga211 = document.getElementById('abio_price_112').value;
+    //var harga212 = document.getElementById('abio_price_122').value;
+
+    //if (harga21 == '') {
+    //    document.getElementById('qty1b10').readOnly = true;
+    //}
+    //if (harga22 == '') {
+    //    document.getElementById('qty2b15').readOnly = true;
+    //}
+    //if (harga23 == '') {
+    //    document.getElementById('qty3b20').readOnly = true;
+    //}
+    //if (harga24 == '') {
+    //    document.getElementById('qty4b25').readOnly = true;
+    //}
+    //if (harga25 == '') {
+    //    document.getElementById('qty5b30').readOnly = true;
+    //}
+    //if (harga26 == '') {
+    //    document.getElementById('qty6b35').readOnly = true;
+    //}
+    //if (harga27 == '') {
+    //    document.getElementById('qty7b40').readOnly = true;
+    //}
+    //if (harga28 == '') {
+    //    document.getElementById('qty8b45').readOnly = true;
+    //}
+    //if (harga29 == '') {
+    //    document.getElementById('qty9b50').readOnly = true;
+    //}
+    //if (harga210 == '') {
+    //    document.getElementById('qty10b55').readOnly = true;
+    //}
+    //if (harga211 == '') {
+    //    document.getElementById('qty11b60').readOnly = true;
+    //}
+    //if (harga212 == '') {
+    //    document.getElementById('qty12b65').readOnly = true;
+    //}
+
+    //var harga31 = document.getElementById('abio_price_13').value;
+    //var harga32 = document.getElementById('abio_price_23').value;
+    //var harga33 = document.getElementById('abio_price_33').value;
+    //var harga34 = document.getElementById('abio_price_43').value;
+    //var harga35 = document.getElementById('abio_price_53').value;
+    //var harga36 = document.getElementById('abio_price_63').value;
+    //var harga37 = document.getElementById('abio_price_73').value;
+    //var harga38 = document.getElementById('abio_price_83').value;
+    //var harga39 = document.getElementById('abio_price_93').value;
+    //var harga310 = document.getElementById('abio_price_103').value;
+    //var harga311 = document.getElementById('abio_price_113').value;
+    //var harga312 = document.getElementById('abio_price_123').value;
+
+    //if (harga31 == '') {
+    //    document.getElementById('qty1b11').readOnly = true;
+    //}
+    //if (harga32 == '') {
+    //    document.getElementById('qty2b16').readOnly = true;
+    //}
+    //if (harga33 == '') {
+    //    document.getElementById('qty3b21').readOnly = true;
+    //}
+    //if (harga34 == '') {
+    //    document.getElementById('qty4b26').readOnly = true;
+    //}
+    //if (harga35 == '') {
+    //    document.getElementById('qty5b31').readOnly = true;
+    //}
+    //if (harga36 == '') {
+    //    document.getElementById('qty6b36').readOnly = true;
+    //}
+    //if (harga37 == '') {
+    //    document.getElementById('qty7b41').readOnly = true;
+    //}
+    //if (harga38 == '') {
+    //    document.getElementById('qty8b46').readOnly = true;
+    //}
+    //if (harga39 == '') {
+    //    document.getElementById('qty9b51').readOnly = true;
+    //}
+    //if (harga310 == '') {
+    //    document.getElementById('qty10b56').readOnly = true;
+    //}
+    //if (harga311 == '') {
+    //    document.getElementById('qty11b61').readOnly = true;
+    //}
+    //if (harga312 == '') {
+    //    document.getElementById('qty12b66').readOnly = true;
+    //}
+
+    //var harga41 = document.getElementById('abio_price_14').value;
+    //var harga42 = document.getElementById('abio_price_24').value;
+    //var harga43 = document.getElementById('abio_price_34').value;
+    //var harga44 = document.getElementById('abio_price_44').value;
+    //var harga45 = document.getElementById('abio_price_54').value;
+    //var harga46 = document.getElementById('abio_price_64').value;
+    //var harga47 = document.getElementById('abio_price_74').value;
+    //var harga48 = document.getElementById('abio_price_84').value;
+    //var harga49 = document.getElementById('abio_price_94').value;
+    //var harga410 = document.getElementById('abio_price_104').value;
+    //var harga411 = document.getElementById('abio_price_114').value;
+    //var harga412 = document.getElementById('abio_price_124').value;
+    //if (harga41 == '') {
+    //    document.getElementById('qty1b12').readOnly = true;
+    //}
+    //if (harga42 == '') {
+    //    document.getElementById('qty2b17').readOnly = true;
+    //}
+    //if (harga43 == '') {
+    //    document.getElementById('qty3b22').readOnly = true;
+    //}
+    //if (harga44 == '') {
+    //    document.getElementById('qty4b27').readOnly = true;
+    //}
+    //if (harga45 == '') {
+    //    document.getElementById('qty5b32').readOnly = true;
+    //}
+    //if (harga46 == '') {
+    //    document.getElementById('qty6b37').readOnly = true;
+    //}
+    //if (harga47 == '') {
+    //    document.getElementById('qty7b42').readOnly = true;
+    //}
+    //if (harga48 == '') {
+    //    document.getElementById('qty8b47').readOnly = true;
+    //}
+    //if (harga49 == '') {
+    //    document.getElementById('qty9b52').readOnly = true;
+    //}
+    //if (harga410 == '') {
+    //    document.getElementById('qty10b57').readOnly = true;
+    //}
+    //if (harga411 == '') {
+    //    document.getElementById('qty11b62').readOnly = true;
+    //}
+    //if (harga412 == '') {
+    //    document.getElementById('qty12b67').readOnly = true;
+    //}
+
+    //var harga51 = document.getElementById('abio_price_15').value;
+    //var harga52 = document.getElementById('abio_price_25').value;
+    //var harga53 = document.getElementById('abio_price_35').value;
+    //var harga54 = document.getElementById('abio_price_45').value;
+    //var harga55 = document.getElementById('abio_price_55').value;
+    //var harga56 = document.getElementById('abio_price_65').value;
+    //var harga57 = document.getElementById('abio_price_75').value;
+    //var harga58 = document.getElementById('abio_price_85').value;
+    //var harga59 = document.getElementById('abio_price_95').value;
+    //var harga510 = document.getElementById('abio_price_105').value;
+    //var harga511 = document.getElementById('abio_price_115').value;
+    //var harga512 = document.getElementById('abio_price_125').value;
+
+    //if (harga51 == '') {
+    //    document.getElementById('qty1b13').readOnly = true;
+    //}
+    //if (harga52 == '') {
+    //    document.getElementById('qty2b18').readOnly = true;
+    //}
+    //if (harga53 == '') {
+    //    document.getElementById('qty3b23').readOnly = true;
+    //}
+    //if (harga54 == '') {
+    //    document.getElementById('qty4b28').readOnly = true;
+    //}
+    //if (harga55 == '') {
+    //    document.getElementById('qty5b33').readOnly = true;
+    //}
+    //if (harga56 == '') {
+    //    document.getElementById('qty6b38').readOnly = true;
+    //}
+    //if (harga57 == '') {
+    //    document.getElementById('qty7b43').readOnly = true;
+    //}
+    //if (harga58 == '') {
+    //    document.getElementById('qty8b48').readOnly = true;
+    //}
+    //if (harga59 == '') {
+    //    document.getElementById('qty9b53').readOnly = true;
+    //}
+    //if (harga510 == '') {
+    //    document.getElementById('qty10b58').readOnly = true;
+    //}
+    //if (harga511 == '') {
+    //    document.getElementById('qty11b63').readOnly = true;
+    //}
+    //if (harga512 == '') {
+    //    document.getElementById('qty12b68').readOnly = true;
+    //}
+
+</script>
+<style type="text/css">
+    /* Remove arrow input number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    /* Remove arrow input number */
+</style>

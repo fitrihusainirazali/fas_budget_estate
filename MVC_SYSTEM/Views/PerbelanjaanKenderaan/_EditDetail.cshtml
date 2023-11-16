@@ -1,0 +1,962 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesVehicleCreateOrEditDetailViewModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.abev_id)//
+    @Html.HiddenFor(model => model.abev_budgeting_year)
+    @Html.HiddenFor(model => model.abev_cost_center_code)
+    @Html.HiddenFor(model => model.abev_cost_center_desc)
+    <div class="modal-body">
+        <div class="panel panel-success">
+            <div class="panel-heading">@ViewBag.Title - Details</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_material_code)
+                            @Html.DropDownListFor(model => model.abev_material_code, new SelectList(ViewBag.VehicleList, "Value", "Text"), "Kod Kenderaan", htmlAttributes: new { @class = "form-control select2" })
+                            @Html.HiddenFor(model => model.abev_material_name)
+                            @Html.HiddenFor(model => model.abev_model)
+                            @Html.HiddenFor(model => model.abev_registration_no)
+                            @Html.ValidationMessageFor(model => model.abev_material_code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_gl_expenses_code)
+                            @Html.DropDownListFor(model => model.abev_gl_expenses_code, new SelectList(ViewBag.GLList, "Value", "Text"), "GL Perbelanjaan", htmlAttributes: new { @class = "form-control select2" })
+                            @Html.HiddenFor(model => model.abev_gl_expenses_name)
+                            @Html.ValidationMessageFor(model => model.abev_gl_expenses_code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_note)
+                            @Html.TextBoxFor(model => model.abev_note, null, new { @class = "form-control text-uppercase" })
+                            @Html.ValidationMessageFor(model => model.abev_note, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_quantity)
+                            @Html.EditorFor(model => model.abev_quantity, new { htmlAttributes = new { @class = "form-control text-right input-number" } })
+                            @Html.ValidationMessageFor(model => model.abev_quantity, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_uom)
+                            @Html.DropDownListFor(model => model.abev_uom, new SelectList(ViewBag.UOM, "Value", "Text"), "UOM", htmlAttributes: new { @class = "form-control select2" })
+                            @*@Html.EditorFor(model => model.abev_uom, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })*@
+                            @Html.ValidationMessageFor(model => model.abev_uom, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_unit_price)
+                            @Html.EditorFor(model => model.abev_unit_price, new { htmlAttributes = new { @class = "form-control text-right input-number" } })
+                            @Html.ValidationMessageFor(model => model.abev_unit_price, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Jumlah (RM)")
+                            @Html.TextBox("total_amount", null, htmlAttributes: new { @class = "form-control text-right", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_proration)
+                            @Html.DropDownListFor(model => model.abev_proration, new List<SelectListItem>{
+                                new SelectListItem { Value = "keyin", Text = "Key In" },
+                                new SelectListItem { Value = "monthly", Text = "Monthly" },
+                                new SelectListItem { Value = "quarterly", Text = "Quarterly" },
+                                new SelectListItem { Value = "semi_annually", Text = "Semi Annually" },
+                                new SelectListItem { Value = "annually", Text = "Annually" }
+                            }, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.abev_proration, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-md-2" style="margin-top:45px;">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_total_quantity)
+                            @Html.EditorFor(model => model.abev_total_quantity, new { htmlAttributes = new { @class = "form-control text-right", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.abev_total_quantity, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abev_total)
+                            @Html.EditorFor(model => model.abev_total, new { htmlAttributes = new { @class = "form-control text-right", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.abev_total, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_1)
+                                @Html.EditorFor(model => model.abev_quantity_1, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_1, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_1, "", new { @class = "text-danger" })
+                                @Html.ValidationMessageFor(model => model.abev_amount_1, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_2)
+                                @Html.EditorFor(model => model.abev_quantity_2, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_2, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_2, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_3)
+                                @Html.EditorFor(model => model.abev_quantity_3, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_3, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_3, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_4)
+                                @Html.EditorFor(model => model.abev_quantity_4, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_4, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_4, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_5)
+                                @Html.EditorFor(model => model.abev_quantity_5, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_5, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_5, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_6)
+                                @Html.EditorFor(model => model.abev_quantity_6, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_6, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_6, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:20px;">
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_7)
+                                @Html.EditorFor(model => model.abev_quantity_7, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_7, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_7, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_8)
+                                @Html.EditorFor(model => model.abev_quantity_8, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_8, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_8, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_9)
+                                @Html.EditorFor(model => model.abev_quantity_9, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_9, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_9, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_10)
+                                @Html.EditorFor(model => model.abev_quantity_10, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_10, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_10, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_11)
+                                @Html.EditorFor(model => model.abev_quantity_11, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_11, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_11, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-2">
+                                @Html.LabelFor(model => model.abev_quantity_12)
+                                @Html.EditorFor(model => model.abev_quantity_12, new { htmlAttributes = new { @class = "form-control input_proration text-right" } })
+                                @Html.EditorFor(model => model.abev_amount_12, new { htmlAttributes = new { @class = "form-control input_amount_proration text-right", style = "margin-top:10px;" } })
+                                @Html.ValidationMessageFor(model => model.abev_quantity_12, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-danger">
+                        Baki: <span id="balance">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button id="btn_submit" type="submit" class="btn btn-primary">@GlobalResEstate.btnSave.ToUpper()</button>
+        <button type="button" class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack.ToUpper()</button>
+    </div>
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        glExpensesChange();
+        //getProductByCode();
+        //getUomByProduct();
+        //costCenterJualanChange();
+
+        setTotal();
+        prorationChange();
+        setBalanceQty();
+        setTotalQty();
+        setTotalAmount();
+
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        $('input[type="number"]').on('keydown', function (e) {
+            var val = $(this).val();
+            //var regex = /^\d+(\.\d{0,1})?$/;
+            var regex = /^\d+(\.\d{0,2})?$/;
+            if (!regex.test(val)) {
+                var match = val.match(regex);
+                if (match !== null) {
+                    $(this).val(match[0]);
+                } else {
+                    var newVal = val.replace(/(\.\d{1})\d+/g, '$1');
+                    $(this).val(newVal);
+                }
+            }
+            if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+                e.preventDefault();
+            } else if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+            }
+        });
+
+        $('.input-number').on('focus', function () {
+            $(this).val($(this).val().replace(/,/g, ''));
+            $(this).attr('type', 'number');
+        });
+        $('.input-number').on('blur', function () {
+            $(this).attr('type', 'text');
+            if ($(this).val()) {
+                var value = parseFloat($(this).val());
+                $(this).val(value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }));
+            }
+        });
+
+        $('.input_amount_proration').attr('readonly', 'readonly');
+
+        $('#abev_material_code').on('change', function () {
+            materialCodeChange();
+        });
+
+        $('#abev_gl_expenses_code').on('change', function () {
+            glExpensesChange();
+        });
+
+        //$('#abev_product_code').on('change', function () {
+        //    getProductByCode();
+        //    getUomByProduct();
+        //});
+
+        //$('#abev_cost_center_jualan_code').on('change', function () {
+        //    costCenterJualanChange();
+        //});
+
+        $('#abev_quantity').on('keyup', function () {
+            setTotal();
+            prorationChange(true);
+            setBalanceQty();
+            setTotalQty();
+            setTotalAmount();
+        });
+
+        $('#abev_unit_price').on('change', function () {
+            setTotal();
+            prorationChange(true);
+            setBalanceQty();
+            setTotalQty();
+            setTotalAmount();
+        });
+
+        $('#abev_proration').on('change', function () {
+            prorationChange(true);
+            setBalanceQty();
+            setTotalQty();
+            setTotalAmount();
+        });
+
+        $('#abev_quantity_1, #abev_quantity_2, #abev_quantity_3, #abev_quantity_4, #abev_quantity_5, #abev_quantity_6, #abev_quantity_7, #abev_quantity_8, #abev_quantity_9, #abev_quantity_10, #abev_quantity_11, #abev_quantity_12').on('keyup', function () {
+            setTotalQty();
+            setBalanceQty();
+        });
+
+        $('#abev_quantity_1').on('keyup', function () {
+            setAmount1();
+        });
+
+        $('#abev_quantity_2').on('keyup', function () {
+            setAmount2();
+        });
+
+        $('#abev_quantity_3').on('keyup', function () {
+            setAmount3();
+        });
+
+        $('#abev_quantity_4').on('keyup', function () {
+            setAmount4();
+        });
+
+        $('#abev_quantity_5').on('keyup', function () {
+            setAmount5();
+        });
+
+        $('#abev_quantity_6').on('keyup', function () {
+            setAmount6();
+        });
+
+        $('#abev_quantity_7').on('keyup', function () {
+            setAmount7();
+        });
+
+        $('#abev_quantity_8').on('keyup', function () {
+            setAmount8();
+        });
+
+        $('#abev_quantity_9').on('keyup', function () {
+            setAmount9();
+        });
+
+        $('#abev_quantity_10').on('keyup', function () {
+            setAmount10();
+        });
+
+        $('#abev_quantity_11').on('keyup', function () {
+            setAmount11();
+        });
+
+        $('#abev_quantity_12').on('keyup', function () {
+            setAmount12();
+        });
+    });
+
+    function materialCodeChange() {
+        var val = $('#abev_material_code').find('option:selected').val();
+        if (val) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetMaterialName")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ materialcode: val }),
+                success: function (result) {
+                    $('#abev_material_name').val(result.mdesc);
+                    $('#abev_model').val(result.model);
+                    $('#abev_registration_no').val(result.regno);
+                }
+            });
+        }
+    }
+
+    function glExpensesChange() {
+        var val = $('#abev_gl_expenses_code').find('option:selected').val();
+        if (val) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetGLName")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ glcode: val }),
+                success: function (result) {
+                    $('#abev_gl_expenses_name').val(result.gl);
+                }
+            });
+        }
+    }
+
+    @*function getProductByCode() {
+        var val = $('#abev_product_code').find('option:selected').val();
+        if (val) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetProductByCode")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ code: val }),
+                success: function (result) {
+                    $('#abev_product_name').val(result.product.PrdName);
+
+                    var price = result.product.PricePAU ? parseFloat(result.product.PricePAU) : 0;
+                    $('#abev_rate').val(price.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })).change();
+                }
+            });
+        }
+    }*@
+
+    @*function getUomByProduct() {
+        var val = $('#abev_product_code').find('option:selected').val();
+        if (val) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetProductUOMByCode")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ productcode: val }),
+                success: function (result) {
+                    $('#abev_uom_1').val(result.UOM);
+                }
+            });
+        }
+    }*@
+
+    //function costCenterJualanChange() {
+    //    var val = $('#abev_cost_center_jualan_code').find('option:selected').val();
+    //    var text = $('#abev_cost_center_jualan_code').find('option:selected').text();
+    //    if (val) {
+    //        $('#abev_cost_center_jualan_desc').val(text.substr(13));
+    //    } else {
+    //        $('#abev_cost_center_jualan_desc').val(null);
+    //    }
+    //}
+
+    function prorationChange(trigger = false) {
+        var val = $('#abev_proration').find('option:selected').val();
+        if (val) {
+            if (val == 'keyin') {
+                $('.input_proration').removeAttr('readonly');
+                //baru add
+                $('.input_proration').on('keydown', function (e) {
+                    var val = $(this).val();
+                    var regex = /^\d+(\.\d{0,2})?$/;
+                    if (!regex.test(val)) {
+                        var match = val.match(regex);
+                        if (match !== null) {
+                            $(this).val(match[0]);
+                        } else {
+                            var newVal = val.replace(/(\.\d{1})\d+/g, '$1');
+                            $(this).val(newVal);
+                        }
+                    }
+                    if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+                        e.preventDefault();
+                    } else if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                        e.preventDefault();
+                    }
+                });
+                //end
+
+                if (trigger) {
+                    $('#abev_quantity_1').val(null);
+                    $('#abev_quantity_2').val(null);
+                    $('#abev_quantity_3').val(null);
+                    $('#abev_quantity_4').val(null);
+                    $('#abev_quantity_5').val(null);
+                    $('#abev_quantity_6').val(null);
+                    $('#abev_quantity_7').val(null);
+                    $('#abev_quantity_8').val(null);
+                    $('#abev_quantity_9').val(null);
+                    $('#abev_quantity_10').val(null);
+                    $('#abev_quantity_11').val(null);
+                    $('#abev_quantity_12').val(null);
+
+                    $('#abev_amount_1').val(null);
+                    $('#abev_amount_2').val(null);
+                    $('#abev_amount_3').val(null);
+                    $('#abev_amount_4').val(null);
+                    $('#abev_amount_5').val(null);
+                    $('#abev_amount_6').val(null);
+                    $('#abev_amount_7').val(null);
+                    $('#abev_amount_8').val(null);
+                    $('#abev_amount_9').val(null);
+                    $('#abev_amount_10').val(null);
+                    $('#abev_amount_11').val(null);
+                    $('#abev_amount_12').val(null);
+                }
+            } else {
+                $('.input_proration').attr('readonly', 'readonly');
+
+                var qty = $('#abev_quantity').val() ? parseFloat($('#abev_quantity').val().replace(/,/g, '')) : 0;
+                var total = calcTotal();
+                var qty1 = 0;
+                var qty2 = 0;
+                var qty3 = 0;
+                var qty4 = 0;
+                var qty5 = 0;
+                var qty6 = 0;
+                var qty7 = 0;
+                var qty8 = 0;
+                var qty9 = 0;
+                var qty10 = 0;
+                var qty11 = 0;
+                var qty12 = 0;
+
+                if (val == 'monthly') {
+                    qty1 = qty / 12;
+                    qty2 = qty / 12;
+                    qty3 = qty / 12;
+                    qty4 = qty / 12;
+                    qty5 = qty / 12;
+                    qty6 = qty / 12;
+                    qty7 = qty / 12;
+                    qty8 = qty / 12;
+                    qty9 = qty / 12;
+                    qty10 = qty / 12;
+                    qty11 = qty / 12;
+                    qty12 = qty - (parseFloat((qty / 12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 11);
+                } else if (val == 'quarterly') {
+                    qty3 = qty / 4;
+                    qty6 = qty / 4;
+                    qty9 = qty / 4;
+                    qty12 = qty - (parseFloat((qty / 4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 3);
+                } else if (val == 'semi_annually') {
+                    qty6 = qty / 2;
+                    qty12 = qty - parseFloat(qty6.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+                } else if (val == 'annually') {
+                    qty12 = qty;
+                }
+
+                $('#abev_quantity_1').val(qty1.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_2').val(qty2.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_3').val(qty3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_4').val(qty4.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_5').val(qty5.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_6').val(qty6.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_7').val(qty7.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_8').val(qty8.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_9').val(qty9.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_10').val(qty10.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_11').val(qty11.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#abev_quantity_12').val(qty12.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+                setAmount1();
+                setAmount2();
+                setAmount3();
+                setAmount4();
+                setAmount5();
+                setAmount6();
+                setAmount7();
+                setAmount8();
+                setAmount9();
+                setAmount10();
+                setAmount11();
+                setAmount12();
+            }
+        }
+    }
+
+    function setTotal() {
+        var total = calcTotal();
+        $('#total_amount').val(total.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function setTotalQty() {
+        var totalQty = calcTotalQty();
+        $('#abev_total_quantity').val(totalQty.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function setBalanceQty() {
+        var balance = calcBalanceQty();
+        if (balance == 0)
+            enableSubmit();
+        else
+            disableSubmit();
+
+        $('#balance').text(balance.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function setAmount1() {
+        var amount = calcAmount1();
+        $('#abev_amount_1').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount2() {
+        var amount = calcAmount2();
+        $('#abev_amount_2').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount3() {
+        var amount = calcAmount3();
+        $('#abev_amount_3').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount4() {
+        var amount = calcAmount4();
+        $('#abev_amount_4').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount5() {
+        var amount = calcAmount5();
+        $('#abev_amount_5').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount6() {
+        var amount = calcAmount6();
+        $('#abev_amount_6').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount7() {
+        var amount = calcAmount7();
+        $('#abev_amount_7').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount8() {
+        var amount = calcAmount8();
+        $('#abev_amount_8').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount9() {
+        var amount = calcAmount9();
+        $('#abev_amount_9').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount10() {
+        var amount = calcAmount10();
+        $('#abev_amount_10').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount11() {
+        var amount = calcAmount11();
+        $('#abev_amount_11').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setAmount12() {
+        var amount = calcAmount12();
+        $('#abev_amount_12').val(amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })).change();
+
+        setTotalAmount();
+    }
+
+    function setTotalAmount() {
+        var amount1 = calcAmount1();
+        var amount2 = calcAmount2();
+        var amount3 = calcAmount3();
+        var amount4 = calcAmount4();
+        var amount5 = calcAmount5();
+        var amount6 = calcAmount6();
+        var amount7 = calcAmount7();
+        var amount8 = calcAmount8();
+        var amount9 = calcAmount9();
+        var amount10 = calcAmount10();
+        var amount11 = calcAmount11();
+        var amount12 = calcAmount12();
+
+        var totalamount = calcTotalAmount();
+        var totalamount2 = parseFloat(totalamount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        var totalamount_2 = totalamount2;
+
+        var total = calcTotal();
+        var total2 = parseFloat(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+
+        if ((totalamount2 > total2) || (totalamount2 < total2 && amount1 > 0 && amount2 > 0 && amount3 > 0 && amount4 > 0 && amount5 > 0 && amount6 > 0 && amount7 > 0 && amount8 > 0 && amount9 > 0 && amount10 > 0 && amount11 > 0 && amount12 > 0)) {
+            totalamount_2 = total2;
+
+            var balance = totalamount2 - total2;
+            var balance2 = parseFloat(balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+
+            if (amount12 > 0) {
+                amount12 = amount12 - balance2;
+            } else if (amount11 > 0) {
+                amount11 = amount11 - balance2;
+            } else if (amount10 > 0) {
+                amount10 = amount10 - balance2;
+            } else if (amount9 > 0) {
+                amount9 = amount9 - balance2;
+            } else if (amount8 > 0) {
+                amount8 = amount8 - balance2;
+            } else if (amount7 > 0) {
+                amount7 = amount7 - balance2;
+            } else if (amount6 > 0) {
+                amount6 = amount6 - balance2;
+            } else if (amount6 > 0) {
+                amount6 = amount6 - balance2;
+            } else if (amount5 > 0) {
+                amount5 = amount5 - balance2;
+            } else if (amount4 > 0) {
+                amount4 = amount4 - balance2;
+            } else if (amount3 > 0) {
+                amount3 = amount3 - balance2;
+            } else if (amount2 > 0) {
+                amount2 = amount2 - balance2;
+            } else if (amount1 > 0) {
+                amount1 = amount1 - balance2;
+            }
+
+            $('#abev_amount_1').val(amount1.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_2').val(amount2.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_3').val(amount3.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_4').val(amount4.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_5').val(amount5.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_6').val(amount6.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_7').val(amount7.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_8').val(amount8.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_9').val(amount9.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_10').val(amount10.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_11').val(amount11.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+            $('#abev_amount_12').val(amount12.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })).change();
+        }
+
+        $('#abev_total').val(totalamount_2.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function calcTotal() {
+        var qty = $('#abev_quantity').val() ? parseFloat($('#abev_quantity').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        return qty * amount;
+    }
+
+    function calcTotalQty() {
+        var qty1 = $('#abev_quantity_1').val() ? parseFloat($('#abev_quantity_1').val().replace(/,/g, '')) : 0;
+        var qty2 = $('#abev_quantity_2').val() ? parseFloat($('#abev_quantity_2').val().replace(/,/g, '')) : 0;
+        var qty3 = $('#abev_quantity_3').val() ? parseFloat($('#abev_quantity_3').val().replace(/,/g, '')) : 0;
+        var qty4 = $('#abev_quantity_4').val() ? parseFloat($('#abev_quantity_4').val().replace(/,/g, '')) : 0;
+        var qty5 = $('#abev_quantity_5').val() ? parseFloat($('#abev_quantity_5').val().replace(/,/g, '')) : 0;
+        var qty6 = $('#abev_quantity_6').val() ? parseFloat($('#abev_quantity_6').val().replace(/,/g, '')) : 0;
+        var qty7 = $('#abev_quantity_7').val() ? parseFloat($('#abev_quantity_7').val().replace(/,/g, '')) : 0;
+        var qty8 = $('#abev_quantity_8').val() ? parseFloat($('#abev_quantity_8').val().replace(/,/g, '')) : 0;
+        var qty9 = $('#abev_quantity_9').val() ? parseFloat($('#abev_quantity_9').val().replace(/,/g, '')) : 0;
+        var qty10 = $('#abev_quantity_10').val() ? parseFloat($('#abev_quantity_10').val().replace(/,/g, '')) : 0;
+        var qty11 = $('#abev_quantity_11').val() ? parseFloat($('#abev_quantity_11').val().replace(/,/g, '')) : 0;
+        var qty12 = $('#abev_quantity_12').val() ? parseFloat($('#abev_quantity_12').val().replace(/,/g, '')) : 0;
+        return qty1 + qty2 + qty3 + qty4 + qty5 + qty6 + qty7 + qty8 + qty9 + qty10 + qty11 + qty12;
+    }
+
+    function calcBalanceQty() {
+        var qty = $('#abev_quantity').val() ? parseFloat($('#abev_quantity').val().replace(/,/g, '')) : 0;
+        var totalQty = calcTotalQty();
+        var totalQty2 = parseFloat(totalQty.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return qty - totalQty2;
+    }
+
+    function calcAmount1() {
+        var qty1 = $('#abev_quantity_1').val() ? parseFloat($('#abev_quantity_1').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount1 = qty1 * amount;
+        var amount1_3 = parseFloat(amount1.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount1_2 = parseFloat(amount1_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount1_2;
+    }
+
+    function calcAmount2() {
+        var qty2 = $('#abev_quantity_2').val() ? parseFloat($('#abev_quantity_2').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount2 = qty2 * amount;
+        var amount2_3 = parseFloat(amount2.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount2_2 = parseFloat(amount2_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount2_2;
+    }
+
+    function calcAmount3() {
+        var qty3 = $('#abev_quantity_3').val() ? parseFloat($('#abev_quantity_3').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount3 = qty3 * amount;
+        var amount3_3 = parseFloat(amount3.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount3_2 = parseFloat(amount3_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount3_2;
+    }
+
+    function calcAmount4() {
+        var qty4 = $('#abev_quantity_4').val() ? parseFloat($('#abev_quantity_4').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount4 = qty4 * amount;
+        var amount4_3 = parseFloat(amount4.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount4_2 = parseFloat(amount4_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount4_2;
+    }
+
+    function calcAmount5() {
+        var qty5 = $('#abev_quantity_5').val() ? parseFloat($('#abev_quantity_5').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount5 = qty5 * amount;
+        var amount5_3 = parseFloat(amount5.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount5_2 = parseFloat(amount5_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount5_2;
+    }
+
+    function calcAmount6() {
+        var qty6 = $('#abev_quantity_6').val() ? parseFloat($('#abev_quantity_6').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount6 = qty6 * amount;
+        var amount6_3 = parseFloat(amount6.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount6_2 = parseFloat(amount6_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount6_2;
+    }
+
+    function calcAmount7() {
+        var qty7 = $('#abev_quantity_7').val() ? parseFloat($('#abev_quantity_7').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount7 = qty7 * amount;
+        var amount7_3 = parseFloat(amount7.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount7_2 = parseFloat(amount7_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount7_2;
+    }
+
+    function calcAmount8() {
+        var qty8 = $('#abev_quantity_8').val() ? parseFloat($('#abev_quantity_8').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount8 = qty8 * amount;
+        var amount8_3 = parseFloat(amount8.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount8_2 = parseFloat(amount8_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount8_2;
+    }
+
+    function calcAmount9() {
+        var qty9 = $('#abev_quantity_9').val() ? parseFloat($('#abev_quantity_9').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount9 = qty9 * amount;
+        var amount9_3 = parseFloat(amount9.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount9_2 = parseFloat(amount9_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount9_2;
+    }
+
+    function calcAmount10() {
+        var qty10 = $('#abev_quantity_10').val() ? parseFloat($('#abev_quantity_10').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount10 = qty10 * amount;
+        var amount10_3 = parseFloat(amount10.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount10_2 = parseFloat(amount10_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount10_2;
+    }
+
+    function calcAmount11() {
+        var qty11 = $('#abev_quantity_11').val() ? parseFloat($('#abev_quantity_11').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount11 = qty11 * amount;
+        var amount11_3 = parseFloat(amount11.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount11_2 = parseFloat(amount11_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount11_2;
+    }
+
+    function calcAmount12() {
+        var qty12 = $('#abev_quantity_12').val() ? parseFloat($('#abev_quantity_12').val().replace(/,/g, '')) : 0;
+        var amount = $('#abev_unit_price').val() ? parseFloat($('#abev_unit_price').val().replace(/,/g, '')) : 0;
+        var amount12 = qty12 * amount;
+        var amount12_3 = parseFloat(amount12.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).replace(/,/g, ''));
+        var amount12_2 = parseFloat(amount12_3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return amount12_2;
+    }
+
+    function calcTotalAmount() {
+        var amount1 = calcAmount1();
+        var amount2 = calcAmount2();
+        var amount3 = calcAmount3();
+        var amount4 = calcAmount4();
+        var amount5 = calcAmount5();
+        var amount6 = calcAmount6();
+        var amount7 = calcAmount7();
+        var amount8 = calcAmount8();
+        var amount9 = calcAmount9();
+        var amount10 = calcAmount10();
+        var amount11 = calcAmount11();
+        var amount12 = calcAmount12();
+        return amount1 + amount2 + amount3 + amount4 + amount5 + amount6 + amount7 + amount8 + amount9 + amount10 + amount11 + amount12;
+    }
+
+    function enableSubmit() {
+        $('#btn_submit').attr('type', 'submit');
+        $('#btn_submit').removeClass('disabled');
+        $('#btn_submit').prop('disabled', false);
+    }
+
+    function disableSubmit() {
+        $('#btn_submit').attr('type', 'button');
+        $('#btn_submit').addClass('disabled');
+        $('#btn_submit').prop('disabled', true);
+    }
+</script>

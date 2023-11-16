@@ -1,0 +1,155 @@
+﻿@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("I2");
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "searchResult",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+
+    BudgetUserMatrix UserMatrix = new BudgetUserMatrix();//new oct
+    var userid = User.Identity.Name;
+    var RoleScreen = UserMatrix.RoleScreen(userid, "I2");
+}
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/AjaxModal.js")
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom: 16px">
+        @using (Ajax.BeginForm("_Index", "PendapatanBijiBenih", null, options, new { @id = "" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-sm-3">
+                    
+                    <label>Tahun Bajet</label>
+                    @Html.DropDownList("BudgetYear", null, htmlAttributes: new { @class = "form-control", @id = "BudgetYear" })
+                </div>
+                <div class="col-sm-3">
+                    
+                    <label>Cost Center Description</label>
+                    @Html.TextBox("CostCenter", ViewBag.CostCenter as string, htmlAttributes: new { @class = "form-control", placeholder = "", @id = "CostCenter" })
+                </div>
+                <div class="col-sm-1" style="padding-top:25px;">
+                    <input class="btn btn-primary btn-block" type="submit" name="Lihat" id="Lihat" value="@GlobalResEstate.btnView" onclick="return DisplayProgressMessage(this);" />
+                </div>
+                <div class="col-sm-5" style="padding-top:25px;" id="AllDownload">
+                    <a class="btn btn-default btn-sm" href="#" id="downloadpdflistingbijibenih">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                    </a>
+                    <a class="btn btn-default btn-sm" href="#" id="downloadexcellistingbijibenih">
+                        <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well" style="margin-top: 7px;">
+            <div class="panel panel-success">
+                <div class="panel-heading">@GetBudgetClass.GetScreenName("I2")</div>
+                <div class="panel-body">
+                    <div id="searchResult">
+                        @Html.Action("_Index", new { BudgetYear = year })
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12 text-right" style="margin-bottom: 20px">
+                @if (!RoleScreen.add)
+                {
+                    <a class="btn btn-success" href="@Url.Action("Denied", "bgtAlert")">@GetBudgetClass.GetScreenName("I2") - ADD</a>
+                    <a class="btn btn-warning" href="@Url.Action("Index", "Income")" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnBack.ToUpper()</a>
+                }
+                else
+                {
+                    <a class="btn btn-success" data-modal1="" href="@Url.Action("CreatePendapatanBijiBenih", "PendapatanBijiBenih")" id="btnCreate" onclick="return DisplayProgressMessage2(this);">@GetBudgetClass.GetScreenName("I2") - ADD</a>
+                    <a class="btn btn-warning" href="@Url.Action("Index", "Income")" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnBack.ToUpper()</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog" style="width: 99%">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostCenterDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .Amount {
+        width: 90px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 100px;
+        text-align: center;
+    }
+</style>
+
+<script>
+    $("#downloadpdflistingbijibenih").click(function () {
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter;
+        @*PDFObject.embed("@Url.Action("exportPDF", "PendapatanBijiBenih")" + param, "#searchResult", { height: "400px" });*@
+        location.href = "@Url.Action("PrintList", "PendapatanBijiBenih")" + param;
+         return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+
+    $("#downloadexcellistingbijibenih").click(function () {
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter + '&format=EXCEL';
+        location.href = "@Url.Action("PrintList", "PendapatanBijiBenih")" + param;
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+</script>

@@ -1,0 +1,43 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_approval
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>*@
+        @*<h3 class="modal-title">REJECT</h3>*@
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">REASON</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                @Html.Label("", htmlAttributes: new { @class = "text-nowrap" })
+                                <div class="col-md-12">
+                                    @Html.Hidden("CostCenter", null, htmlAttributes: new { @class = "form-control", @Value = ViewBag.CostCenter })
+                                    @Html.HiddenFor(model => model.aprv_budgeting_year, htmlAttributes: new { @class = "form-control", @Value = ViewBag.BudgetYear })
+                                    @Html.TextAreaFor(model => model.aprv_note, htmlAttributes: new { @class = "form-control input-sm", @rows = 5, @required = "true" })
+                                    @Html.ValidationMessageFor(m => m.aprv_note, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 style="margin-top:0;">
+                    <span class="label label-danger">Are you sure to reject?</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">@GlobalResEstate.btnYes.ToUpper()</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnNo.ToUpper()</button>
+    </div>
+}

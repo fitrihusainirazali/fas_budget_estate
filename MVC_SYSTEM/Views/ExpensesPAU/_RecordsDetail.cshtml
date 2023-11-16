@@ -1,0 +1,151 @@
+﻿@*@model PagedList.PagedList<MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesPAUListDetailViewModel>
+@using PagedList.Mvc
+
+@{
+    int pageNumber = (int)ViewBag.PageNumber;
+    int itemPerPage = (int)ViewBag.PageSize;
+    int i = ((pageNumber - 1) * itemPerPage) + 1;
+}
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+<style type="text/css">
+    table th.text-center {
+        background-color: unset;
+    }
+
+    .table tbody > tr > td {
+        vertical-align: middle;
+    }
+    .pagination {
+        margin: 0 !important;
+    }
+</style>
+
+@if (Model.Count > 0)
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center" rowspan="2" style="width:1%;">@GlobalResEstate.hdrNo</th>
+                    <th class="text-center" colspan="2">Jualan</th>
+                    <th class="text-center" colspan="2">Belian</th>
+                    <th class="text-center" rowspan="2">Produk</th>
+                    <th class="text-center" rowspan="2">Jumlah (RM)</th>
+                    <th class="text-center" rowspan="2">@GlobalResEstate.hdrAction</th>
+                </tr>
+                <tr>
+                    <th class="text-center">Kod Cost Center</th>
+                    <th class="text-center">@GlobalResEstate.lblGLCode</th>
+                    <th class="text-center">@GlobalResEstate.lblGLCode</th>
+                    <th class="text-center">@GlobalResEstate.lblGLDesc</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">@i</td>
+                        <td class="text-center">@item.abep_cost_center_jualan_code</td>
+                        <td class="text-center">@item.abep_gl_income_code</td>
+                        <td class="text-center">@item.abep_gl_expenses_code</td>
+                        <td>@item.abep_gl_expenses_name</td>
+                        <td>@item.abep_product_name</td>
+                        <td class="text-right">@(item.abep_total.HasValue ? item.abep_total.Value.ToString("#,##0.00") : string.Empty)</td>
+                        <td class="text-center" style="white-space:nowrap;">
+                            @Html.Raw("<a href='" + @Url.Action("EditDetail", new { id = item.abep_id }) + "' class='btn btn-success btn-sm' data-edit=''><i class='fa fa-edit'></i></a>")
+                            @Html.Raw("<a href='" + @Url.Action("DeleteDetail", new { id = item.abep_id }) + "' class='btn btn-danger btn-sm' data-delete=''><i class='fa fa-trash'></i></a>")
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        </div>
+        <div class="col-md-6 text-right">
+            @Html.PagedListPager(Model, page => Url.Action("RecordsDetail", new { page, sortOrder = ViewBag.CurrentSort, BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, BudgetYearFilter = ViewBag.BudgetYearFilter, CostCenterFilter = ViewBag.CostCenterFilter }))
+        </div>
+    </div>
+}
+else
+{
+    <hr />
+    <div class="text-center text-danger">
+        @Html.Label(GlobalResEstate.msgErrorSearch)
+    </div>
+    <hr />
+}*@
+
+<style type="text/css">
+    table th.text-center {
+        background-color: unset;
+    }
+    .table tbody > tr > td {
+        vertical-align: middle;
+    }
+</style>
+
+@{
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "table-grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (grid.TotalRowCount > 0)
+    {
+        @grid.GetHtml(
+            htmlAttributes: new { id = "table-grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                grid.Column(GlobalResEstate.hdrNo, style: "text-center", format: (item) => (grid.PageIndex * grid.RowsPerPage) + grid.Rows.IndexOf(item) + 1),
+                grid.Column("abep_cost_center_jualan_code", "Kod Cost Center", style: "text-center"),
+                grid.Column("abep_gl_income_code", GlobalResEstate.lblGLCode, style: "text-center"),
+                grid.Column("abep_gl_expenses_code", GlobalResEstate.lblGLCode, style: "text-center"),
+                grid.Column("abep_gl_expenses_name", GlobalResEstate.lblGLDesc),
+                grid.Column("abep_product_name", "Produk"),
+                grid.Column("abep_total", "Jumlah (RM)", style: "text-right", format: @<text>@item.abep_total.ToString("#,##0.00")</text>),
+                grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "text-center text-nowrap", format: @<text>
+                    @Html.Raw("<a href='" + @Url.Action("EditDetail", new { id = item.abep_id }) + "' class='btn btn-success btn-sm' data-edit=''><i class='fa fa-edit'></i></a>")
+                    @Html.Raw("<a href='" + @Url.Action("DeleteDetail", new { id = item.abep_id }) + "' class='btn btn-danger btn-sm' data-delete=''><i class='fa fa-trash'></i></a>")
+                </text>)))
+    }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label(GlobalResEstate.msgErrorSearch)
+        </div>
+        <hr />
+    }
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var thead = '<tr>' +
+            '<th class="text-center" rowspan="2" style="width:1%;">@GlobalResEstate.hdrNo</th>' +
+            '<th class="text-center" colspan="2">Jualan</th>' +
+            '<th class="text-center" colspan="2">Belian</th>' +
+            '<th class="text-center" rowspan="2">Produk</th>' +
+            '<th class="text-center" rowspan="2">Jumlah (RM)</th>' +
+            '<th class="text-center" rowspan="2">@GlobalResEstate.hdrAction</th>' +
+            '</tr>' +
+            '<tr>' +
+            '<th class="text-center">Kod Cost Center</th>' +
+            '<th class="text-center">@GlobalResEstate.lblGLCode</th>' +
+            '<th class="text-center">@GlobalResEstate.lblGLCode</th>' +
+            '<th class="text-center">@GlobalResEstate.lblGLDesc</th>' +
+            '</tr>'
+        $('table#table-grid thead').append(thead);
+        $('table#table-grid thead').find('tr.webgrid-header').remove();
+    });
+</script>

@@ -1,0 +1,494 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesGajiEditDetailViewModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.abeg_budgeting_year)
+    @Html.HiddenFor(model => model.abeg_cost_center_code)
+    @Html.HiddenFor(model => model.abeg_cost_center_desc)
+    @Html.HiddenFor(model => model.abeg_hectare)
+  
+    <div class="modal-body">
+        <div class="panel panel-success">
+            <div class="panel-heading">@ViewBag.Title - Details</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abeg_gl_expenses_code)
+                            @Html.DropDownListFor(model => model.abeg_gl_expenses_code, new SelectList(ViewBag.GLs, "Value", "Text"), "GL Perbelanjaan", htmlAttributes: new { @class = "form-control select2" })
+                            @Html.HiddenFor(model => model.abeg_gl_expenses_name)
+                            @Html.ValidationMessageFor(model => model.abeg_gl_expenses_code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abeg_akt_code)
+                            @Html.DropDownListFor(model => model.abeg_akt_code, new SelectList(ViewBag.Aktvtlist, "Value", "Text"), "Aktiviti", htmlAttributes: new { @class = "form-control select2" })
+                            @*@Html.HiddenFor(model => model.abeg_akt_name)
+                            @Html.ValidationMessageFor(model => model.abeg_akt_name, "", new { @class = "text-danger" })*@
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abeg_note)
+                            @Html.TextAreaFor(model => model.abeg_note, htmlAttributes: new { @class = "form-control", rows = "4" })
+                            @Html.ValidationMessageFor(model => model.abeg_note, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.Label("Jumlah (RM) Setahun")
+                            @Html.EditorFor(model => model.abeg_total, new { htmlAttributes = new { @class = "form-control text-right input-number" } })
+                            @Html.ValidationMessageFor(model => model.abeg_total, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abeg_proration)
+                            @Html.DropDownListFor(model => model.abeg_proration, new List<SelectListItem>{
+                                new SelectListItem { Value = "1", Text = "Key In" },
+                                new SelectListItem { Value = "2", Text = "Monthly" },
+                                new SelectListItem { Value = "3", Text = "Quarterly" },
+                                new SelectListItem { Value = "4", Text = "Semi Annually" },
+                                new SelectListItem { Value = "5", Text = "Annually" }
+                            }, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.abeg_proration, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2" style="margin-top:35px;">
+                        <div class="form-group">
+                            @Html.Label("Jumlah (RM) Setahun")
+                            @Html.TextBox("total_month", null, htmlAttributes: new { @class = "form-control text-right", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_1)
+                                    @Html.EditorFor(model => model.abeg_month_1, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_1, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_2)
+                                    @Html.EditorFor(model => model.abeg_month_2, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_2, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_3)
+                                    @Html.EditorFor(model => model.abeg_month_3, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_3, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_4)
+                                    @Html.EditorFor(model => model.abeg_month_4, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_4, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_5)
+                                    @Html.EditorFor(model => model.abeg_month_5, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_5, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_6)
+                                    @Html.EditorFor(model => model.abeg_month_6, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_6, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_7)
+                                    @Html.EditorFor(model => model.abeg_month_7, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_7, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_8)
+                                    @Html.EditorFor(model => model.abeg_month_8, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_8, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_9)
+                                    @Html.EditorFor(model => model.abeg_month_9, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_9, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_10)
+                                    @Html.EditorFor(model => model.abeg_month_10, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_10, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_11)
+                                    @Html.EditorFor(model => model.abeg_month_11, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_11, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeg_month_12)
+                                    @Html.EditorFor(model => model.abeg_month_12, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.abeg_month_12, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-danger">
+                        Baki: <span id="balance">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button id="btn_submit" type="submit" class="btn btn-primary">@GlobalResEstate.btnSave.ToUpper()</button>
+        <button type="button" class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack.ToUpper()</button>
+    </div>
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        glChange();
+        prorationChange();
+        setTotal();
+        setTotalMonth();
+        setBalance();
+
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        $('input[type="number"]').on('keydown', function (e) {
+            var val = $(this).val();
+            //var regex = /^\d+(\.\d{0,1})?$/;
+            var regex = /^\d+(\.\d{0,2})?$/;
+            if (!regex.test(val)) {
+                var match = val.match(regex);
+                if (match !== null) {
+                    $(this).val(match[0]);
+                } else {
+                    var newVal = val.replace(/(\.\d{1})\d+/g, '$1');
+                    $(this).val(newVal);
+                }
+            }
+            if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+                e.preventDefault();
+            } else if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+            }
+        });
+
+        $('.input-number').on('focus', function () {
+            $(this).val($(this).val().replace(/,/g, ''));
+            $(this).attr('type', 'number');
+        });
+        $('.input-number').on('blur', function () {
+            $(this).attr('type', 'text');
+            if ($(this).val()) {
+                var value = parseFloat($(this).val());
+                $(this).val(value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }));
+            }
+        });
+
+
+    });
+
+    $('#abeg_proration').on('change', function () {
+        prorationChange(true);
+        setTotalMonth();
+        setBalance();
+    });
+
+    $('#abeg_month_1, #abeg_month_2, #abeg_month_3, #abeg_month_4, #abeg_month_5, #abeg_month_6, #abeg_month_7, #abeg_month_8, #abeg_month_9, #abeg_month_10, #abeg_month_11, #abeg_month_12').on('keyup', function () {
+        setTotalMonth();
+        setBalance();
+    });
+
+    $('#abeg_total').on('keyup', function () {
+        setBalance();
+    });
+
+    $('#abeg_gl_expenses_code').on('change', function () {
+        glChange();
+    });
+
+    $('#abeg_total').on('keyup', function () {
+        prorationChange(true);
+        setTotalMonth();
+        setBalance();
+    });
+
+    function glChange() {
+        var val = $('#abeg_gl_expenses_code').find('option:selected').val();
+        var text = $('#abeg_gl_expenses_code').find('option:selected').text();
+        if (val) {
+            $('#abeg_gl_expenses_name').val(text.substr(11));
+        } else {
+            $('#abeg_gl_expenses_name').val(null);
+        }
+    }
+
+
+    function setTotal() {
+        var total = calcTotal();
+        $('#abeg_total').val(total.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function setTotalMonth() {
+        var totalmonth = calcTotalMonth();
+        $('#total_month').val(totalmonth.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function setBalance() {
+        var balance = calcBalance();
+        if (balance == 0)
+            enableSubmit();
+        else
+            disableSubmit();
+
+        $('#balance').text(balance.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function calcTotal() {
+        var month = $('#abeg_total').val() ? parseFloat($('#abeg_total').val().replace(/,/g, '')) : 0;
+
+        return month
+    }
+
+    function calcTotalMonth() {
+        var month1 = $('#abeg_month_1').val() ? parseFloat($('#abeg_month_1').val().replace(/,/g, '')) : 0;
+        var month2 = $('#abeg_month_2').val() ? parseFloat($('#abeg_month_2').val().replace(/,/g, '')) : 0;
+        var month3 = $('#abeg_month_3').val() ? parseFloat($('#abeg_month_3').val().replace(/,/g, '')) : 0;
+        var month4 = $('#abeg_month_4').val() ? parseFloat($('#abeg_month_4').val().replace(/,/g, '')) : 0;
+        var month5 = $('#abeg_month_5').val() ? parseFloat($('#abeg_month_5').val().replace(/,/g, '')) : 0;
+        var month6 = $('#abeg_month_6').val() ? parseFloat($('#abeg_month_6').val().replace(/,/g, '')) : 0;
+        var month7 = $('#abeg_month_7').val() ? parseFloat($('#abeg_month_7').val().replace(/,/g, '')) : 0;
+        var month8 = $('#abeg_month_8').val() ? parseFloat($('#abeg_month_8').val().replace(/,/g, '')) : 0;
+        var month9 = $('#abeg_month_9').val() ? parseFloat($('#abeg_month_9').val().replace(/,/g, '')) : 0;
+        var month10 = $('#abeg_month_10').val() ? parseFloat($('#abeg_month_10').val().replace(/,/g, '')) : 0;
+        var month11 = $('#abeg_month_11').val() ? parseFloat($('#abeg_month_11').val().replace(/,/g, '')) : 0;
+        var month12 = $('#abeg_month_12').val() ? parseFloat($('#abeg_month_12').val().replace(/,/g, '')) : 0;
+        return month1 + month2 + month3 + month4 + month5 + month6 + month7 + month8 + month9 + month10 + month11 + month12;
+    }
+
+    function calcBalance() {
+        var total = calcTotal();
+        var total2 = parseFloat(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        var totalmonth = calcTotalMonth();
+        var totalmonth2 = parseFloat(totalmonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return total2 - totalmonth2;
+    }
+
+
+
+
+    function prorationChange(trigger = false) {
+
+        var val = $('#abeg_proration').find('option:selected').val();
+
+        if (val) {
+            if (val == '1') {
+                $('.input_proration').removeAttr('readonly');
+                $('.input_proration').on('keydown', function (e) {
+                    var val = $(this).val();
+                    //var regex = /^\d+(\.\d{0,1})?$/;
+                    var regex = /^\d+(\.\d{0,2})?$/;
+                    if (!regex.test(val)) {
+                        var match = val.match(regex);
+                        if (match !== null) {
+                            $(this).val(match[0]);
+                        } else {
+                            var newVal = val.replace(/(\.\d{1})\d+/g, '$1');
+                            $(this).val(newVal);
+                        }
+                    }
+                    if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+                        e.preventDefault();
+                    } else if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                        e.preventDefault();
+                    }
+                });
+
+                if (trigger) {
+                    $('#abeg_month_1').val(null);
+                    $('#abeg_month_2').val(null);
+                    $('#abeg_month_3').val(null);
+                    $('#abeg_month_4').val(null);
+                    $('#abeg_month_5').val(null);
+                    $('#abeg_month_6').val(null);
+                    $('#abeg_month_7').val(null);
+                    $('#abeg_month_8').val(null);
+                    $('#abeg_month_9').val(null);
+                    $('#abeg_month_10').val(null);
+                    $('#abeg_month_11').val(null);
+                    $('#abeg_month_12').val(null);
+                }
+            } else {
+                $('.input_proration').attr('readonly', 'readonly');
+                $('.input_proration').attr('type', 'text');
+                $('.input_proration').addClass('text-right');
+
+                var total = calcTotal();
+                var month1 = 0;
+                var month2 = 0;
+                var month3 = 0;
+                var month4 = 0;
+                var month5 = 0;
+                var month6 = 0;
+                var month7 = 0;
+                var month8 = 0;
+                var month9 = 0;
+                var month10 = 0;
+                var month11 = 0;
+                var month12 = 0;
+
+                if (val == '2') {
+                    month1 = total / 12;
+                    month2 = total / 12;
+                    month3 = total / 12;
+                    month4 = total / 12;
+                    month5 = total / 12;
+                    month6 = total / 12;
+                    month7 = total / 12;
+                    month8 = total / 12;
+                    month9 = total / 12;
+                    month10 = total / 12;
+                    month11 = total / 12;
+                    month12 = total - (parseFloat((total / 12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 11);
+                } else if (val == '3') {
+                    month3 = total / 4;
+                    month6 = total / 4;
+                    month9 = total / 4;
+                    month12 = total - (parseFloat((total / 4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 3);
+                } else if (val == '4') {
+                    month6 = total / 2;
+                    month12 = total - (parseFloat((total / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 1);
+                } else if (val == '5') {
+                    month12 = total;
+                }
+
+                $('#abeg_month_1').val(month1.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_2').val(month2.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_3').val(month3.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_4').val(month4.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_5').val(month5.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_6').val(month6.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_7').val(month7.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_8').val(month8.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_9').val(month9.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_10').val(month10.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_11').val(month11.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeg_month_12').val(month12.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+            }
+        }
+    }
+
+    function enableSubmit() {
+        $('#btn_submit').attr('type', 'submit');
+        $('#btn_submit').removeClass('disabled');
+        $('#btn_submit').prop('disabled', false);
+    }
+
+    function disableSubmit() {
+        $('#btn_submit').attr('type', 'button');
+        $('#btn_submit').addClass('disabled');
+        $('#btn_submit').prop('disabled', true);
+    }
+
+
+     $("#abeg_gl_expenses_code").change(function () {
+            var AktvtlistID = {};
+            var disableoption = "";
+            AktvtlistID.url = "@Url.Action("GetAktvtList", "ExpensesGaji")";
+            AktvtlistID.type = "POST";
+            AktvtlistID.data = JSON.stringify({ GLList: $("#abeg_gl_expenses_code").val() });
+            AktvtlistID.datatype = "json";
+            AktvtlistID.contentType = "application/json";
+            AktvtlistID.success = function (Aktvtlist) {
+                $("#abeg_akt_code").empty();
+                $("#abeg_akt_code").append("<option value=All>All</option>");
+                for (var i = 0; i < Aktvtlist.length; i++) {
+                if ($("#abeg_gl_expenses_code").val() == 0) {
+                        disableoption = "disabled";
+                    }
+                    $("#abeg_akt_code").append("<option value=" + Aktvtlist[i].Value + " " + disableoption + ">" + Aktvtlist[i].Text + "</option>");
+                }
+            };
+
+            AktvtlistID.error = function () { $.simplyToast('Sistem masalah', 'danger'); };
+            $.ajax(AktvtlistID);
+        });
+
+
+</script>

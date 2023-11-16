@@ -1,0 +1,947 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_income_product[]
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetStatus GetStatus = new GetStatus();
+    GetConfig GetConfig = new GetConfig();
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("I3");
+    int i = 1;
+    int j = 1;
+    int k = 1;
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    @Html.Hidden("cc", null, htmlAttributes: new { @Class = "cc", @Value = Model.FirstOrDefault().abip_cost_center })
+    @Html.Hidden("yr", null, htmlAttributes: new { @Class = "yr", @Value = Model.FirstOrDefault().abip_budgeting_year })
+    @Html.Hidden("st", null, htmlAttributes: new { @Class = "st", @Value = Model.FirstOrDefault().abip_station_code })
+    @Html.Hidden("sn", null, htmlAttributes: new { @Class = "sn", @Value = GetBudgetClass.GetScreenName("I3") })
+    <section class="content-wrapper main-content clear-fix">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+        <div class="modal-body">
+            <div style="text-align:right; margin-top:10px" id="allprint">
+                <a class="btn btn-default btn-sm" href="#" id="downloadpdfviewproduk">
+                    <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                </a>
+                <a class="btn btn-default btn-sm" href="#" id="downloadexcelviewproduk">
+                    <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                </a>
+            </div>
+        </div>
+        <div id="printarea" class="modal-body">
+
+            @foreach (var val in Model.GroupBy(g => new { g.abip_budgeting_year, g.abip_cost_center, g.abip_product_code }).Select(s => s.FirstOrDefault()).OrderBy(o => o.abip_cost_center).ThenBy(o => o.abip_budgeting_year).ThenBy(o => o.abip_product_code))
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table" style="font-size: 11px;" width="100%">
+                            <tr>
+                                <td colspan="4" width="250" style="text-align:justify; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+                                    <img src="~/Asset/Images/logo_FTPSB.jpg" width="100" id="logoid" />
+                                </td>
+                                <td colspan="4" width="500" style="text-align: center; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+
+                                    <span class="text-header">@ViewBag.NamaSyarikat</span>
+                                    <br />
+                                    <span class="text-header">(@ViewBag.NoSyarikat)</span>
+                                    <br />
+                                    Bajet @val.abip_budgeting_year
+                                </td>
+                                <td colspan="6" width="250" style="text-align: right; vertical-align: middle; border-bottom:none;border-bottom-color:red;border-top:none">
+                                    Tarikh : @DateTime.Now.ToString("dd/MM/yyyy")
+                                    <br />
+                                    M.Surat : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ViewBag.curretpage/@ViewBag.newtotalpage
+                                    <br />
+                                    Revision : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@val.abip_status
+                                </td>
+                            </tr>
+                            <tr>
+                                <th colspan="14" style="text-align: left; vertical-align: middle;">Unit : @val.abip_cost_center - @val.abip_cost_center_desc</th>
+                            </tr>
+                            <tr>
+                                <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">1. PRODUK : @val.abip_product_code - @val.abip_product_name.ToUpper()</td>
+                            </tr>
+                            <tr>
+                                <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">2. GL PENDAPATAN SYARIKAT KUMPULAN (@Model.Where(w => w.abip_company_code == "1").FirstOrDefault().abip_gl_code - @Model.Where(w => w.abip_company_code == "1").FirstOrDefault().abip_gl_desc.ToUpper()) : RM@(Model.Where(w => w.abip_company_code == "1" && w.abip_product_code == val.abip_product_code).FirstOrDefault().abip_total_amount_a.HasValue ? Model.Where(w => w.abip_company_code == "1" && w.abip_product_code == val.abip_product_code).FirstOrDefault().abip_total_amount_a.Value.ToString("#,##0.00") : "")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">3. GL PENDAPATAN BANDAR LUAR (@Model.Where(w => w.abip_company_code == "2").FirstOrDefault().abip_gl_code - @Model.Where(w => w.abip_company_code == "2").FirstOrDefault().abip_gl_desc.ToUpper()) : RM@(Model.Where(w => w.abip_company_code == "2" && w.abip_product_code == val.abip_product_code).Sum(s => s.abip_total_amount_b).HasValue ? Model.Where(w => w.abip_company_code == "2" && w.abip_product_code == val.abip_product_code).Sum(s => s.abip_total_amount_b).Value.ToString("#,##0.00") : "")</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <table class="table table-hover table-bordered" style="font-size: 10px;" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">KUANTITI / @val.abip_uom</th>
+                        </tr>
+                        <tr>
+                            <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jan</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Feb</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mac</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Apr</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mei</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jun</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jul</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ogos</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Sept</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Okt</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Nov</th>
+                            <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Dis</th>
+                            <th width="100" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var items in Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code))
+                        {
+                            <tr>
+                                <td align="left" style="vertical-align:middle !important;border:1px solid black;" border="1">@i@Html.Raw(".") @items.abip_company_name.ToUpper()</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_1.HasValue ? items.abip_qty_1.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_2.HasValue ? items.abip_qty_2.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_3.HasValue ? items.abip_qty_3.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_4.HasValue ? items.abip_qty_4.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_5.HasValue ? items.abip_qty_5.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_6.HasValue ? items.abip_qty_6.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_7.HasValue ? items.abip_qty_7.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_8.HasValue ? items.abip_qty_8.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_9.HasValue ? items.abip_qty_9.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_10.HasValue ? items.abip_qty_10.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_11.HasValue ? items.abip_qty_11.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_12.HasValue ? items.abip_qty_12.Value.ToString("#,##0.000") :"")</td>
+                                <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                    @if (items.abip_company_code == "1")
+                                    {
+                                        @(items.abip_total_qty_a.HasValue ? items.abip_total_qty_a.Value.ToString("#,##0.000") : "");
+                                    }
+                                    else
+                                    {
+                                        @(items.abip_total_qty_b.HasValue ? items.abip_total_qty_b.Value.ToString("#,##0.000") : "");
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                        <tr>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">&nbsp;</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_1).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_1).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_2).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_2).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_3).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_3).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_4).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_4).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_5).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_5).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_6).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_6).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_7).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_7).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_8).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_8).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_9).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_9).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_10).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_10).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_11).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_11).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_12).HasValue? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_qty_12).Value.ToString("#,##0.000"):"")</th>
+                            <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_grand_total_quantity).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_grand_total_quantity).Value.ToString("#,##0.000"):"")</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-hover table-bordered" style="font-size: 10px;" border="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">NILAI (RM)</th>
+                        </tr>
+                        <tr>
+                            <th width="200" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jan</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Feb</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mac</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Apr</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mei</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jun</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jul</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ogos</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Sept</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Okt</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Nov</th>
+                            <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Dis</th>
+                            <th width="100" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var items in Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code))
+                        {
+                            <tr>
+                                <td style="text-align: left; vertical-align: middle !important; border: 1px solid black;" border="1">@j@Html.Raw(".") @items.abip_company_name.ToUpper() </td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_1.HasValue ? items.abip_amount_1.Value.ToString("#,##0.00") : "") </td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_2.HasValue ? items.abip_amount_2.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_3.HasValue ? items.abip_amount_3.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_4.HasValue ? items.abip_amount_4.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_5.HasValue ? items.abip_amount_5.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_6.HasValue ? items.abip_amount_6.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_7.HasValue ? items.abip_amount_7.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_8.HasValue ? items.abip_amount_8.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_9.HasValue ? items.abip_amount_9.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_10.HasValue ? items.abip_amount_10.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_11.HasValue ? items.abip_amount_11.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_12.HasValue ? items.abip_amount_12.Value.ToString("#,##0.00") : "")</td>
+                                <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">
+                                    @if (items.abip_company_code == "1")
+                                    {
+                                        @(items.abip_total_amount_a.HasValue ? items.abip_total_amount_a.Value.ToString("#,##0.00") : "");
+                                    }
+                                    else
+                                    {
+                                        @(items.abip_total_amount_b.HasValue ? items.abip_total_amount_b.Value.ToString("#,##0.00") : "");
+                                    }
+                                </td>
+                            </tr>
+                            j++;
+                        }
+                        <tr>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">&nbsp;</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_1).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_1).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_2).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_2).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_3).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_3).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_4).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_4).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_5).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_5).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_6).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_6).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_7).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_7).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_8).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_8).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_9).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_9).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_10).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_10).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_11).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_11).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_12).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_amount_12).Value.ToString("#,##0.00") : "")</th>
+                            <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_grand_total_amount).HasValue ? Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code).Sum(m => m.abip_grand_total_amount).Value.ToString("#,##0.00") : "")</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-hover table-bordered" style="font-size: 10px;" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="2">HARGA (RM / @val.abip_uom)</th>
+                        
+                        
+                            @*<th width="220" style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1">HARGA</th>*@
+                            @*<th width="78" style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1">PER @val.abip_uom</th>*@
+                            <th width="220" style="text-align:center;border:none">&nbsp;</th>
+                            <th width="78" style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var items in Model.Where(w => w.abip_budgeting_year == val.abip_budgeting_year && w.abip_cost_center == val.abip_cost_center && w.abip_product_code == val.abip_product_code))
+                        {
+                            <tr>
+                                <td width="220" style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1">@k@Html.Raw(".") @items.abip_company_name.ToUpper()</td>
+                                <td width="78" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@items.abip_unit_price</td>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                            </tr>
+                            k++;
+                        }
+                        <tr>
+                            <th style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1"> UNIT PERKIRAAN </th>
+                            <th style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1"> <span id="uom">@val.abip_uom</span></th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                            <th style="text-align:center;border:none">&nbsp;</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
+            }
+
+
+
+
+
+
+
+
+            @*<div class="row">
+            <div class="col-md-12">
+                <table class="table" style="font-size: 11px;" width="100%">
+                    <tr>
+                        <td colspan="4" width="250" style="text-align:justify; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+                            <img src="~/Asset/Images/logo_FTPSB.jpg" width="100" id="logoid" />
+                        </td>
+                        <td colspan="4" width="500" style="text-align: center; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+
+                            <span class="text-header">@ViewBag.NamaSyarikat</span>
+                            <br />
+                            <span class="text-header">(@ViewBag.NoSyarikat)</span>
+                            <br />
+                            Bajet @Model.FirstOrDefault().abip_budgeting_year
+                        </td>
+                        <td colspan="6" width="250" style="text-align: right; vertical-align: middle; border-bottom:none;border-bottom-color:red;border-top:none">
+                            Tarikh : @DateTime.Now.ToString("dd/MM/yyyy")
+                            <br />
+                            M.Surat : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ViewBag.curretpage/@ViewBag.newtotalpage
+                            <br />
+                            Revision : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.FirstOrDefault().abip_status
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">@GetBudgetClass.GetScreenName("I3")</th>
+                    </tr>
+                    <tr>
+                        <th colspan="14" style="text-align: left; vertical-align: middle;">Unit : @Model.FirstOrDefault().abip_cost_center - @Model.FirstOrDefault().abip_cost_center_desc</th>
+                        @Html.Hidden("cc", null, htmlAttributes: new { @Class = "cc", @Value = Model.FirstOrDefault().abip_cost_center })
+                        @Html.Hidden("yr", null, htmlAttributes: new { @Class = "yr", @Value = Model.FirstOrDefault().abip_budgeting_year })
+                        @Html.Hidden("st", null, htmlAttributes: new { @Class = "st", @Value = Model.FirstOrDefault().abip_station_code })
+                        @Html.Hidden("sn", null, htmlAttributes: new { @Class = "sn", @Value = GetBudgetClass.GetScreenName("I3") })
+                    </tr>
+                    <tr>
+                        <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">1. PRODUK : @ViewBag.ProductCode - @ViewBag.ProductName.ToUpper()</td>
+                    </tr>
+                    <tr>
+                        <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">2. GL PENDAPATAN SYARIKAT KUMPULAN (@Model.Where(w => w.abip_company_code == "1").FirstOrDefault().abip_gl_code - @Model.Where(w => w.abip_company_code == "1").FirstOrDefault().abip_gl_desc.ToUpper()) : RM@(Model.Where(w=>w.abip_company_code == "1").FirstOrDefault().abip_total_amount_a.HasValue ? Model.Where(w => w.abip_company_code == "1").FirstOrDefault().abip_total_amount_a.Value.ToString("#,##0.00") : "")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">3. GL PENDAPATAN BANDAR LUAR (@Model.Where(w => w.abip_company_code == "2").FirstOrDefault().abip_gl_code - @Model.Where(w => w.abip_company_code == "2").FirstOrDefault().abip_gl_desc.ToUpper()) : RM@(Model.Where(w=>w.abip_company_code == "2").Sum(s=>s.abip_total_amount_b).HasValue ? Model.Where(w => w.abip_company_code == "2").Sum(s=>s.abip_total_amount_b).Value.ToString("#,##0.00") : "")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>*@
+
+            @*<table class="table table-hover table-bordered" style="font-size: 10px;" width="100%">
+            <thead>
+                <tr>
+                    <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">KUANTITI / @Model.FirstOrDefault().abip_uom</th>
+                </tr>
+                <tr>
+                    <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jan</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Feb</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mac</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Apr</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mei</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jun</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jul</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ogos</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Sept</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Okt</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Nov</th>
+                    <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Dis</th>
+                    <th width="100" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var items in Model)
+                {
+                    <tr>
+                        <td align="left" style="vertical-align:middle !important;border:1px solid black;" border="1">@i@Html.Raw(".") @items.abip_company_name.ToUpper()</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_1.HasValue ? items.abip_qty_1.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_2.HasValue ? items.abip_qty_2.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_3.HasValue ? items.abip_qty_3.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_4.HasValue ? items.abip_qty_4.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_5.HasValue ? items.abip_qty_5.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_6.HasValue ? items.abip_qty_6.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_7.HasValue ? items.abip_qty_7.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_8.HasValue ? items.abip_qty_8.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_9.HasValue ? items.abip_qty_9.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_10.HasValue ? items.abip_qty_10.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_11.HasValue ? items.abip_qty_11.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abip_qty_12.HasValue ? items.abip_qty_12.Value.ToString("#,##0.000") :"")</td>
+                        <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                            @if (items.abip_company_code == "1")
+                            {
+                                @(items.abip_total_qty_a.HasValue ? items.abip_total_qty_a.Value.ToString("#,##0.000") : "");
+                            }
+                            else
+                            {
+                                @(items.abip_total_qty_b.HasValue ? items.abip_total_qty_b.Value.ToString("#,##0.000") : "");
+                            }
+                        </td>
+                    </tr>
+                    i++;
+                }
+                <tr>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">&nbsp;</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_1).HasValue? Model.Sum(m => m.abip_qty_1).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_2).HasValue? Model.Sum(m => m.abip_qty_2).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_3).HasValue? Model.Sum(m => m.abip_qty_3).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_4).HasValue? Model.Sum(m => m.abip_qty_4).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_5).HasValue? Model.Sum(m => m.abip_qty_5).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_6).HasValue? Model.Sum(m => m.abip_qty_6).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_7).HasValue? Model.Sum(m => m.abip_qty_7).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_8).HasValue? Model.Sum(m => m.abip_qty_8).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_9).HasValue? Model.Sum(m => m.abip_qty_9).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_10).HasValue? Model.Sum(m => m.abip_qty_10).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_11).HasValue? Model.Sum(m => m.abip_qty_11).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_qty_12).HasValue? Model.Sum(m => m.abip_qty_12).Value.ToString("#,##0.000"):"")</th>
+                    <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_grand_total_quantity).HasValue ? Model.Sum(m => m.abip_grand_total_quantity).Value.ToString("#,##0.000"):"")</th>
+                </tr>
+            </tbody>
+        </table>*@
+
+
+            <!---------------------------NILAI----------------------------->
+            <br />
+            <!---------------------------NILAI----------------------------->
+            @*<table class="table table-hover table-bordered" style="font-size: 10px;" border="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">NILAI (RM)</th>
+                </tr>
+                <tr>
+                    <th width="200" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jan</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Feb</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mac</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Apr</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mei</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jun</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jul</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ogos</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Sept</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Okt</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Nov</th>
+                    <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Dis</th>
+                    <th width="100" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var items in Model)
+                {
+                    <tr>
+                        <td style="text-align: left; vertical-align: middle !important; border: 1px solid black;" border="1">@j@Html.Raw(".") @items.abip_company_name.ToUpper() </td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_1.HasValue ? items.abip_amount_1.Value.ToString("#,##0.00") : "") </td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_2.HasValue ? items.abip_amount_2.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_3.HasValue ? items.abip_amount_3.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_4.HasValue ? items.abip_amount_4.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_5.HasValue ? items.abip_amount_5.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_6.HasValue ? items.abip_amount_6.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_7.HasValue ? items.abip_amount_7.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_8.HasValue ? items.abip_amount_8.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_9.HasValue ? items.abip_amount_9.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_10.HasValue ? items.abip_amount_10.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_11.HasValue ? items.abip_amount_11.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abip_amount_12.HasValue ? items.abip_amount_12.Value.ToString("#,##0.00") : "")</td>
+                        <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">
+                            @if (items.abip_company_code == "1")
+                            {
+                                @(items.abip_total_amount_a.HasValue ? items.abip_total_amount_a.Value.ToString("#,##0.00") : "");
+                            }
+                            else
+                            {
+                                @(items.abip_total_amount_b.HasValue ? items.abip_total_amount_b.Value.ToString("#,##0.00") : "");
+                            }
+                        </td>
+                    </tr>
+                    j++;
+                }
+
+                <tr>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">&nbsp;</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_1).HasValue ? Model.Sum(m => m.abip_amount_1).Value.ToString("#,##0.00") : "")</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_2).HasValue ? Model.Sum(m => m.abip_amount_2).Value.ToString("#,##0.00") : "")</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_3).HasValue ? Model.Sum(m => m.abip_amount_3).Value.ToString("#,##0.00") : "") </th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_4).HasValue ? Model.Sum(m => m.abip_amount_4).Value.ToString("#,##0.00") : "") </th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_5).HasValue ? Model.Sum(m => m.abip_amount_5).Value.ToString("#,##0.00") : "") </th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_6).HasValue ? Model.Sum(m => m.abip_amount_6).Value.ToString("#,##0.00") : "") </th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_7).HasValue ? Model.Sum(m => m.abip_amount_7).Value.ToString("#,##0.00") : "") </th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_8).HasValue ? Model.Sum(m => m.abip_amount_8).Value.ToString("#,##0.00") : "" )</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_9).HasValue ? Model.Sum(m => m.abip_amount_9).Value.ToString("#,##0.00") : "" )</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_10).HasValue ? Model.Sum(m => m.abip_amount_10).Value.ToString("#,##0.00") : "" )</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_11).HasValue ? Model.Sum(m => m.abip_amount_11).Value.ToString("#,##0.00") : "" )</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_amount_12).HasValue ? Model.Sum(m => m.abip_amount_12).Value.ToString("#,##0.00") : "" )</th>
+                    <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.Sum(m => m.abip_grand_total_amount).HasValue ? Model.Sum(m => m.abip_grand_total_amount).Value.ToString("#,##0.00") : "")</th>
+                </tr>
+            </tbody>
+        </table>*@
+
+
+            <!----------------------------PRICE---------------------------->
+            <br />
+            <!----------------------------PRICE---------------------------->
+            @*<table class="table table-hover table-bordered" style="font-size: 10px;" width="100%">
+            <thead>
+                <tr>
+                    <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="2">HARGA (RM / @Model.FirstOrDefault().abip_uom)</th>
+                </tr>
+                <tr>
+                    <th width="200" style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                    <th width="80" style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1">HARGA (RM)</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var items in Model)
+                {
+                    <tr>
+                        <td width="200" style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1">@k@Html.Raw(".") @items.abip_company_name.ToUpper()</td>
+                        <td style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@Model.FirstOrDefault().abip_unit_price</td>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                        <th style="text-align:center;border:none">&nbsp;</th>
+                    </tr>
+                    k++;
+                }
+                <tr>
+                    <th style="text-align:left;vertical-align:middle !important;border:1px solid black;" border="1"> UNIT PERKIRAAN </th>
+                    <th style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1"> <span id="uom">@Model.FirstOrDefault().abip_uom</span></th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                    <th style="text-align:center;border:none">&nbsp;</th>
+                </tr>
+            </tbody>
+        </table>*@
+
+
+
+
+            @*<table class="table table-bordered table-striped table-list table-hover" style="font-size: 10px;" width="100%">
+            <thead>
+                <tr>
+                    <th width="200px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                        Produk
+                    </th>
+                    <th width="200px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                        GL Pendapatan
+                    <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                        Harga (RM)
+                    </th>
+                    <th colspan="12" style="text-align:center;vertical-align:middle !important; ">
+                        Jangkaan Pendapatan Bulanan (Kuantiti)
+                    </th>
+                    <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important; ">
+                        Total
+                    </th>
+                </tr>
+                <tr>
+                    <th style="text-align:center;vertical-align:middle !important; ">
+                        Jan
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important; ">
+                        Feb
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important; ">
+                        Mar
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Apr
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        May
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Jun
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Jul
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Aug
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Sep
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Oct
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Nov
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Dec
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.GroupBy(g => new { g.abip_budgeting_year, g.abip_cost_center, g.abip_product_code }).Select(g => g.FirstOrDefault()).OrderBy(o => o.abip_cost_center).ThenBy(o => o.abip_budgeting_year).ThenBy(o => o.abip_product_code))
+                {
+                    <tr>
+                        <td style="text-align:left;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abip_product_code) - @Html.DisplayFor(modelItem => item.abip_product_name)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abip_gl_code) - @Html.DisplayFor(modelItem => item.abip_gl_desc)
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).FirstOrDefault().abip_unit_price.HasValue ?
+                            Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).FirstOrDefault().abip_unit_price.Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_1).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_1).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_2).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_2).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_3).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_3).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_4).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_4).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_5).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_5).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_6).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_6).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_7).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_7).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_8).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_8).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_9).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_9).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_10).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_10).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_11).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_11).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_qty_12).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_qty_12).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_grand_total_quantity).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_grand_total_quantity).Value.ToString("#,##0.00"):"")
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align:left;vertical-align:middle !important;">
+                        &nbsp;
+                    </td>
+                    <td style="text-align:center;vertical-align:middle !important;">
+                        &nbsp;
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;">
+                        &nbsp;
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_1).HasValue ? Model.Sum(s => s.abip_qty_1).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_2).HasValue ? Model.Sum(s => s.abip_qty_2).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_3).HasValue ? Model.Sum(s => s.abip_qty_3).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_4).HasValue ? Model.Sum(s => s.abip_qty_4).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_5).HasValue ? Model.Sum(s => s.abip_qty_5).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_6).HasValue ? Model.Sum(s => s.abip_qty_6).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_7).HasValue ? Model.Sum(s => s.abip_qty_7).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_8).HasValue ? Model.Sum(s => s.abip_qty_8).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_9).HasValue ? Model.Sum(s => s.abip_qty_9).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_10).HasValue ? Model.Sum(s => s.abip_qty_10).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_11).HasValue ? Model.Sum(s => s.abip_qty_11).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_qty_12).HasValue ? Model.Sum(s => s.abip_qty_12).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_grand_total_quantity).HasValue ? Model.Sum(s => s.abip_grand_total_quantity).Value.ToString("#,##0.00"):"")
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+
+        <table class="table table-bordered table-striped table-list table-hover" style="font-size: 10px;" width="100%">
+            <thead>
+                <tr>
+                    <th width="200px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                        Produk
+                    </th>
+                    <th width="200px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                        GL Pendapatan
+                    <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                        Harga (RM)
+                    </th>
+                    <th colspan="12" style="text-align:center;vertical-align:middle !important; ">
+                        Jangkaan Pendapatan Bulanan (Nilai (RM))
+                    </th>
+                    <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important; ">
+                        Total
+                    </th>
+                </tr>
+                <tr>
+                    <th style="text-align:center;vertical-align:middle !important; ">
+                        Jan
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important; ">
+                        Feb
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important; ">
+                        Mar
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Apr
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        May
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Jun
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Jul
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Aug
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Sep
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Oct
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Nov
+                    </th>
+                    <th style="text-align:center;vertical-align:middle !important;">
+                        Dec
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.GroupBy(g => new { g.abip_cost_center, g.abip_product_code }).Select(g => g.FirstOrDefault()).OrderBy(o => o.abip_cost_center).ThenBy(o => o.abip_budgeting_year).ThenBy(o => o.abip_product_code))
+                {
+                    <tr>
+                        <td style="text-align:left;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abip_product_code) - @Html.DisplayFor(modelItem => item.abip_product_name)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abip_gl_code) - @Html.DisplayFor(modelItem => item.abip_gl_desc)
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).FirstOrDefault().abip_unit_price.HasValue ?
+                            Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).FirstOrDefault().abip_unit_price.Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_1).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_1).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_2).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_2).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_3).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_3).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_4).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_4).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_5).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_5).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_6).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_6).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_7).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_7).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_8).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_8).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_9).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_9).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_10).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_10).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_11).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_11).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_amount_12).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_amount_12).Value.ToString("#,##0.00"):"")
+                        </td>
+                        <td style="text-align:right;vertical-align:middle !important;">
+                            @(Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s=>s.abip_grand_total_amount).HasValue ?
+                        Model.Where(w => w.abip_cost_center == item.abip_cost_center && w.abip_gl_code == item.abip_gl_code && w.abip_product_code == item.abip_product_code).Sum(s => s.abip_grand_total_amount).Value.ToString("#,##0.00"):"")
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align:left;vertical-align:middle !important;">
+                        &nbsp;
+                    </td>
+                    <td style="text-align:center;vertical-align:middle !important;">
+                        &nbsp;
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;">
+                        &nbsp;
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_1).HasValue ? Model.Sum(s => s.abip_amount_1).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_2).HasValue ? Model.Sum(s => s.abip_amount_2).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_3).HasValue ? Model.Sum(s => s.abip_amount_3).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_4).HasValue ? Model.Sum(s => s.abip_amount_4).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_5).HasValue ? Model.Sum(s => s.abip_amount_5).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_6).HasValue ? Model.Sum(s => s.abip_amount_6).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_7).HasValue ? Model.Sum(s => s.abip_amount_7).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_8).HasValue ? Model.Sum(s => s.abip_amount_8).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_9).HasValue ? Model.Sum(s => s.abip_amount_9).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_10).HasValue ? Model.Sum(s => s.abip_amount_10).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_11).HasValue ? Model.Sum(s => s.abip_amount_11).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_amount_12).HasValue ? Model.Sum(s => s.abip_amount_12).Value.ToString("#,##0.00"):"")
+                    </td>
+                    <td style="text-align:right;vertical-align:middle !important;font-weight:bold">
+                        @(Model.Sum(s => s.abip_total_amount_b).HasValue ? Model.Sum(s => s.abip_grand_total_amount).Value.ToString("#,##0.00"):"")
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>*@
+        </div>
+    </section>
+}
+else
+{
+    <div id="printarea" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+    </div>
+}
+<style>
+    #page td {
+    padding: 2px;
+    margin: 2px;
+    }
+
+    .headerviewsawit {
+    color: #ffffff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    }
+
+    .text-header {
+        font-size: small;
+        font-weight: bold;
+    }
+</style>
+<script>
+    $("#downloadpdfviewproduk").click(function () {
+        var BudgetYear = $("#yr").val();
+        var CostCenter = $("#cc").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        location.href="@Url.Action("PrintViewPdf", "PendapatanProduk")" + param;
+        return false;
+    });
+    $("#downloadexcelviewproduk").click(function () {
+        var BudgetYear = $("#yr").val();
+        var CostCenter = $("#cc").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        location.href="@Url.Action("PrintViewExcel", "PendapatanProduk")" + param;
+        return false;
+    });
+</script>

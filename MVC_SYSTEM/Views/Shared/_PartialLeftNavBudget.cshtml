@@ -1,0 +1,123 @@
+﻿@using MVC_SYSTEM.Class;
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetIdentity GetIdentity = new GetIdentity();
+    GetTriager GetTriager = new GetTriager();
+    Screen screen = new Screen();
+    var menus = screen.GetScrHdrs();
+}
+@if (Request.IsAuthenticated)
+{
+    <div id="UpdateProgress2" style="display:none;">
+        <div class="progressTest">
+            <label>
+                @GlobalResEstate.msgWait
+            </label>
+        </div>
+    </div>
+
+    <div id="UpdateProgress1" style="display:none;">
+        <div class="progressTest">
+            <label>
+                @GlobalResEstate.msgWait
+            </label>
+        </div>
+    </div>
+
+    <div id="UpdateProgress4" style="display:none;">
+        <div class="progressTest">
+            <label>
+                @GlobalResEstate.msgWait
+            </label>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-default sidebar" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="glyphicon glyphicon-list"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    @if (menus.Count > 0)
+                    {
+                        foreach (var menu in menus)
+                        {
+                            var url = "javascript:void(0);";
+                            var icon = "fa fa-circle fa-fw";
+                            if (menu.ScrHdrCode.Contains("ICC"))
+                            {
+                                url = Url.Action("Index", "Income");
+                                icon = "fa fa-heart fa-fw";
+                            }
+                            else if (menu.ScrHdrCode.Contains("EHQ"))
+                            {
+                                url = Url.Action("Index", "ExpensesHQ");
+                                icon = "fa fa-shopping-cart fa-fw";
+                            }
+                            else if (menu.ScrHdrCode.Contains("ECC"))
+                            {
+                                url = Url.Action("Index", "ExpensesCC");
+                                icon = "fa fa-shopping-cart fa-fw";
+                            }
+                            else if (menu.ScrHdrCode.Contains("MGR"))
+                            {
+                                url = Url.Action("Index", "BudgetApproval");
+                                icon = "fa fa-lock fa-fw";
+                            }
+                            else if (menu.ScrHdrCode.Contains("6BCO"))
+                            {
+                                url = Url.Action("Index", "DetailRecords");
+                                icon = "fa fa-list fa-fw";
+                            }
+                            <li>
+                                <a href="@url" onclick="return DisplayProgressMessage2(this);">
+                                    @menu.ScrHdrName
+                                    <span style="font-size:16px;padding-left:10px" class="pull-right hidden-xs showopacity">
+                                        <i class="@icon"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                    }
+                    <li><a href="@Url.Action("Index", "Modules")" onclick="return DisplayProgressMessage2(this);">OPMS Modules <span style="font-size:16px;padding-left:10px" class="pull-right hidden-xs showopacity"><i class="fa fa-external-link fa-fw"></i></span></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+}
+<script>
+    function DisplayProgressMessage(ctl) {
+        //$("body").addClass("submit-progress-bg");
+        //$(".submit-progress").removeClass("hidden");
+        $("#UpdateProgress1").css("display", "");
+        return true;
+    }
+
+    function DisplayProgressMessage2(ctl) {
+        $("#UpdateProgress2").css("display", "");
+        return true;
+    }
+
+    function DisplayProgressMessage4(ctl) {
+        $("#UpdateProgress4").css("display", "");
+        return true;
+    }
+
+    $(document.body).on('shown.bs.modal', function () {
+        $("#UpdateProgress1").css("display", "none");
+        $("#UpdateProgress2").css("display", "none");
+    });
+
+    $(document.body).on('hidden.bs.modal', function () {
+        $("#UpdateProgress1").css("display", "none");
+        $("#UpdateProgress2").css("display", "none");
+    });
+
+    //$(document.body).on('shown.bs.modal', function () {
+    //    $("#UpdateProgress1").css("display", "none");
+    //});
+</script>

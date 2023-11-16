@@ -1,0 +1,224 @@
+﻿@model IEnumerable<MVC_SYSTEM.ModelsBudget.sp_CCdetailsRecs>
+@using MVC_SYSTEM.Class;
+
+@if (Model != null && Model.Count() != 0)
+{
+    <div id="scrollArea2" class="modal-body">
+        <section class="content-wrapper main-content clear-fix">
+            <div class="well" style="margin-top: 10px" width="100%">
+
+                <div id="printarea" class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <span style="font-weight:bold; font-size:16px;">
+                                @ViewBag.NamaSyarikat
+                                <br />
+                                (@ViewBag.NoSyarikat)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <hr style="margin-top:0; margin-bottom:0; border-top:2px solid red;" />
+                            <br />
+                            <table style="width:100%;">
+                                <tr>
+                                    <td style="width:20%;">
+                                        <img src="~/Asset/Images/logo_FTPSB.jpg" id="logo" style="float:left; width:80px; margin-top:-60px; margin-left:5px;" />
+                                    </td>
+                                    <td class="text-center" style="vertical-align:top;">
+                                        <span style="font-weight:bold; font-size:14px;">DETAILS RECORD <br />  @ViewBag.YearList</span>
+                                    </td>
+                                    <td style="width: 20%; vertical-align: top; font-size: 11px;">
+                                        <table style="float:right;">
+                                            <tr>
+                                                <td class="text-right">Tarikh</td>
+                                                <td>:</td>
+                                                <td class="text-left">@DateTime.Now.ToString("dd/MM/yyyy")</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-right">M.Surat</td>
+                                                <td>:</td>
+                                                <td class="text-left">1 of 1</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                    <br />
+                    <table style="font-size: 11px;" width="100%">
+                        <thead>
+                            <tr>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px;">Kod GL</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">Keterangan</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">Cost Center</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">Unit</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">Jumlah (RM)</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">JAN</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">FEB</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">MAC</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">APR</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">MEI</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">JUN</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">JUL</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">OGO</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">SEP</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">OKT</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">NOV</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">DIS</th>
+                                <th bgcolor="#ccffcc" style="color: black; text-align: center; vertical-align: middle !important; border: 1px solid silver; font-size: 9px; min-width: 50px; ">Nama Skrin</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var bb in Model.GroupBy(c => new { c.fldGL, c.fldCostCenter }).Select(s => s.FirstOrDefault()).OrderBy(o => o.fldCostCenter).ThenBy(t => t.fldGL))
+                            {
+
+                                <tr>
+                                    <td class="text-center fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@bb.fldGL </td>
+                                    <td class="text-left fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@bb.fldGLDesc</td>
+                                    <td class="text-center fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@bb.fldCostCenter</td>
+                                    <td class="text-left fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@bb.fldCostCenterDesc</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldTotal).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount1).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount2).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount3).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount4).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount5).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount6).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount7).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount8).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount9).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount10).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount11).Value.ToString("N")</td>
+                                    <td class="text-right fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@Model.Where(wx => wx.fldGL == bb.fldGL && wx.fldCostCenter == bb.fldCostCenter).Sum(s => s.fldAmount12).Value.ToString("N")</td>
+                                    <td class="text-center fixed-width" style="font-size: 9px; border-top: 1px solid silver; color: black; ">@bb.fldScreen </td>
+                                </tr>
+
+                            }
+
+                        </tbody>
+
+                        <tr>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; "></td>
+                            <td style="text-align: left; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; "></td>
+                            <td style="text-align: left; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; "></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldTotal)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount1)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount2)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount3)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount4)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount5)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount6)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount7)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount8)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount9)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount10)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount11)))</b></td>
+                            <td style="text-align: right; font-size: 9px; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; color: black; "><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.fldAmount12)))</b></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: 2px solid red; "></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: left; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: left; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                            <td style="text-align: right; vertical-align: middle !important; border-bottom: 2px solid red; border-top: none; "></td>
+                        </tr>
+                    </table>
+                    <br />
+                    <br />
+                </div>
+            </div>
+        </section>
+    </div>
+}
+@if (Model == null || Model.Count() == 0)
+{
+    <div id="scrollArea2" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+
+    </div>
+}
+
+<div class="modal-footer">
+    <div style="text-align:right; margin-top:10px" id="allprint">
+        <a href="@Url.Action("CCrecPDF", new { YearList = ViewBag.YearList, format = "PDF" })" target="_blank" class="btn btn-default btn-sm">
+            <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+        </a>
+        <a href="@Url.Action("CCrecExcel", new { YearList = ViewBag.YearList, format = "EXCEL" })" class="btn btn-default btn-sm">
+            <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+        </a>
+
+    </div>
+</div>
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+
+    table {
+        page-break-inside: avoid
+    }
+
+    #content {
+        display: table;
+    }
+
+    #pageFooter {
+        display: table-footer-group;
+    }
+
+    #page_number:after {
+        content: "";
+        counter-increment: pagenumber;
+        content: "Page" counter(pagenumber) "of" counter(pagenumber);
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-row-group
+    }
+
+    tr {
+        page-break-inside: avoid
+    }
+</style>
+
+<script src="~/Asset/Scripts/FromHTML.js"></script>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#printpage").click(function () {
+            var DivElement = document.getElementById("scrollArea2").innerHTML;
+            var oldPage = document.body.innerHTML;
+            document.body.innerHTML = DivElement;
+            window.print();
+            document.body.innerHTML = oldPage;
+        })
+    });
+</script>
+
+

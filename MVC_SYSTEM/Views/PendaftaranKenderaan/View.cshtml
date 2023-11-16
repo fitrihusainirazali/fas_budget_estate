@@ -1,0 +1,167 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_vehicle_register[]
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetStatus GetStatus = new GetStatus();
+    GetConfig GetConfig = new GetConfig();
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("E13");
+}
+
+@if (Model != null && Model.Count() != 0)
+{
+    <section class="content-wrapper main-content clear-fix">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+        <div class="modal-body">
+            <div style="text-align:right; margin-top:10px" id="allprint">
+                <a class="btn btn-default btn-sm" href="#" id="downloadpdfview">
+                    <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                </a>
+                <a class="btn btn-default btn-sm" href="#" id="downloadexcelview">
+                    <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                </a>
+            </div>
+        </div>
+        <div id="printarea" class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table" style="font-size: 11px;" width="100%">
+                        <tr>
+                            <td colspan="4" width="250" style="text-align:justify; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+                                <img src="~/Asset/Images/logo_FTPSB.jpg" width="100" id="logoid" />
+                            </td>
+                            <td colspan="4" width="500" style="text-align: center; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+
+                                <span class="text-header">@ViewBag.NamaSyarikat</span>
+                                <br />
+                                <span class="text-header">(@ViewBag.NoSyarikat)</span>
+                                <br />
+                                Bajet @Model.FirstOrDefault().abvr_budgeting_year
+                            </td>
+                            <td colspan="6" width="250" style="text-align: right; vertical-align: middle; border-bottom:none;border-bottom-color:red;border-top:none">
+                                Tarikh : @DateTime.Now.ToString("dd/MM/yyyy")
+                                <br />
+                                @*M.Surat : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ViewBag.curretpage/@ViewBag.newtotalpage
+                                <br />*@
+                                Revision : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.FirstOrDefault().abvr_revision_status
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">@GetBudgetClass.GetScreenName("E13")</th>
+                        </tr>
+                        <tr>
+                            <th colspan="14" style="text-align: left; vertical-align: middle;">Unit : @Model.FirstOrDefault().abvr_cost_center_code - @Model.FirstOrDefault().abvr_cost_center_desc</th>
+                            @Html.Hidden("cc", null, htmlAttributes: new { @Class = "cc", @Value = Model.FirstOrDefault().abvr_cost_center_code })
+                            @Html.Hidden("yr", null, htmlAttributes: new { @Class = "yr", @Value = Model.FirstOrDefault().abvr_budgeting_year })
+                            @Html.Hidden("sn", null, htmlAttributes: new { @Class = "sn", @Value = GetBudgetClass.GetScreenName("E13") })
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+            <table class="table table-bordered table-striped table-list table-hover" style="font-size: 10px;" width="100%">
+                <thead>
+                    <tr>
+                        <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                            Jenis Kenderaan
+                        </th>
+                        <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                            Kod Kenderaan
+                        <th width="250px" rowspan="2" style="text-align:center;vertical-align:middle !important;">
+                            Nama Kenderaan
+                        </th>
+                        <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important; ">
+                            Model Kenderaan
+                        </th>
+                        <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important; ">
+                            No Pendaftaran
+                        </th>
+                        <th width="100px" rowspan="2" style="text-align:center;vertical-align:middle !important; ">
+                            Tahun Dibuat
+                        </th>
+                        <th width="50px" rowspan="2" style="text-align:center;vertical-align:middle !important; ">
+                            Active?
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderBy(o => o.abvr_cost_center_code).ThenBy(o => o.abvr_budgeting_year).ThenBy(o => o.abvr_material_code))
+                    {
+                    <tr>
+                        <td style="text-align:left;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abvr_jenis_code) - @Html.DisplayFor(modelItem => item.abvr_jenis_name)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abvr_material_code) 
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abvr_material_name)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @*@Html.DisplayFor(modelItem => item.abvr_model)*@
+                            @item.abvr_model.ToUpper()
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @*@Html.DisplayFor(modelItem => item.abvr_register_no)*@
+                            @item.abvr_register_no.ToUpper()
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @Html.DisplayFor(modelItem => item.abvr_tahun_dibuat)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle !important;">
+                            @if (item.abvr_status == true)
+                            {
+                                @Html.Raw("TRUE")
+                            }
+                            else
+                            {
+                                @Html.Raw("FALSE")
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+else
+{
+    <div id="printarea" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+    </div>
+}
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+
+    .headerviewsawit {
+        color: #ffffff;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+    .text-header {
+        font-size: small;
+        font-weight: bold;
+    }
+</style>
+<script>
+    $("#downloadpdfview").click(function () {
+        var BudgetYear = $("#yr").val();
+        var CostCenter = $("#cc").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        location.href="@Url.Action("PrintViewPdf", "PendaftaranKenderaan")" + param;
+        return false;
+    });
+    $("#downloadexcelview").click(function () {
+        var BudgetYear = $("#yr").val();
+        var CostCenter = $("#cc").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        location.href="@Url.Action("PrintViewExcel", "PendaftaranKenderaan")" + param;
+        return false;
+    });
+</script>

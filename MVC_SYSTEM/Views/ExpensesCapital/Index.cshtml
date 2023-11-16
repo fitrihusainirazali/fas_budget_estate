@@ -1,0 +1,201 @@
+﻿@{
+    var screen = ViewBag.Screen as MVC_SYSTEM.ModelsBudget.bgt_Screen;
+    ViewBag.Title = screen.ScrNameLongDesc;
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+    var costCenter = ViewBag.CostCenter as string;
+    var gl = ViewBag.GL as string;
+    var jenisBelian = ViewBag.JenisBelian as string;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "GET",
+        UpdateTargetId = "RecordsPartial",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+}
+
+<style type="text/css">
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    tr.webgrid-header th {
+        text-align: center;
+    }
+
+    .modal-lg {
+        width: 99% !important;
+    }
+
+    @@media only screen and (max-width: 768px) {
+        .modal-lg {
+            width: inherit !important;
+        }
+    }
+</style>
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well" style="margin-bottom: 20px;">
+        @using (Ajax.BeginForm("Records", "ExpensesCapital", null, options, new { @id = "form-expenses-capital-search" }))
+        {
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        @Html.Label("Budget Year", htmlAttributes: new { @class = "text-nowrap" })
+                        @Html.DropDownList("BudgetYear", new SelectList(ViewBag.Years, "Value", "Text"), htmlAttributes: new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        @Html.Label("Cost Center Description", htmlAttributes: new { @class = "text-nowrap" })
+                        @Html.TextBox("CostCenter", costCenter, htmlAttributes: new { @class = "form-control input-sm", placeholder = "Cost Center Description" })
+                    </div>
+                </div>
+                @*<div class="col-md-2">
+                        <div class="form-group">
+                            @Html.Label("GL Description", htmlAttributes: new { @class = "text-nowrap" })
+                            @Html.TextBox("GL", gl, htmlAttributes: new { @class = "form-control input-sm", placeholder = "GL Description" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            @Html.Label("Jenis Belian", htmlAttributes: new { @class = "text-nowrap" })
+                            @Html.DropDownList("JenisBelian", new List<SelectListItem>{
+                                new SelectListItem { Value = "", Text = GlobalResEstate.lblAll },
+                                new SelectListItem { Value = "1", Text = "Baru" },
+                                new SelectListItem { Value = "2", Text = "Gantian" }
+                            }, htmlAttributes: new { @class = "form-control input-sm" })
+                        </div>
+                    </div>*@
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">@GlobalResEstate.btnView</button>
+                </div>
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>&nbsp;</label>
+                            <a href="@Url.Action("Print", new { year = year, costCenter = costCenter, format = "PDF" })" target="_blank" class="btn btn-default btn-sm btn-block">
+                                <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <label>&nbsp;</label>
+                            <a href="@Url.Action("Print", new { year = year, costCenter = costCenter, format = "EXCEL" })" class="btn btn-default btn-sm btn-block">
+                                <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div id="RecordsPartial">
+                            @Html.Action("Records", new { BudgetYear = year })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr style="margin-top:0;" />
+        <div class="row">
+            <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                <a href="@Url.Action("Create")" class="btn btn-success">@ViewBag.Title - @GlobalResEstate.btnAdd.ToUpper()</a>
+                <a href="@Url.Action("Index", "ExpensesCC")" class="btn btn-warning">@GlobalResEstate.btnBack.ToUpper()</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- modal placeholder-->
+<div id="myModal1" class="modal fade in">
+    <div class="modal-dialog" style="width: 75%">
+        <div class="modal-content">
+            <div id="myModalContent1"></div>
+        </div>
+    </div>
+</div>
+<div id="myModal2" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="myModalContent2"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @*@Scripts.Render("~/Asset/Scripts/AjaxModal.js")*@
+    <script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({ cache: false });
+
+            $(document).on("click", "a[data-modal1]", function (e) {
+                $('#myModal2').modal('hide');
+                $('#myModalContent1').load(this.href, function () {
+                    $('#myModal1').modal({
+                        backdrop: 'static', keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+
+            $(document).on("click", "a[data-modal2]", function (e) {
+                $('#myModal1').modal('hide');
+                $('#myModalContent2').load(this.href, function () {
+                    $('#myModal2').modal({
+                        backdrop: 'static', keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+        });
+
+        function bindForm(dialog) {
+            $('form', dialog).submit(function () {
+                $('#progress').show();
+                $.ajax({
+                    url: this.action,
+                    type: this.method,
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        $('#progress').hide();
+                        $('#myModal1').modal('hide');
+                        $('#myModal2').modal('hide');
+                        if (result.success) {
+                            var url = '';
+                            if (result.controller && result.action && result.rooturl) {
+                                if (result.paramName && result.paramValue) {
+                                    url = result.rooturl + '/' + result.controller + '/' + result.action + '?' + result.paramName + '=' + result.paramValue;
+                                } else {
+                                    url = result.rooturl + '/' + result.controller + '/' + result.action;
+                                }
+                            }
+                            if (result.div && url != '') {
+                                $('#' + result.div).load(url);
+                            }
+                            if (result.msg && result.status) {
+                                $.simplyToast(result.msg, result.status);
+                            }
+                        } else {
+                            if (result.msg && result.status) {
+                                $.simplyToast(result.msg, result.status);
+                            }
+                        }
+                    }
+                });
+                return false;
+            });
+        }
+    </script>
+}

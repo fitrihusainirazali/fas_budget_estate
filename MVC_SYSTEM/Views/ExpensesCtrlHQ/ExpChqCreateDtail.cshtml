@@ -1,0 +1,1117 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_expenses_CtrlHQ[]
+@using MVC_SYSTEM.ClassBudget;
+@{
+    //ViewBag.Title = "Perbelanjaan HQ (Belanja Lain-Lain (Di kawal oleh HQ))";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    int id = 8;
+    var GetScreenGL = GetBudgetClass.GetScreenGL(id) as List<MVC_SYSTEM.MasterModels.tbl_SAPGLPUP>;
+    int GetCountGL = GetBudgetClass.GetCountGL(id);
+    int i = 0;
+    int k = 0;
+    int yearW = DateTime.Now.Year;
+
+}
+<style type="text/css">
+    .panel-success > .panel-heading {
+        color: white;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+        font-weight: normal;
+    }
+
+    /*Remove arrow input number*/
+    /*Chrome, Safari, Edge,Opera*/
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button{
+        -webkit-appearance:none;
+        margin:0;
+    }
+    /*Firefox*/
+    input[type=number]{
+        -moz-appearance:textfield;
+    }
+    /*Remove arrow input number*/
+</style>
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@*<script src="~/Asset/select2/dist/js/select2.js"></script>*@
+<link href="~/Asset/select2/dist/css/select2.min.css" rel="stylesheet" />
+<section class="content-wrapper main-content clear-fix">
+    <div class="well" style="margin-bottom: 10px">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="panel panel-success">
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">@ViewBag.Title</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label id="yearlist">@GlobalResEstate.lblYear</label>
+                                        @Html.TextBox("abhq_budgeting_year", null, htmlAttributes: new { @class = "form-control", @readonly = "@readonly", ViewBag.abhq_budgeting_year })
+                                        @Html.ValidationMessage("abhq_budgeting_year", "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-6">
+                                        @Html.Label("Cost Center:")
+                                        @Html.DropDownList("abhq_cost_center", new SelectList(ViewBag.abhq_cost_center, "Value", "Text"), htmlAttributes: new { @class = "form-control select2", @data_val = "true", @required = "required", @Value = ViewBag.abhq_cost_center })
+                                        @Html.ValidationMessage("abhq_cost_center", "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="well" style="margin-top: 10px">
+                <table class="table table-bordered table-condensed" id="scrollArea2" style="font-size: 9px;" cellspacing="0" border="0" width="100%">
+                    @{int RowNoSave = 1;}
+                    @foreach (var a in GetScreenGL)
+                    {
+                        <tr>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_gl_desc, new { @Class = "form-control", @Value = @a.fld_GLDesc })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_gl_code, new { @class = "form-control", @Value = @a.fld_GLCode })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_proration, new { @class = "form-control", @id = "proration" + RowNoSave, @Value = ViewBag.abhq_proration })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_jumlah_setahun, new { @class = "form-control input-number", id = "jum_thn" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_1, new { @class = "form-control input-number", id = "mon_1" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_2, new { @class = "form-control input-number", id = "mon_2" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_3, new { @class = "form-control input-number", id = "mon_3" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_4, new { @class = "form-control input-number", id = "mon_4" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_5, new { @class = "form-control input-number", id = "mon_5" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_6, new { @class = "form-control input-number", id = "mon_6" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_7, new { @class = "form-control input-number", id = "mon_7" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_8, new { @class = "form-control input-number", id = "mon_8" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_9, new { @class = "form-control input-number", id = "mon_9" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_10, new { @class = "form-control input-number", id = "mon_10" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_11, new { @class = "form-control input-number", id = "mon_11" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_month_12, new { @class = "form-control input-number", id = "mon_12" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_jumlah_RM, new { @class = "form-control input-number", id = "jum_rm" + RowNoSave })</th>
+                            <th hidden style="text-align:center;vertical-align:middle !important;">@Html.TextBoxFor(m => m[k].abhq_jumlah_keseluruhan, new { @class = "form-control input-number", id = "jum_all" + RowNoSave })</th>
+
+                        </tr>
+                        k++;
+                        RowNoSave++;
+                    }
+
+                    <tr>
+                        <th style="text-align:center"></th>
+
+                        @foreach (var a in GetScreenGL)
+                        {
+                            @*<th style="text-align:center; vertical-align:middle !important;">@Html.LabelFor(model => model[i].abhq_gl_desc, @a.fld_GLDesc)</th>*@
+                            <th style="text-align:center; vertical-align:middle !important;">@Html.Label("GLDesc", @a.fld_GLDesc)</th>
+
+                        }
+
+                        <th style="text-align:center; vertical-align:middle !important;">JUMLAH (RM)</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:center"></th>
+
+                        @foreach (var a in GetScreenGL)
+                        {
+                            @*<th style="text-align:center; vertical-align:middle !important; font-size:11px">@Html.LabelFor(model => model[i].abhq_gl_code, @a.fld_GLCode)</th>*@
+                            <th style="text-align:center; vertical-align:middle !important; font-size:11px">@Html.Label("GLCode", @a.fld_GLCode)</th>
+                        }
+
+                        <th style="text-align:center; vertical-align:middle !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">JUMLAH SETAHUN(RM)</th>
+                        @{int RowNojumThn = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align:left; vertical-align:middle !important;">@Html.TextBox("jumThn", null, new { @Class = "form-control text-right input-number", id = "jumThn" + RowNojumThn, onkeyup = "CalljumThn(this)" })</th>
+                            @*@Html.ValidationMessageFor(model => model[i].abhq_jumlah_setahun, "", new { @class = "text-danger" })*@
+
+                            RowNojumThn++;
+                        }
+                        @Html.Hidden("hiddenjumthn", RowNojumThn)
+                        <th style="text-align:center">@Html.TextBox("jumRM", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jumRM" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">Proration</th>
+                        @{int RowNoP = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align:center;vertical-align:middle !important;">
+
+                                @Html.DropDownList("abhq_proration", new List<SelectListItem>
+                                    {
+                                    new SelectListItem { Text = "Select Proration", Value = "0"},
+                                    new SelectListItem { Text = "Key in", Value = "1"},
+                                    new SelectListItem { Text = "Monthly", Value = "2"},
+                                    new SelectListItem { Text = "Quaterly", Value = "3"},
+                                    new SelectListItem { Text = "Semi Annually", Value = "4"},
+                                    new SelectListItem { Text = "Annually", Value = "5"}
+                                    }, new { @class = "form-control", onchange = "SelectedIndexChanged(this)", id = "Pro" + @RowNoP })
+
+                            </th>
+                            RowNoP++;
+                        }
+
+                        <th style="text-align:center"></th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">JAN</th>
+                        @{int RowNoJan = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align:left;vertical-align:middle !important;"> @Html.TextBox("Jan", null, new { @Class = "form-control text-right input-number", id = "Jan" + @RowNoJan, onkeyup = "CallAmt(this)", @readonly = "true"})</th>
+                            RowNoJan++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum1", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum1" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">FEB</th>
+                        @{int RowNoFeb = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Feb", null, new { @Class = "form-control text-right input-number", id = "Feb" + @RowNoFeb, onkeyup = "CallAmt(this)", @readonly = "true"})</th>
+                            RowNoFeb++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum2", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum2" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">MAC</th>
+                        @{int RowNoMac = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Mac", null, new { @Class = "form-control text-right input-number", id = "Mac" + @RowNoMac, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+
+                            RowNoMac++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum3", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum3" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">APR</th>
+                        @{int RowNoApr = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Apr", null, new { @Class = "form-control text-right input-number", id = "Apr" + @RowNoApr, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoApr++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum4", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum4" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">MEI</th>
+                        @{int RowNoMei = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Mei", null, new { @Class = "form-control text-right input-number", id = "Mei" + @RowNoMei, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoMei++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum5", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum5" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">JUN</th>
+                        @{int RowNoJun = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Jun", null, new { @Class = "form-control text-right input-number", id = "Jun" + @RowNoJun, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoJun++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum6", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum6" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">JUL</th>
+                        @{int RowNoJul = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Jul", null, new { @Class = "form-control text-right input-number", id = "Jul" + @RowNoJul, onkeyup = "CallAmt(this)", @readonly = "true"})</th>
+                            RowNoJul++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum7", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum7" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">AUG</th>
+                        @{int RowNoAug = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Aug", null, new { @Class = "form-control text-right input-number", id = "Aug" + @RowNoAug, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoAug++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum8", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum8" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">SEPT</th>
+                        @{int RowNoSept = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important; ">@Html.TextBox("Sept", null, new { @Class = "form-control text-right input-number", id = "Sept" + @RowNoSept, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoSept++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum9", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum9" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">OCT</th>
+                        @{int RowNoOct = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Oct", null, new { @Class = "form-control text-right input-number", id = "Oct" + @RowNoOct, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoOct++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum10", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum10" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">NOV</th>
+                        @{int RowNoNov = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Nov", null, new { @Class = "form-control text-right input-number", id = "Nov" + @RowNoNov, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoNov++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum11", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum11" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle !important;">DEC</th>
+                        @{int RowNoDec = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("Dec", null, new { @Class = "form-control text-right input-number", id = "Dec" + @RowNoDec, onkeyup = "CallAmt(this)", @readonly = "true" })</th>
+                            RowNoDec++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jum12", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jum12" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;">JUMLAH KESELURUHAN</th>
+                        @{int RowNoAll = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left; vertical-align: middle !important;">@Html.TextBox("All", null, new { @Class = "form-control text-right input-number", id = "All" + @RowNoAll, @disabled = "disabled" })</th>
+                            RowNoAll++;
+                        }
+                        <th style="text-align:center">@Html.TextBox("jumAll", null, new { @Class = "form-control text-right input-number", @readonly = "true", id = "jumAll" })</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;"><font style="color:red">Baki</font></th>
+                        @{int RowNoBaki = 1;}
+                        @foreach (var a in GetScreenGL)
+                        {
+                            <th style="text-align: left ; vertical-align: middle !important; color: red;" id="baki_@RowNoBaki"></th>
+                            RowNoBaki++;
+                        }
+                        <th style="text-align:center"></th>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button id="btn_submit" class="btn btn-primary" type="submit"><i class="fa fa-save fa-fw"></i> @GlobalResEstate.btnSave.ToUpper()</button>
+                @Html.ActionLink("BACK", "ExpChqListing", null, new { @class = "btn btn-warning" })
+            </div>
+        }
+        <br />
+        <br />
+    </div>
+</section>
+
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+@*@section scripts{
+        @Scripts.Render("~/Asset/Scripts/appjs.js?v=1.1")
+    }*@
+<style>
+    .frm {
+        /*width: 80px;*/
+        text-align: center;
+        vertical-align: middle !important;
+    }
+</style>
+
+<script type="text/javascript">
+   
+    $(document).ready(function () {
+        $('.form-control').addClass('input-sm');
+
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        $('input[type="number"]').on('keydown', function (e) {
+            var val = $(this).val();
+            //var regex = /^\d+(\.\d{0,1})?$/;
+            var regex = /^\d+(\.\d{0,2})?$/;
+            if (!regex.test(val)) {
+                var match = val.match(regex);
+                if (match !== null) {
+                    $(this).val(match[0]);
+                } else {
+                    var newVal = val.replace(/(\.\d{1})\d+/g, '$1');
+                    $(this).val(newVal);
+                }
+            }
+            if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+                e.preventDefault();
+            } else if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+            }
+        });
+    });
+
+    $('.input-number').on('focus', function () {
+        $(this).val($(this).val().replace(/,/g, ''));
+        $(this).attr('type', 'number');
+    });
+    $('.input-number').on('blur', function () {
+        $(this).attr('type', 'text');
+        if ($(this).val()) {
+            var value = parseFloat($(this).val());
+            $(this).val(value.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }));
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    //untuk function pengiraan jumlah setahun
+    function CalljumThn(element) {
+
+        var id = $(element).attr('id');
+        var no = parseInt(id.replace(/[^0-9]/g, ''));
+        var nohidden = parseInt($('#hiddenjumthn').val());
+
+        var tot = 0;
+        for (var a = 1; a < nohidden; a++) {
+            var amt = document.getElementById('jumThn' + a).value != '' ? parseFloat(document.getElementById('jumThn' + a).value.replace(/,/g, '')) : 0;
+            tot += amt;
+            //console.log(amt);
+            document.getElementById('jum_thn' + a).value = amt;
+            document.getElementById('jum_rm' + a).value = amt;
+        }
+        document.getElementById('jumRM').value = tot.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+
+        var jumRM = document.getElementById('jumRM').value != '' ? parseFloat(document.getElementById('jumRM').value.replace(/,/g, '')) : 0;
+        var jumAll1 = document.getElementById('jumAll').value != '' ? parseFloat(document.getElementById('jumAll').value) : 0;
+        jumAll = jumAll1.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+        var jumNilai = jumRM - jumAll;
+
+        if (jumNilai == 0) {
+            enableSubmit();
+        } else {
+            disableSubmit();
+        }
+
+    }
+
+    // untuk function poration key in
+    function CallAmt(element) {
+        var id = $(element).attr('id');
+        var no = parseInt(id.replace(/[^0-9]/g, ''));
+        var nohidden = parseInt($('#hiddenjumthn').val());
+
+        var jumThn1 = document.getElementById('jumThn' + no).value;
+        jumThn = jumThn1.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+        var amtA = document.getElementById('Jan' + no).value != '' ? parseFloat(document.getElementById('Jan' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_1' + no).value = amtA;
+
+        var amtB = document.getElementById('Feb' + no).value != '' ? parseFloat(document.getElementById('Feb' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_2' + no).value = amtB;
+
+        var amtC = document.getElementById('Mac' + no).value != '' ? parseFloat(document.getElementById('Mac' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_3' + no).value = amtC;
+
+        var amtD = document.getElementById('Apr' + no).value != '' ? parseFloat(document.getElementById('Apr' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_4' + no).value = amtD;
+
+        var amtE = document.getElementById('Mei' + no).value != '' ? parseFloat(document.getElementById('Mei' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_5' + no).value = amtE;
+
+        var amtF = document.getElementById('Jun' + no).value != '' ? parseFloat(document.getElementById('Jun' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_6' + no).value = amtF;
+
+        var amtG = document.getElementById('Jul' + no).value != '' ? parseFloat(document.getElementById('Jul' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_7' + no).value = amtG;
+
+        var amtH = document.getElementById('Aug' + no).value != '' ? parseFloat(document.getElementById('Aug' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_8' + no).value = amtH;
+
+        var amtI = document.getElementById('Sept' + no).value != '' ? parseFloat(document.getElementById('Sept' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_9' + no).value = amtI;
+
+        var amtJ = document.getElementById('Oct' + no).value != '' ? parseFloat(document.getElementById('Oct' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_10' + no).value = amtJ;
+
+        var amtK = document.getElementById('Nov' + no).value != '' ? parseFloat(document.getElementById('Nov' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_11' + no).value = amtK;
+
+        var amtL = document.getElementById('Dec' + no).value != '' ? parseFloat(document.getElementById('Dec' + no).value.replace(/,/g, '')) : 0;
+        document.getElementById('mon_12' + no).value = amtL;
+
+        // a - b
+        var sumBaki1 = jumThn - amtA - amtB - amtC - amtD - amtE - amtF - amtG - amtH - amtI - amtJ - amtK - amtL;
+        //console.log(sumBaki1);
+
+        $('#baki_' + no).text(sumBaki1.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+
+        if (sumBaki1 == 0) {
+            enableSubmit();
+        } else {
+            disableSubmit();
+        }
+        var sumAllKey = amtA + amtB + amtC + amtD + amtE + amtF + amtG + amtH + amtI + amtJ + amtK + amtL;
+        document.getElementById('All' + no).value = sumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); //
+        document.getElementById('jum_all' + no).value = sumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+
+        var totA = 0;
+        var totB = 0;
+        var totC = 0;
+        var totD = 0;
+        var totE = 0;
+        var totF = 0;
+        var totG = 0;
+        var totH = 0;
+        var totI = 0;
+        var totJ = 0;
+        var totK = 0;
+        var totL = 0;
+
+        for (var a = 1; a < nohidden; a++) {
+            var amtAi = document.getElementById('Jan' + a).value != '' ? parseFloat(document.getElementById('Jan' + a).value.replace(/,/g, '')) : 0;
+            totA += amtAi;
+            //alert(amtA +' -- '+ totA);
+            var amtBi = document.getElementById('Feb' + a).value != '' ? parseFloat(document.getElementById('Feb' + a).value.replace(/,/g, '')) : 0;
+            totB += amtBi;
+            var amtCi = document.getElementById('Mac' + a).value != '' ? parseFloat(document.getElementById('Mac' + a).value.replace(/,/g, '')) : 0;
+            totC += amtCi;
+            var amtDi = document.getElementById('Apr' + a).value != '' ? parseFloat(document.getElementById('Apr' + a).value.replace(/,/g, '')) : 0;
+            totD += amtDi;
+            var amtEi = document.getElementById('Mei' + a).value != '' ? parseFloat(document.getElementById('Mei' + a).value.replace(/,/g, '')) : 0;
+            totE += amtEi;
+            var amtFi = document.getElementById('Jun' + a).value != '' ? parseFloat(document.getElementById('Jun' + a).value.replace(/,/g, '')) : 0;
+            totF += amtFi;
+            var amtGi = document.getElementById('Jul' + a).value != '' ? parseFloat(document.getElementById('Jul' + a).value.replace(/,/g, '')) : 0;
+            totG += amtGi;
+            var amtHi = document.getElementById('Aug' + a).value != '' ? parseFloat(document.getElementById('Aug' + a).value.replace(/,/g, '')) : 0;
+            totH += amtHi;
+            var amtIi = document.getElementById('Sept' + a).value != '' ? parseFloat(document.getElementById('Sept' + a).value.replace(/,/g, '')) : 0;
+            totI += amtIi;
+            var amtJi = document.getElementById('Oct' + a).value != '' ? parseFloat(document.getElementById('Oct' + a).value.replace(/,/g, '')) : 0;
+            totJ += amtJi;
+            var amtKi = document.getElementById('Nov' + a).value != '' ? parseFloat(document.getElementById('Nov' + a).value.replace(/,/g, '')) : 0;
+            totK += amtKi;
+            var amtLi = document.getElementById('Dec' + a).value != '' ? parseFloat(document.getElementById('Dec' + a).value.replace(/,/g, '')) : 0;
+            totL += amtLi;
+
+        }
+        document.getElementById('jum1').value = totA.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum2').value = totB.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum3').value = totC.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum4').value = totD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum5').value = totE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum6').value = totF.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum7').value = totG.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum8').value = totH.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum9').value = totI.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum10').value = totJ.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum11').value = totK.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('jum12').value = totL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        var jumAllKey = totA + totB + totC + totD + totE + totF + totG + totH + totI + totJ + totK + totL;
+        document.getElementById('jumAll').value = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        var jumRM = document.getElementById('jumRM').value != '' ? parseFloat(document.getElementById('jumRM').value.replace(/,/g, '')) : 0;
+        var jumAll = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+        var jumNilai = jumRM - jumAll;
+
+        if (jumNilai == 0) {
+            enableSubmit();
+        } else {
+            disableSubmit();
+        }
+    }
+
+    //untuk function dropdown proration
+    function SelectedIndexChanged(element) {
+        var id = $(element).attr('id');
+        var no = parseInt(id.replace(/[^0-9]/g, ''));
+        var val = $(element).find('option:selected').val();
+        var nohidden = parseInt($('#hiddenjumthn').val());
+
+        var amtJumThn = document.getElementById('jumThn' + no).value;
+        amt = amtJumThn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+        $('#Jan' + no).val(null);
+        $('#Feb' + no).val(null);
+        $('#Mac' + no).val(null);
+        $('#Apr' + no).val(null);
+        $('#Mei' + no).val(null);
+        $('#Jun' + no).val(null);
+        $('#Jul' + no).val(null);
+        $('#Aug' + no).val(null);
+        $('#Sept' + no).val(null);
+        $('#Oct' + no).val(null);
+        $('#Nov' + no).val(null);
+        $('#Dec' + no).val(null);
+
+        if (amt === null || amt === 0 || amt == "") {
+            alert("Sila Masukkan Nilai Untuk Setahun");
+            $(element).val($(element).find('option:first').val());
+
+        } else {
+            if (val == 1) {
+
+                $('#Jan' + no).removeAttr('readonly');
+                $('#Feb' + no).removeAttr('readonly');
+                $('#Mac' + no).removeAttr('readonly');
+                $('#Apr' + no).removeAttr('readonly');
+                $('#Mei' + no).removeAttr('readonly');
+                $('#Jun' + no).removeAttr('readonly');
+                $('#Jul' + no).removeAttr('readonly');
+                $('#Aug' + no).removeAttr('readonly');
+                $('#Sept' + no).removeAttr('readonly');
+                $('#Oct' + no).removeAttr('readonly');
+                $('#Nov' + no).removeAttr('readonly');
+                $('#Dec' + no).removeAttr('readonly');
+
+                document.getElementById('proration' + no).value = 1;
+
+            } else if (val == 2) {
+                var amtMonth = amt / 12; //a = A/12
+                var balance = (parseFloat(amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 11); //b = a*11
+                var baldec = amt - balance; //c = A-b
+
+                $('#Jan' + no).attr('readonly', 'readonly');
+                $('#Feb' + no).attr('readonly', 'readonly');
+                $('#Mac' + no).attr('readonly', 'readonly');
+                $('#Apr' + no).attr('readonly', 'readonly');
+                $('#Mei' + no).attr('readonly', 'readonly');
+                $('#Jun' + no).attr('readonly', 'readonly');
+                $('#Jul' + no).attr('readonly', 'readonly');
+                $('#Aug' + no).attr('readonly', 'readonly');
+                $('#Sept' + no).attr('readonly', 'readonly');
+                $('#Oct' + no).attr('readonly', 'readonly');
+                $('#Nov' + no).attr('readonly', 'readonly');
+                $('#Dec' + no).attr('readonly', 'readonly');
+
+                document.getElementById('Jan' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Feb' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Mac' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Apr' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Mei' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Jun' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Jul' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Aug' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Sept' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Oct' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Nov' + no).value = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Dec' + no).value = baldec.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var amtMonthA = document.getElementById('Jan' + no).value
+                amtMonthA = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_1' + no).value = amtMonthA;
+
+                var amtMonthB = document.getElementById('Feb' + no).value
+                amtMonthB = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_2' + no).value = amtMonthB;
+
+                var amtMonthC = document.getElementById('Mac' + no).value
+                amtMonthC = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_3' + no).value = amtMonthC;
+
+                var amtMonthD = document.getElementById('Apr' + no).value
+                amtMonthD = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_4' + no).value = amtMonthD;
+
+                var amtMonthE = document.getElementById('Mei' + no).value
+                amtMonthE = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_5' + no).value = amtMonthE;
+
+                var amtMonthF = document.getElementById('Jun' + no).value
+                amtMonthF = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_6' + no).value = amtMonthF;
+
+                var amtMonthG = document.getElementById('Jul' + no).value
+                amtMonthG = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_7' + no).value = amtMonthG;
+
+                var amtMonthH = document.getElementById('Aug' + no).value
+                amtMonthH = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_8' + no).value = amtMonthH;
+
+                var amtMonthI = document.getElementById('Sept' + no).value
+                amtMonthI = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_9' + no).value = amtMonthI;
+
+                var amtMonthJ = document.getElementById('Oct' + no).value
+                amtMonthJ = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_10' + no).value = amtMonthJ;
+
+                var amtMonthK = document.getElementById('Nov' + no).value
+                amtMonthK = amtMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_11' + no).value = amtMonthK;
+
+                var amtMonthL = document.getElementById('Dec' + no).value
+                amtMonthL = baldec.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_12' + no).value = amtMonthL;
+
+
+                var sumMonth = parseFloat(amtMonthA.replace(/,/g, '')) + parseFloat(amtMonthB.replace(/,/g, '')) + parseFloat(amtMonthC.replace(/,/g, '')) + parseFloat(amtMonthD.replace(/,/g, '')) + parseFloat(amtMonthE.replace(/,/g, '')) + parseFloat(amtMonthF.replace(/,/g, '')) + parseFloat(amtMonthG.replace(/,/g, '')) + parseFloat(amtMonthH.replace(/,/g, '')) + parseFloat(amtMonthI.replace(/,/g, '')) + parseFloat(amtMonthJ.replace(/,/g, '')) + parseFloat(amtMonthK.replace(/,/g, '')) + parseFloat(amtMonthL.replace(/,/g, ''));
+                document.getElementById('All' + no).value = sumMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum_all' + no).value = sumMonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+                document.getElementById('proration' + no).value = 2;
+
+                var totA = 0;
+                var totB = 0;
+                var totC = 0;
+                var totD = 0;
+                var totE = 0;
+                var totF = 0;
+                var totG = 0;
+                var totH = 0;
+                var totI = 0;
+                var totJ = 0;
+                var totK = 0;
+                var totL = 0;
+
+                for (var a = 1; a < nohidden; a++) {
+                    var amtA = document.getElementById('Jan' + a).value != '' ? parseFloat(document.getElementById('Jan' + a).value.replace(/,/g, '')) : 0;
+                    totA += amtA;
+                    //console.log(amtA +' -- '+ totA);
+                    var amtB = document.getElementById('Feb' + a).value != '' ? parseFloat(document.getElementById('Feb' + a).value.replace(/,/g, '')) : 0;
+                    totB += amtB;
+                    var amtC = document.getElementById('Mac' + a).value != '' ? parseFloat(document.getElementById('Mac' + a).value.replace(/,/g, '')) : 0;
+                    totC += amtC;
+                    var amtD = document.getElementById('Apr' + a).value != '' ? parseFloat(document.getElementById('Apr' + a).value.replace(/,/g, '')) : 0;
+                    totD += amtD;
+                    var amtE = document.getElementById('Mei' + a).value != '' ? parseFloat(document.getElementById('Mei' + a).value.replace(/,/g, '')) : 0;
+                    totE += amtE;
+                    var amtF = document.getElementById('Jun' + a).value != '' ? parseFloat(document.getElementById('Jun' + a).value.replace(/,/g, '')) : 0;
+                    totF += amtF;
+                    var amtG = document.getElementById('Jul' + a).value != '' ? parseFloat(document.getElementById('Jul' + a).value.replace(/,/g, '')) : 0;
+                    totG += amtG;
+                    var amtH = document.getElementById('Aug' + a).value != '' ? parseFloat(document.getElementById('Aug' + a).value.replace(/,/g, '')) : 0;
+                    totH += amtH;
+                    var amtI = document.getElementById('Sept' + a).value != '' ? parseFloat(document.getElementById('Sept' + a).value.replace(/,/g, '')) : 0;
+                    totI += amtI;
+                    var amtJ = document.getElementById('Oct' + a).value != '' ? parseFloat(document.getElementById('Oct' + a).value.replace(/,/g, '')) : 0;
+                    totJ += amtJ;
+                    var amtK = document.getElementById('Nov' + a).value != '' ? parseFloat(document.getElementById('Nov' + a).value.replace(/,/g, '')) : 0;
+                    totK += amtK;
+                    var amtL = document.getElementById('Dec' + a).value != '' ? parseFloat(document.getElementById('Dec' + a).value.replace(/,/g, '')) : 0;
+                    totL += amtL;
+
+                }
+
+
+                document.getElementById('jum1').value = totA.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum2').value = totB.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum3').value = totC.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum4').value = totD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum5').value = totE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum6').value = totF.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum7').value = totG.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum8').value = totH.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum9').value = totI.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum10').value = totJ.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum11').value = totK.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum12').value = totL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+
+                var jumAllKey = totA + totB + totC + totD + totE + totF + totG + totH + totI + totJ + totK + totL;
+                document.getElementById('jumAll').value = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var jumRM = document.getElementById('jumRM').value != '' ? parseFloat(document.getElementById('jumRM').value.replace(/,/g, '')) : 0;
+                var jumAll = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                var jumNilai = jumRM - jumAll;
+
+                if (jumNilai == 0) {
+                    enableSubmit();
+                } else {
+                    disableSubmit();
+                }
+
+            } else if (val == 3) {
+                var amtQuartly = amt / 4; //a = A/12
+                var balance = (parseFloat(amtQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 3); //b = a*11
+                var baldec = amt - balance; //c = A-b
+
+                $('#Jan' + no).attr('readonly', 'readonly');
+                $('#Feb' + no).attr('readonly', 'readonly');
+                $('#Mac' + no).attr('readonly', 'readonly');
+                $('#Apr' + no).attr('readonly', 'readonly');
+                $('#Mei' + no).attr('readonly', 'readonly');
+                $('#Jun' + no).attr('readonly', 'readonly');
+                $('#Jul' + no).attr('readonly', 'readonly');
+                $('#Aug' + no).attr('readonly', 'readonly');
+                $('#Sept' + no).attr('readonly', 'readonly');
+                $('#Oct' + no).attr('readonly', 'readonly');
+                $('#Nov' + no).attr('readonly', 'readonly');
+                $('#Dec' + no).attr('readonly', 'readonly');
+
+                document.getElementById('Mac' + no).value = amtQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Jun' + no).value = amtQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Sept' + no).value = amtQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Dec' + no).value = baldec.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var amtQuartlyA = document.getElementById('Mac' + no).value
+                amtQuartlyA = amtQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_3' + no).value = amtQuartlyA;
+
+                var amtQuartlyB = document.getElementById('Jun' + no).value
+                amtQuartlyB = amtQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_6' + no).value = amtQuartlyB;
+
+                var amtQuartlyC = document.getElementById('Sept' + no).value
+                amtQuartlyC = amtQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_9' + no).value = amtQuartlyC;
+
+                var amtQuartlyD = document.getElementById('Dec' + no).value
+                amtQuartlyD = baldec.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_12' + no).value = amtQuartlyD;
+
+                var sumQuartly = parseFloat(amtQuartlyA.replace(/,/g, '')) + parseFloat(amtQuartlyB.replace(/,/g, '')) + parseFloat(amtQuartlyC.replace(/,/g, '')) + parseFloat(amtQuartlyD.replace(/,/g, ''));
+                document.getElementById('All' + no).value = sumQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum_all' + no).value = sumQuartly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+                document.getElementById('proration' + no).value = 3;
+
+                var totA = 0;
+                var totB = 0;
+                var totC = 0;
+                var totD = 0;
+                var totE = 0;
+                var totF = 0;
+                var totG = 0;
+                var totH = 0;
+                var totI = 0;
+                var totJ = 0;
+                var totK = 0;
+                var totL = 0;
+
+                for (var a = 1; a < nohidden; a++) {
+                    var amtA = document.getElementById('Jan' + a).value != '' ? parseFloat(document.getElementById('Jan' + a).value.replace(/,/g, '')) : 0;
+                    totA += amtA;
+                    //console.log(amtA +' -- '+ totA);
+                    var amtB = document.getElementById('Feb' + a).value != '' ? parseFloat(document.getElementById('Feb' + a).value.replace(/,/g, '')) : 0;
+                    totB += amtB;
+                    var amtC = document.getElementById('Mac' + a).value != '' ? parseFloat(document.getElementById('Mac' + a).value.replace(/,/g, '')) : 0;
+                    totC += amtC;
+                    var amtD = document.getElementById('Apr' + a).value != '' ? parseFloat(document.getElementById('Apr' + a).value.replace(/,/g, '')) : 0;
+                    totD += amtD;
+                    var amtE = document.getElementById('Mei' + a).value != '' ? parseFloat(document.getElementById('Mei' + a).value.replace(/,/g, '')) : 0;
+                    totE += amtE;
+                    var amtF = document.getElementById('Jun' + a).value != '' ? parseFloat(document.getElementById('Jun' + a).value.replace(/,/g, '')) : 0;
+                    totF += amtF;
+                    var amtG = document.getElementById('Jul' + a).value != '' ? parseFloat(document.getElementById('Jul' + a).value.replace(/,/g, '')) : 0;
+                    totG += amtG;
+                    var amtH = document.getElementById('Aug' + a).value != '' ? parseFloat(document.getElementById('Aug' + a).value.replace(/,/g, '')) : 0;
+                    totH += amtH;
+                    var amtI = document.getElementById('Sept' + a).value != '' ? parseFloat(document.getElementById('Sept' + a).value.replace(/,/g, '')) : 0;
+                    totI += amtI;
+                    var amtJ = document.getElementById('Oct' + a).value != '' ? parseFloat(document.getElementById('Oct' + a).value.replace(/,/g, '')) : 0;
+                    totJ += amtJ;
+                    var amtK = document.getElementById('Nov' + a).value != '' ? parseFloat(document.getElementById('Nov' + a).value.replace(/,/g, '')) : 0;
+                    totK += amtK;
+                    var amtL = document.getElementById('Dec' + a).value != '' ? parseFloat(document.getElementById('Dec' + a).value.replace(/,/g, '')) : 0;
+                    totL += amtL;
+
+                }
+
+
+                document.getElementById('jum1').value = totA.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum2').value = totB.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum3').value = totC.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum4').value = totD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum5').value = totE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum6').value = totF.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum7').value = totG.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum8').value = totH.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum9').value = totI.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum10').value = totJ.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum11').value = totK.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum12').value = totL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+
+                var jumAllKey = totA + totB + totC + totD + totE + totF + totG + totH + totI + totJ + totK + totL;
+                document.getElementById('jumAll').value = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var jumRM = document.getElementById('jumRM').value != '' ? parseFloat(document.getElementById('jumRM').value.replace(/,/g, '')) : 0;
+                var jumAll = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                var jumNilai = jumRM - jumAll;
+
+                if (jumNilai == 0) {
+                    enableSubmit();
+                } else {
+                    disableSubmit();
+                }
+
+            } else if (val == 4) {
+                var amtSeAnnual = amt / 2; //a = A/12
+                var balance = (parseFloat(amtSeAnnual.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 1); //b = a*11
+                var baldec = amt - balance; //c = A-b
+
+                $('#Jan' + no).attr('readonly', 'readonly');
+                $('#Feb' + no).attr('readonly', 'readonly');
+                $('#Mac' + no).attr('readonly', 'readonly');
+                $('#Apr' + no).attr('readonly', 'readonly');
+                $('#Mei' + no).attr('readonly', 'readonly');
+                $('#Jun' + no).attr('readonly', 'readonly');
+                $('#Jul' + no).attr('readonly', 'readonly');
+                $('#Aug' + no).attr('readonly', 'readonly');
+                $('#Sept' + no).attr('readonly', 'readonly');
+                $('#Oct' + no).attr('readonly', 'readonly');
+                $('#Nov' + no).attr('readonly', 'readonly');
+                $('#Dec' + no).attr('readonly', 'readonly');
+
+                document.getElementById('Jun' + no).value = amtSeAnnual.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('Dec' + no).value = baldec.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var amtSeAnnualA = document.getElementById('Jun' + no).value
+                amtSeAnnualA = amtSeAnnual.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_6' + no).value = amtSeAnnualA;
+
+                var amtSeAnnualB = document.getElementById('Dec' + no).value
+                amtSeAnnualB = baldec.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_12' + no).value = amtSeAnnualB;
+
+                var sumSeAnnual = parseFloat(amtSeAnnualA.replace(/,/g, '')) + parseFloat(amtSeAnnualB.replace(/,/g, ''));
+                document.getElementById('All' + no).value = sumSeAnnual.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum_all' + no).value = sumSeAnnual.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+                document.getElementById('proration' + no).value = 4;
+
+                var totA = 0;
+                var totB = 0;
+                var totC = 0;
+                var totD = 0;
+                var totE = 0;
+                var totF = 0;
+                var totG = 0;
+                var totH = 0;
+                var totI = 0;
+                var totJ = 0;
+                var totK = 0;
+                var totL = 0;
+
+                for (var a = 1; a < nohidden; a++) {
+                    var amtA = document.getElementById('Jan' + a).value != '' ? parseFloat(document.getElementById('Jan' + a).value.replace(/,/g, '')) : 0;
+                    totA += amtA;
+                    //console.log(amtA +' -- '+ totA);
+                    var amtB = document.getElementById('Feb' + a).value != '' ? parseFloat(document.getElementById('Feb' + a).value.replace(/,/g, '')) : 0;
+                    totB += amtB;
+                    var amtC = document.getElementById('Mac' + a).value != '' ? parseFloat(document.getElementById('Mac' + a).value.replace(/,/g, '')) : 0;
+                    totC += amtC;
+                    var amtD = document.getElementById('Apr' + a).value != '' ? parseFloat(document.getElementById('Apr' + a).value.replace(/,/g, '')) : 0;
+                    totD += amtD;
+                    var amtE = document.getElementById('Mei' + a).value != '' ? parseFloat(document.getElementById('Mei' + a).value.replace(/,/g, '')) : 0;
+                    totE += amtE;
+                    var amtF = document.getElementById('Jun' + a).value != '' ? parseFloat(document.getElementById('Jun' + a).value.replace(/,/g, '')) : 0;
+                    totF += amtF;
+                    var amtG = document.getElementById('Jul' + a).value != '' ? parseFloat(document.getElementById('Jul' + a).value.replace(/,/g, '')) : 0;
+                    totG += amtG;
+                    var amtH = document.getElementById('Aug' + a).value != '' ? parseFloat(document.getElementById('Aug' + a).value.replace(/,/g, '')) : 0;
+                    totH += amtH;
+                    var amtI = document.getElementById('Sept' + a).value != '' ? parseFloat(document.getElementById('Sept' + a).value.replace(/,/g, '')) : 0;
+                    totI += amtI;
+                    var amtJ = document.getElementById('Oct' + a).value != '' ? parseFloat(document.getElementById('Oct' + a).value.replace(/,/g, '')) : 0;
+                    totJ += amtJ;
+                    var amtK = document.getElementById('Nov' + a).value != '' ? parseFloat(document.getElementById('Nov' + a).value.replace(/,/g, '')) : 0;
+                    totK += amtK;
+                    var amtL = document.getElementById('Dec' + a).value != '' ? parseFloat(document.getElementById('Dec' + a).value.replace(/,/g, '')) : 0;
+                    totL += amtL;
+
+                }
+
+
+                document.getElementById('jum1').value = totA.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum2').value = totB.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum3').value = totC.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum4').value = totD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum5').value = totE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum6').value = totF.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum7').value = totG.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum8').value = totH.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum9').value = totI.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum10').value = totJ.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum11').value = totK.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum12').value = totL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+
+                var jumAllKey = totA + totB + totC + totD + totE + totF + totG + totH + totI + totJ + totK + totL;
+                document.getElementById('jumAll').value = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var jumRM = document.getElementById('jumRM').value != '' ? parseFloat(document.getElementById('jumRM').value.replace(/,/g, '')) : 0;
+                var jumAll = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                var jumNilai = jumRM - jumAll;
+
+                if (jumNilai == 0) {
+                    enableSubmit();
+                } else {
+                    disableSubmit();
+                }
+            } else if (val == 5) {
+                var amtAnuall = amt / 1
+
+                $('#Jan' + no).attr('readonly', 'readonly');
+                $('#Feb' + no).attr('readonly', 'readonly');
+                $('#Mac' + no).attr('readonly', 'readonly');
+                $('#Apr' + no).attr('readonly', 'readonly');
+                $('#Mei' + no).attr('readonly', 'readonly');
+                $('#Jun' + no).attr('readonly', 'readonly');
+                $('#Jul' + no).attr('readonly', 'readonly');
+                $('#Aug' + no).attr('readonly', 'readonly');
+                $('#Sept' + no).attr('readonly', 'readonly');
+                $('#Oct' + no).attr('readonly', 'readonly');
+                $('#Nov' + no).attr('readonly', 'readonly');
+                $('#Dec' + no).attr('readonly', 'readonly');
+
+                document.getElementById('Dec' + no).value = amtAnuall.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var amtAnnualA = document.getElementById('Dec' + no).value
+                amtAnnualA = amtAnuall.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                document.getElementById('mon_12' + no).value = amtAnnualA;
+
+                var sumAnnual = parseFloat(amtAnnualA.replace(/,/g, ''));
+                document.getElementById('All' + no).value = sumAnnual.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum_all' + no).value = sumAnnual.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+
+                document.getElementById('proration' + no).value = 5;
+
+                var totA = 0;
+                var totB = 0;
+                var totC = 0;
+                var totD = 0;
+                var totE = 0;
+                var totF = 0;
+                var totG = 0;
+                var totH = 0;
+                var totI = 0;
+                var totJ = 0;
+                var totK = 0;
+                var totL = 0;
+
+                for (var a = 1; a < nohidden; a++) {
+                    var amtA = document.getElementById('Jan' + a).value != '' ? parseFloat(document.getElementById('Jan' + a).value.replace(/,/g, '')) : 0;
+                    totA += amtA;
+                    //console.log(amtA +' -- '+ totA);
+                    var amtB = document.getElementById('Feb' + a).value != '' ? parseFloat(document.getElementById('Feb' + a).value.replace(/,/g, '')) : 0;
+                    totB += amtB;
+                    var amtC = document.getElementById('Mac' + a).value != '' ? parseFloat(document.getElementById('Mac' + a).value.replace(/,/g, '')) : 0;
+                    totC += amtC;
+                    var amtD = document.getElementById('Apr' + a).value != '' ? parseFloat(document.getElementById('Apr' + a).value.replace(/,/g, '')) : 0;
+                    totD += amtD;
+                    var amtE = document.getElementById('Mei' + a).value != '' ? parseFloat(document.getElementById('Mei' + a).value.replace(/,/g, '')) : 0;
+                    totE += amtE;
+                    var amtF = document.getElementById('Jun' + a).value != '' ? parseFloat(document.getElementById('Jun' + a).value.replace(/,/g, '')) : 0;
+                    totF += amtF;
+                    var amtG = document.getElementById('Jul' + a).value != '' ? parseFloat(document.getElementById('Jul' + a).value.replace(/,/g, '')) : 0;
+                    totG += amtG;
+                    var amtH = document.getElementById('Aug' + a).value != '' ? parseFloat(document.getElementById('Aug' + a).value.replace(/,/g, '')) : 0;
+                    totH += amtH;
+                    var amtI = document.getElementById('Sept' + a).value != '' ? parseFloat(document.getElementById('Sept' + a).value.replace(/,/g, '')) : 0;
+                    totI += amtI;
+                    var amtJ = document.getElementById('Oct' + a).value != '' ? parseFloat(document.getElementById('Oct' + a).value.replace(/,/g, '')) : 0;
+                    totJ += amtJ;
+                    var amtK = document.getElementById('Nov' + a).value != '' ? parseFloat(document.getElementById('Nov' + a).value.replace(/,/g, '')) : 0;
+                    totK += amtK;
+                    var amtL = document.getElementById('Dec' + a).value != '' ? parseFloat(document.getElementById('Dec' + a).value.replace(/,/g, '')) : 0;
+                    totL += amtL;
+
+                }
+
+
+                document.getElementById('jum1').value = totA.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum2').value = totB.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum3').value = totC.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum4').value = totD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum5').value = totE.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum6').value = totF.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum7').value = totG.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum8').value = totH.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum9').value = totI.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum10').value = totJ.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum11').value = totK.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('jum12').value = totL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+
+                var jumAllKey = totA + totB + totC + totD + totE + totF + totG + totH + totI + totJ + totK + totL;
+                document.getElementById('jumAll').value = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                var jumRM = document.getElementById('jumRM').value != '' ? parseFloat(document.getElementById('jumRM').value.replace(/,/g, '')) : 0;
+                var jumAll = jumAllKey.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '');
+                var jumNilai = jumRM - jumAll;
+
+                if (jumNilai == 0) {
+                    enableSubmit();
+                } else {
+                    disableSubmit();
+                }
+            }
+        }
+
+    }
+
+
+    function enableSubmit() {
+        $('#btn_submit').attr('type', 'submit');
+        $('#btn_submit').removeClass('disabled');
+        $('#btn_submit').prop('disabled', false);
+    }
+
+    function disableSubmit() {
+        $('#btn_submit').attr('type', 'button');
+        $('#btn_submit').addClass('disabled');
+        $('#btn_submit').prop('disabled', true);
+    }
+
+
+</script>
+
+
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+
+    table {
+        page-break-inside: avoid
+    }
+
+    #content {
+        display: table;
+    }
+
+    #pageFooter {
+        display: table-footer-group;
+    }
+
+    #page_number:after {
+        content: "";
+        counter-increment: pagenumber;
+        content: "Page" counter(pagenumber) "of" counter(pagenumber);
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-row-group
+    }
+
+    tr {
+        page-break-inside: avoid
+    }
+</style>
+

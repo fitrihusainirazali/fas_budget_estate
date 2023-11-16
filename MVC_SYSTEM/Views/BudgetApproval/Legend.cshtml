@@ -1,0 +1,78 @@
+﻿@Html.AntiForgeryToken()
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-sm-12">
+                <div class="panel-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+
+                                <table>
+                                    <tr>
+                                        <th>STATUS</th>
+                                        <th>DESCRIPTION</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="~/Asset/Images/P.jpg" />
+                                        </td>
+                                        <td>
+                                            PREPARE
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="~/Asset/Images/C.jpg" />
+                                        </td>
+                                        <td>
+                                            CHECK
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="~/Asset/Images/A.jpg" />
+                                        </td>
+                                        <td>
+                                            APPROVE
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <img src="~/Asset/Images/R.jpg" />
+                                        </td>
+                                        <td>
+                                            REJECT
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-warning" data-dismiss="modal">CLOSE</button>
+</div>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    /*tr:nth-child(even) {
+        background-color: #dddddd;*/
+    }
+</style>

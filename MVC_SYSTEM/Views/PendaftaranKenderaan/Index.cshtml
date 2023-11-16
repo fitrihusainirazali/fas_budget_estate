@@ -1,0 +1,198 @@
+﻿@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("E13");
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "vehicleregister",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+}
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/AjaxModal.js")
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom:16px;">
+        @using (Ajax.BeginForm("_Index", "PendaftaranKenderaan", null, options, new { @id = "" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Tahun Bajet")
+                    @Html.DropDownList("BudgetYear", new SelectList(ViewBag.BudgetYear, "Value", "Text"), htmlAttributes: new { @class = "form-control", @id = "BudgetYear" })
+                </div>
+                <div class="col-sm-4">
+                    @Html.Label("Keterangan Cost Center")
+                    @Html.TextBox("CostCenter", ViewBag.CostCenter as string, htmlAttributes: new { @class = "form-control", @id = "CostCenter" })
+                </div>
+                <div class="col-sm-1 btn-group" style="padding-top: 24px;">
+                    <input class="btn btn-primary btn-block" type="submit" id="submit" name="View" value=@GlobalResEstate.btnView />
+                </div>
+                <div class="col-sm-3" style="padding-top:25px;" id="AllDownload">
+                    <a class="btn btn-default btn-sm" href="#" id="downloadpdflisting">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                    </a>
+                    <a class="btn btn-default btn-sm" href="#" id="downloadexcellisting"><span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel</a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well" style="margin-top:7px;">
+        <div class="panel panel-success">
+            <div class="panel-heading">@GetBudgetClass.GetScreenName("E13")</div>
+            <div class="panel-body">
+                <div id="vehicleregister">
+                    @Html.Action("_Index", new { BudgetYear = year, CostCenter = ViewBag.CostCenter })
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12 text-right" style="margin-bottom: 20px">
+                <a class="btn btn-success" href="@Url.Action("Create", "PendaftaranKenderaan")" id="btnCreate" onclick="return DisplayProgressMessage2(this);">@GetBudgetClass.GetScreenName("E13") - ADD</a>
+                <a class="btn btn-warning" href=@Url.Action("Index", "ExpensesCC") role="button" onclick="return DisplayProgressMessage(this);">@GlobalResEstate.btnBack.ToUpper()</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    /* Remove arrow input number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    /* Remove arrow input number */
+
+    /*input[type="number"] {
+        text-align: right;
+    }*/
+
+    .btn.disabled, [disabled].btn, fieldset[disabled] .btn {
+        opacity: 0.65 !important;
+    }
+
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    tr.webgrid-header th {
+        text-align: center;
+    }
+
+    .modal-lg {
+        width: 99% !important;
+    }
+
+    @@media only screen and (max-width: 768px) {
+        .modal-lg {
+            width: inherit !important;
+        }
+    }
+
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .ProductDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .GLDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostCenterDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .Amount {
+        width: 90px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 100px;
+        text-align: center;
+    }
+</style>
+
+<script>
+    $("#downloadpdflisting").click(function () {
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        location.href = "@Url.Action("PrintList", "PendaftaranKenderaan")" + param;
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+
+    $("#downloadexcellisting").click(function () {
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter + '&format=EXCEL';
+        location.href="@Url.Action("PrintList", "PendaftaranKenderaan")" + param;
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+</script>

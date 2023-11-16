@@ -1,0 +1,71 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_income_bijibenih[]
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = "Delete Pendapatan Biji Benih";
+    var Cc_Ccd = ViewBag.getCosC + " - " + ViewBag.getCDes;
+    int i = 0;
+}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <div class="panel panel-success">
+                <div class="panel-heading">@GetBudgetClass.GetScreenName("I2")</div>
+                <fieldset class="panel-body">
+                    @foreach (var val in Model)
+                    {
+                        @Html.HiddenFor(m => m[i].abis_id, new { @Class = "form-control", @Value = val.abis_id })
+                        @Html.HiddenFor(m => m[i].abis_budgeting_year, new { @Class = "form-control", @Value = val.abis_budgeting_year })
+                        @Html.HiddenFor(m => m[i].abis_cost_center, new { @Class = "form-control", @Value = val.abis_cost_center })
+                        i++;
+                    }
+                    <fieldset disabled>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.lblYear:</label>
+                            <div class="col-sm-6">
+                                @Html.TextBox("budget_year", null, new { @class = "form-control", @readonly = "readonly", @Value = Model.FirstOrDefault().abis_budgeting_year })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Produk</label>
+                            <div class="col-sm-6">
+                                @Html.TextBox("product_name", null, new { @class = "form-control", @readonly = "readonly", @Value = Model.FirstOrDefault().abis_product_name })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.lblCostCenter:</label>
+                            <div class="col-sm-6">
+                                @Html.TextBox("CC", null, htmlAttributes: new { @class = "form-control", @readonly = "true", @Value = Cc_Ccd })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Stesen</label>
+                            <div class="col-sm-6">
+                                @Html.TextBox("station_name", null, new { @class = "form-control", @readonly = "true", @Value = Model.FirstOrDefault().abis_station_name })
+                            </div>
+                        </div>
+                    </fieldset>
+                </fieldset>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 text-center">
+                    <h3>
+                        <span class="label label-danger">
+                            @GlobalResEstate.msgDelete
+                        </span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnYes.ToUpper() />
+        <button class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnNo.ToUpper()</button>
+    </div>
+}

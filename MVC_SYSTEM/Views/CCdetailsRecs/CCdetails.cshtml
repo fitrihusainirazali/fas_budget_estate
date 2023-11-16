@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = ViewBag.TitleReport;
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "searchResult",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "divLoading"
+    };
+}
+<style>
+    input.grpcb {
+        transform: scale(1.5);
+        margin: 7px;
+    }
+</style>
+
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<div id="divLoading" style="display:none;">
+    <div class="progressTest">
+        <label>
+            @GlobalResEstate.msgWait
+        </label>
+    </div>
+</div>
+
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom:16px;">
+        @using (Ajax.BeginForm("_CCdetails", "CCdetailsRecs", null, options, new { id = "ReportSearch" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-3" id="divlist">
+                        <label id="yearlist">Tahun Bajet</label>
+                        @Html.DropDownList("YearList", null, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                    <div class="col-sm-1" style="padding-top:25px;">
+                        <button type="submit" class="btn btn-primary btn-sm btn-block">@GlobalResEstate.btnView.ToUpper()</button>
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+    <div class="well" style="margin-top:7px;">
+        <div class="panel panel-success">
+            <div class="panel-heading">DETAILS RECORD</div>
+            <div class="panel-body">
+                <div id="searchResult">
+                    <div id="scrollArea2" class="modal-body" style="text-align: center">
+                        <p style="color: red">Please select the selection and click view button.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- modal placeholder-->
+<div id="myModal1" class="modal fade in">
+    <div class="modal-dialog" style="width: 75%">
+        <div class="modal-content">
+            <div id="myModalContent1"></div>
+        </div>
+    </div>
+</div>
+<div id="myModal2" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="myModalContent2"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.select2').select2({
+            width: '100%'
+        });
+
+    });
+
+
+
+</script>
+

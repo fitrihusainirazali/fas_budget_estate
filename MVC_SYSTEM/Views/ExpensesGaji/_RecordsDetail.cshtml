@@ -1,0 +1,39 @@
+﻿@{ 
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (grid.TotalRowCount > 0)
+    {
+        @grid.GetHtml(
+            htmlAttributes: new { id = "grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                grid.Column(GlobalResEstate.hdrNo, style: "text-center", format: (item) => (grid.PageIndex * grid.RowsPerPage) + grid.Rows.IndexOf(item) + 1),
+                grid.Column("abeg_gl_expenses_code", GlobalResEstate.lblGLCode, style: "text-center"),
+                grid.Column("abeg_gl_expenses_name", GlobalResEstate.lblGLDesc),
+                grid.Column("abeg_akt_code", "Kod Aktiviti", style: "text-center"),
+                grid.Column("abeg_akt_name", "Aktiviti"),
+                grid.Column("abeg_note", "Nota"),
+                grid.Column("abeg_total", "Jumlah (RM)", style: "text-right", format: @<text>@item.abeg_total.ToString("#,##0.00")</text>),
+                grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "text-center text-nowrap", format: @<text>
+                    @Html.Raw("<a href='" + @Url.Action("EditDetail", new { id = item.abeg_id }) + "' class='btn btn-success btn-sm' data-edit=''><i class='fa fa-edit'></i></a>")
+                    @Html.Raw("<a href='" + @Url.Action("DeleteDetail", new { id = item.abeg_id }) + "' class='btn btn-danger btn-sm' data-delete=''><i class='fa fa-trash'></i></a>")
+                </text>)))
+    }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label(GlobalResEstate.msgErrorSearch)
+        </div>
+        <hr />
+    }
+}

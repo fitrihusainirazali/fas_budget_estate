@@ -1,0 +1,32 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.BudgetApprovalViewModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        @*<h3 class="modal-title">&nbsp;</h3>*@
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">REASON</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                @*@Html.Label("", htmlAttributes: new { @class = "text-nowrap" })*@
+                                <div class="col-md-12">
+                                    @Html.TextAreaFor(model => model.aprv_note, htmlAttributes: new { @class = "form-control input-sm", @rows = 5, @readonly = "true" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">CLOSE</button>
+    </div>
+}

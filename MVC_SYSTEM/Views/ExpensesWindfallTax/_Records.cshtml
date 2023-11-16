@@ -1,0 +1,48 @@
+﻿@using MVC_SYSTEM.ClassBudget;
+@{ 
+    bgtApproval bgtapproval = new bgtApproval();
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (grid.TotalRowCount > 0)
+    {
+        @grid.GetHtml(
+            htmlAttributes: new { id = "grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                grid.Column(GlobalResEstate.hdrNo, style: "text-center", format: (item) => (grid.PageIndex * grid.RowsPerPage) + grid.Rows.IndexOf(item) + 1),
+                grid.Column("abew_cost_center", "Kod Cost Center", style: "text-center"),
+                grid.Column("abew_cost_center_name", "Keterangan Cost Center"),
+                grid.Column("abew_jumlah_keseluruhan", "Jumlah (RM)", style: "text-center", format: @<text>@item.abew_jumlah_keseluruhan.ToString("#,##0.00")</text>),
+                grid.Column("abew_budgeting_year", "Tahun Bajet", style: "text-center"),
+                grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "text-center text-nowrap col-md-1", format: @<text>
+                @if (bgtapproval.GetBlockStatus(item.abew_cost_center, item.abew_budgeting_year) == true) {
+                    @Html.Raw("<a href='" + @Url.Action("ViewExpWind", new { year = item.abew_budgeting_year, costcenter = item.abew_cost_center }) + "' class='btn btn-primary btn-sm' data-modal2=''><i class='fa fa-list'></i></a>&nbsp;")
+                    @Html.Raw("<a disabled class='btn btn-success btn-sm'><i class='fa fa-edit'></i></a>&nbsp;")
+                    @Html.Raw("<a disabled class='btn btn-danger btn-sm'><i class='fa fa-trash'></i></a>")
+                }
+                else
+                {
+                    @Html.Raw("<a href='" + @Url.Action("ViewExpWind", new { year = item.abew_budgeting_year, costcenter = item.abew_cost_center }) + "' class='btn btn-primary btn-sm' data-modal2=''><i class='fa fa-list'></i></a>&nbsp;")
+                    @Html.Raw("<a href='" + @Url.Action("ExpWindEditDetail", new { abew_budgeting_year = item.abew_budgeting_year, abew_cost_center = item.abew_cost_center }) + "' class='btn btn-success btn-sm'><i class='fa fa-edit'></i></a>&nbsp;")
+                    @Html.Raw("<a href='" + @Url.Action("ExpWindDeleteDetail", new { abew_budgeting_year = item.abew_budgeting_year, abew_cost_center = item.abew_cost_center }) + "' class='btn btn-danger btn-sm' data-modal1=''><i class='fa fa-trash'></i></a>")
+                }
+                </text>)))
+    }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label(GlobalResEstate.msgErrorSearch)
+        </div>
+        <hr />
+    }
+}

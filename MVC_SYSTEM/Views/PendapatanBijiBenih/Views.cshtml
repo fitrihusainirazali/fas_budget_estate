@@ -1,0 +1,356 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_income_bijibenih[]
+@using MVC_SYSTEM.ClassBudget;
+@{
+    ViewBag.Title = "View Pendapatan Biji Benih";
+    GetStatus GetStatus = new GetStatus();
+    GetConfig GetConfig = new GetConfig();
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    int i = 1;
+    int j = 1;
+    //int k = 1;
+}
+
+@*@if (Model != null && Model.Count() != 0)*@
+@if (Model.Count() > 0)
+{
+    <section class="content-wrapper main-content clear-fix">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+        <div class="modal-body">
+            <div style="text-align:right; margin-top:10px" id="allprint">
+                <a class="btn btn-default btn-sm" href="#" id="downloadpdfviewbijibenih">
+                    <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                </a>
+                <a class="btn btn-default btn-sm" href="#" id="downloadexcelviewbijibenih">
+                    <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                </a>
+            </div>
+        </div>
+        <div id="printarea" class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table" style="font-size: 11px;" width="100%">
+                        <tr>
+                            <td colspan="4" width="250" style="text-align:justify; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+                                <img src="~/Asset/Images/logo_FTPSB.jpg" width="100" id="logoid" />
+                            </td>
+                            <td colspan="4" width="500" style="text-align: center; vertical-align: middle;border-bottom:none;border-bottom-color:red;border-top:none">
+                                <br />
+                                <span class="text-header">@ViewBag.NamaSyarikat</span>
+                                <br />
+                                <span class="text-header">(@ViewBag.NoSyarikat)</span>
+                                <br />
+                                Bajet @ViewBag.BudgetYear
+                            </td>
+                            <td colspan="6" width="250" style="text-align: right; vertical-align: middle; border-bottom:none;border-bottom-color:red;border-top:none">
+                                Tarikh : @DateTime.Now.ToString("dd/MM/yyyy")
+                                <br />
+                                M.Surat : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ViewBag.curretpage/@ViewBag.newtotalpage
+                                <br />
+                                Revision : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.FirstOrDefault().abis_status
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">@GetBudgetClass.GetScreenName("I2")</th>
+                        </tr>
+                        <tr>
+                            <th colspan="14" style="text-align: left; vertical-align: middle;">Unit : @Model.FirstOrDefault().abis_cost_center - @Model.FirstOrDefault().abis_cost_center_desc</th>
+                            @Html.Hidden("cc", null, htmlAttributes: new { @Class = "cc", @Value = Model.FirstOrDefault().abis_cost_center })
+                            @Html.Hidden("yr", null, htmlAttributes: new { @Class = "yr", @Value = Model.FirstOrDefault().abis_budgeting_year })
+                            @Html.Hidden("sn", null, htmlAttributes: new { @Class = "sn", @Value = GetBudgetClass.GetScreenName("I2") })
+                        </tr>
+                        <tr>
+                            <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">1. PRODUK : @Model.FirstOrDefault().abis_product_code - @ViewBag.ProductName.ToUpper()</td>
+                        </tr>
+                        <tr>
+                            <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">
+
+                                2. GL PENDAPATAN SYARIKAT KUMPULAN (@Model.FirstOrDefault().abis_gl_code - @Model.FirstOrDefault().abis_gl_desc.ToUpper()) : RM@(Model.Sum(s=>s.abis_grand_amount1).HasValue ? Model.Sum(s=>s.abis_grand_amount1).Value.ToString("#,##0.00") :"")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="14" style="text-align: left; vertical-align: middle; border-top:none; border-bottom:1px solid;border-bottom-color:#dddddd">
+
+                                3. GL PENDAPATAN BANDAR LUAR (@Model.LastOrDefault().abis_gl_code - @Model.LastOrDefault().abis_gl_desc.ToUpper()) : RM@(Model.Sum(s=>s.abis_grand_amount2).HasValue ? Model.Sum(s => s.abis_grand_amount2).Value.ToString("#,##0.00") :"")
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <table class="table table-hover table-bordered" style="font-size: 11px;" width="100%">
+                <thead>
+                    <tr>
+                        <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">KUANTITI / @Model.FirstOrDefault().abis_uom</th>
+                    </tr>
+                    <tr>
+                        <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jan</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Feb</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mac</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Apr</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mei</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jun</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jul</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ogos</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Sept</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Okt</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Nov</th>
+                        <th width="70" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Dis</th>
+                        <th width="100" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var items in Model.GroupBy(g => new { g.abis_fld_ID, g.abis_cost_center }).Select(g => g.FirstOrDefault()))
+                    {
+                        <tr>
+                            <td align="left" style="vertical-align:middle !important;border:1px solid black;" border="1">@i@Html.Raw(".") @items.abis_company_name.ToUpper()</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_1.HasValue ? items.abis_qty_1.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_2.HasValue ? items.abis_qty_2.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_3.HasValue ? items.abis_qty_3.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_4.HasValue ? items.abis_qty_4.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_5.HasValue ? items.abis_qty_5.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_6.HasValue ? items.abis_qty_6.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_7.HasValue ? items.abis_qty_7.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_8.HasValue ? items.abis_qty_8.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_9.HasValue ? items.abis_qty_9.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_10.HasValue ? items.abis_qty_10.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_11.HasValue ? items.abis_qty_11.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">@(items.abis_qty_12.HasValue ? items.abis_qty_12.Value.ToString("#,##0.000") : "0.000")</td>
+                            <td align="right" style="vertical-align:middle !important;border:1px solid black;" border="1">
+                                @if (items.abis_company_code == "1")
+                                {
+                                    @(items.abis_total_qty_a.HasValue ? items.abis_total_qty_a.Value.ToString("#,##0.000") : "");
+                                }
+                                else
+                                {
+                                    @(items.abis_total_qty_b.HasValue ? items.abis_total_qty_b.Value.ToString("#,##0.000") : "");
+                                }
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                    <tr>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">&nbsp;</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_1 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_1).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_2 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_2).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_3 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_3).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_4 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_4).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_5 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_5).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_6 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_6).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_7 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_7).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_8 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_8).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_9 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_9).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_10 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_10).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_11 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_11).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@Model.GroupBy(g => new { g.abis_fld_ID, g.abis_qty_12 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_qty_12).Value.ToString("#,##0.000")</th>
+                        <th style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_company_name, g.abis_grand_total_quantity }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_grand_total_quantity).HasValue ? Model.GroupBy(g => new { g.abis_company_name, g.abis_grand_total_quantity }).Select(g => g.FirstOrDefault()).Sum(m=>m.abis_grand_total_quantity).Value.ToString("#,##0.000"):"")</th>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <!---------------------------NILAI----------------------------->
+            <br />
+            <!---------------------------NILAI----------------------------->
+
+
+            <table class="table table-hover table-bordered" style="font-size: 11px;" border="0" width="100%">
+                <thead>
+                    <tr>
+                        <th class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" colspan="14">NILAI (RM)</th>
+                    </tr>
+                    <tr>
+                        <th width="200" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jan</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Feb</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mac</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Apr</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Mei</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jun</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Jul</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Ogos</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Sept</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Okt</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Nov</th>
+                        <th width="70" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Dis</th>
+                        <th width="100" class="headerviewsawit" bgcolor="#" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@GlobalResEstate.lblTotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var items in Model.GroupBy(g => new { g.abis_fld_ID, g.abis_cost_center }).Select(g => g.FirstOrDefault()))
+                    {
+                        <tr>
+                            <td style="text-align: left; vertical-align: middle !important; border: 1px solid black;" border="1">@j@Html.Raw(".") @items.abis_company_name.ToUpper() </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_1.HasValue ? items.abis_amount_1.Value.ToString("#,##0.00") : "")</td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_2.HasValue ? items.abis_amount_2.Value.ToString("#,##0.00") : "")</td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_3.HasValue ? items.abis_amount_3.Value.ToString("#,##0.00") : "")</td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_4.HasValue ? items.abis_amount_4.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_5.HasValue ? items.abis_amount_5.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_6.HasValue ? items.abis_amount_6.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_7.HasValue ? items.abis_amount_7.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_8.HasValue ? items.abis_amount_8.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_9.HasValue ? items.abis_amount_9.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_10.HasValue ? items.abis_amount_10.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_11.HasValue ? items.abis_amount_11.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">@(items.abis_amount_12.HasValue ? items.abis_amount_12.Value.ToString("#,##0.00") : "") </td>
+                            <td style="text-align: right; vertical-align: middle !important; border: 1px solid black;" border="1">
+                                @if (items.abis_company_code == "1")
+                                {
+                                    @(items.abis_total_amount_a.HasValue ? items.abis_total_amount_a.Value.ToString("#,##0.00") : "")
+                                }
+                                else
+                                {
+                                    @(items.abis_total_amount_b.HasValue ? items.abis_total_amount_b.Value.ToString("#,##0.00") : "")
+                                }
+                            </td>
+                        </tr>
+                        j++;
+                    }
+                    <tr>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">&nbsp;</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_1 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_1).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_1 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_1).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_2 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_2).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_2 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_2).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_3 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_3).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_3 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_3).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_4 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_4).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_4 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_4).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_5 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_5).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_5 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_5).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_6 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_6).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_6 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_6).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_7 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_7).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_7 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_7).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_8 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_8).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_8 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_8).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_9 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_9).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_9 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_9).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_10 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_10).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_10 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_10).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_11 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_11).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_11 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_11).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_12 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_12).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_amount_12 }).Select(g => g.FirstOrDefault()).Sum(m => m.abis_amount_12).Value.ToString("#,##0.00") : "")</th>
+                        <th style="text-align:right;vertical-align:middle !important;border: 1px solid black;" border="1">@(Model.GroupBy(g => new { g.abis_fld_ID, g.abis_grand_total_amount }).Select(g => g.FirstOrDefault()).Sum(s=>s.abis_grand_total_amount).HasValue ? Model.GroupBy(g => new { g.abis_fld_ID, g.abis_grand_total_amount }).Select(g => g.FirstOrDefault()).Sum(s=>s.abis_grand_total_amount).Value.ToString("#,##0.00") : "") </th>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <!----------------------------PRICE---------------------------->
+            <br />
+            <!----------------------------PRICE---------------------------->
+
+
+            <table class="table table-hover table-bordered" style="font-size: 11px;border:none" width="100%">
+                <thead>
+                    <tr>
+                        <th class="headerviewsawit" width="200" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">HARGA (RM / @Model.FirstOrDefault().abis_uom)</th>
+                        <th class="headerviewsawit" width="70" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="70" style="text-align:center;border:none">&nbsp;</th>
+                        <th width="100" style="text-align:center;border:none">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int pb = 1;
+                        int year = @ViewBag.BudgetYear;
+                    }
+
+                    @if (year >= 2024)
+                    {
+                        foreach (var items in Model.GroupBy(g => new { g.abis_fld_ID, g.abis_company_name, g.abis_unit_price }).Select(g => g.Key))
+                        {
+                            <tr>
+                                <td style="text-align:left;vertical-align:middle !important;border:1px solid black;">@pb@Html.Raw(".")@items.abis_company_name.ToUpper() </td>
+                                <td style="text-align:right;vertical-align:middle !important;border:1px solid black;">@(items.abis_unit_price.HasValue ? items.abis_unit_price.Value.ToString("#,##0.00") : "")</td>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                            </tr>
+                            pb++;
+                        }
+                    }
+                    else if (year < 2024)
+                    {
+                        foreach (var items in Model)
+                        {
+                            <tr>
+                                <td style="text-align:left;vertical-align:middle !important;border:1px solid black;">@pb@Html.Raw(".")@items.abis_company_name.ToUpper() </td>
+                                <td style="text-align:right;vertical-align:middle !important;border:1px solid black;">0.00</td>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                                <th style="text-align:center;border:none">&nbsp;</th>
+                            </tr>
+                            pb++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+else
+{
+    <div id="printarea" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+    </div>
+}
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+
+    .headerviewsawit {
+        color: #ffffff;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+
+    .text-header {
+        font-size: small;
+        font-weight: bold;
+    }
+</style>
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+<script>
+    $("#downloadpdfviewbijibenih").click(function () {
+
+        var BudgetYear = $("#yr").val();
+        var CostCenter = $("#cc").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        @*PDFObject.embed("@Url.Action("ViewSawitPDF", "PendapatanBijiBenih")" + param, "#printarea", { height: "500px" });*@
+        location.href="@Url.Action("PrintView", "PendapatanBijiBenih")" + param;
+        return false;
+    });
+    
+    $("#downloadexcelviewbijibenih").click(function () {
+
+        var BudgetYear = $("#yr").val();
+        var CostCenter = $("#cc").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        location.href="@Url.Action("PrintViewExcel", "PendapatanBijiBenih")" + param;
+        return false;
+    });
+</script>

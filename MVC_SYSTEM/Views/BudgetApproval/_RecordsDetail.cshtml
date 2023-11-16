@@ -1,0 +1,43 @@
+﻿<style type="text/css">
+    table th.text-center {
+        background-color: unset;
+    }
+
+    .table tbody > tr > td {
+        vertical-align: middle !important;
+    }
+</style>
+
+@{ 
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (grid.TotalRowCount > 0)
+    {
+        @grid.GetHtml(
+            htmlAttributes: new { id = "grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                grid.Column(header: GlobalResEstate.hdrNo, format: (item) => (grid.PageIndex * grid.RowsPerPage) + grid.Rows.IndexOf(item) + 1, style: "text-center col-md-1"),
+                grid.Column("aprv_cost_center_code", "Kod Cost Center", style: "text-center"),
+                grid.Column("aprv_cost_center_desc", "Keterangan Cost Center", style: "text-center"),
+                grid.Column("aprv_budgeting_year", "Tahun Bajet", style: "text-center")
+                ))
+    }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label(GlobalResEstate.msgErrorSearch)
+        </div>
+        <hr />
+    }
+}

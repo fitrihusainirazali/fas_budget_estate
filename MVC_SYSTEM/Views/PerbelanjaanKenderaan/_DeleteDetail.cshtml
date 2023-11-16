@@ -1,0 +1,88 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesVehicleDeleteDetailViewModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">@GlobalResEstate.titleDelete</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_budgeting_year)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_budgeting_year, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_cost_center_code)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_cost_center_code, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_cost_center_desc)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_cost_center_desc, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_cost_center_jualan_code)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_cost_center_jualan_code, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_gl_income_code)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_gl_income_code, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>*@
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_gl_expenses_code)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_gl_expenses_code, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_gl_expenses_name)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_gl_expenses_name, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_product_code)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_product_name, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>*@
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.abev_total)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.abev_total, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 style="margin-top:0;">
+                    <span class="label label-danger">@GlobalResEstate.msgDelete</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">@GlobalResEstate.btnYes.ToUpper()</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnNo.ToUpper()</button>
+    </div>
+}

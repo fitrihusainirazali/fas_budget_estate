@@ -1,0 +1,302 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+    var costCenter = ViewBag.CostCenter as string;
+    var bgtrole = ViewBag.RoleID;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "GET",
+        UpdateTargetId = "RecordsPartial",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+}
+
+<style type="text/css">
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    tr.webgrid-header th {
+        text-align: center;
+    }
+
+    .modal-lg {
+        width: 99% !important;
+    }
+
+    .text-upper {
+        text-transform: uppercase;
+    }
+
+    .text-bolded {
+        font-weight: bold;
+    }
+
+    @@media only screen and (max-width: 768px) {
+        .modal-lg {
+            width: inherit !important;
+        }
+    }
+</style>
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well" style="margin-bottom: 20px;">
+        @using (Ajax.BeginForm("Records", "BudgetApproval", null, options, new { id = "FormBudgetApprovalSearch" }))
+        {
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        @Html.Label("Tahun Bajet", htmlAttributes: new { @class = "text-nowrap" })
+                        @Html.DropDownList("BudgetYear", new SelectList(ViewBag.BudgetYear, "Value", "Text"), htmlAttributes: new { @class = "form-control input-sm", @id = "BudgetYear" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        @Html.Label("Cost Center Description", htmlAttributes: new { @class = "text-nowrap" })
+                        @Html.TextBox("CostCenter", costCenter, htmlAttributes: new { @class = "form-control input-sm", placeholder = "Cost Center Description" })
+                    </div>
+                </div>
+                @*<div class="col-md-2">
+                        <div class="form-group">
+                            @Html.Label("Action", htmlAttributes: new { @class = "text-nowrap" })
+                            @Html.DropDownList("Action", new List<SelectListItem>
+                            {
+                                new SelectListItem { Value = "1", Text = "Send For Approval", Selected = true },
+                                new SelectListItem { Value = "2", Text = "Approve" },
+                                new SelectListItem { Value = "3", Text = "Reject" }
+                            }, htmlAttributes: new { @class = "form-control input-sm", @id = "Action", onclick = "ActionRole()", onchange = "ActionStatus()", @disabled = "disabled" })
+                        </div>
+                    </div>*@
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">@GlobalResEstate.btnView</button>
+                </div>
+                @if (bgtrole == 9) //Exe Budget
+                {
+                    <div class="col-md-1">
+                        <label>&nbsp;</label>
+                        <a data-process="" href="@Url.Action("SendForApproval")" class="btn btn-success btn-sm">Send For Approval</a>
+                    </div>
+                    <div class="col-md-5">
+                        <label>&nbsp;</label>
+                    </div>
+                    <div class="col-md-1">
+                        <label>&nbsp;</label><br />
+                        <a data-legend="" href="@Url.Action("Legend")" class="btn btn-info btn-sm">Legend</a>
+                    </div>
+                }
+                else if (bgtrole == 1) //Budget Manager
+                {
+                    <div class="col-md-4">
+                        <label>&nbsp;</label><br />
+                        <a data-process="" href="@Url.Action("Approve")" class="btn btn-success btn-sm">Approve</a>
+                        <label>&nbsp;</label>
+                        <a data-process="" href="@Url.Action("Reject")" class="btn btn-danger btn-sm">Reject</a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="well">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div id="RecordsPartial">
+                            @Html.Action("Records", new { BudgetYear = year, CostCenter = ViewBag.CostCenter })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<hr style="margin-top:0;" />
+            <div class="row">
+                <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                    @if (bgtrole == 1)
+                    {
+                        <a data-create="" href="@Url.Action("AddDetails")" class="btn btn-success" onclick="return DisplayProgressMessage2(this);">@ViewBag.Title - @GlobalResEstate.btnAdd.ToUpper()</a>
+                    }
+                    <a href="@Url.Action("Index", "BudgetApproval")" class="btn btn-warning">@GlobalResEstate.btnBack.ToUpper()</a>
+                </div>
+            </div>*@
+    </div>
+</section>
+
+<!-- modal placeholder-->
+<div id="myModal1" class="modal fade in">
+    <div class="modal-dialog" style="width: 75%">
+        <div class="modal-content">
+            <div id="myModalContent1"></div>
+        </div>
+    </div>
+</div>
+<div id="myModal2" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="myModalContent2"></div>
+        </div>
+    </div>
+</div>
+<div id="myModal3" class="modal fade in">
+    <div class="modal-dialog" style="width: 30%">
+        <div class="modal-content">
+            <div id="myModalContent3"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                cache: false
+            });
+
+            $(document).on('click', 'a[data-legend]', function (e) {
+                $('#myModalContent3').load(this.href, function () {
+                    $('#myModal1').modal('hide');
+                    $('#myModal2').modal('hide');
+                    $('#myModal3').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+
+            $(document).on('click', 'a[data-create]', function (e) {
+                var url = this.href;
+                $('#myModalContent1').load(url, function () {
+                    $('#myModal1').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+
+            $(document).on('click', 'a[data-edit]', function (e) {
+                $('#myModalContent1').load(this.href, function () {
+                    $('#myModal2').modal('hide');
+                    $('#myModal1').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+
+            $(document).on('click', 'a[data-delete]', function (e) {
+                $('#myModalContent2').load(this.href, function () {
+                    $('#myModal1').modal('hide');
+                    $('#myModal2').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+
+            $(document).on('click', 'a[data-process]', function (e)
+            {
+                var BudgetYear = $("#BudgetYear").val();
+                var CostCenter = $("#CCcode").val();
+                var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+                if (CostCenter == null || CostCenter == "") {
+                    @*location.href = "@Url.Action("DialogMsg", "BudgetApproval")";*@
+                    var urls = "@Url.Action("DialogMsg", "BudgetApproval")";
+                    $('#myModalContent1').load(urls, function () {
+                        $('#myModal2').modal('hide');
+                        $('#myModal1').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        }, 'show');
+                        bindForm(this);
+                    });
+                    return false;
+                }
+                $('#myModalContent1').load(this.href+param, function () {
+                    $('#myModal2').modal('hide');
+                    $('#myModal1').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            });
+        });
+
+        function bindForm(dialog) {
+            $('form', dialog).submit(function () {
+                $('#progress').show();
+                $.ajax({
+                    url: this.action,
+                    type: this.method,
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        $('#progress').hide();
+                        if (result.success) {
+                            $('#myModal1').modal('hide');
+                            $('#myModal2').modal('hide');
+                            var url = '';
+                            if (result.controller && result.action && result.rooturl) {
+                                if (result.paramName1 && result.paramValue1) {
+                                    if (result.paramName2 && result.paramValue2) {
+                                        url = result.rooturl + '/' + result.controller + '/' + result.action + '?' + result.paramName1 + '=' + result.paramValue1 + '&' + result.paramName2 + '=' + result.paramValue2;
+                                    } else {
+                                        url = result.rooturl + '/' + result.controller + '/' + result.action + '?' + result.paramName1 + '=' + result.paramValue1;
+                                    }
+                                    url = result.rooturl + '/' + result.controller + '/' + result.action + '?' + result.paramName1 + '=' + result.paramValue1;
+                                } else {
+                                    url = result.rooturl + '/' + result.controller + '/' + result.action;
+                                }
+                            }
+                            if (result.div && url != '') {
+                                $('#' + result.div).load(url);
+                            }
+                            if (result.msg && result.status) {
+                                $.simplyToast(result.msg, result.status);
+                            }
+                        } else {
+                            if (result.msg && result.status) {
+                                $.simplyToast(result.msg, result.status);
+                            }
+                        }
+                    }
+                });
+                return false;
+            });
+        }
+
+        function CheckFunction(element) {
+            if ($(element).prop('checked')) {
+                var CCcode = $('#CCcode').val(); CCcode += $(element).val() + ','; $('#CCcode').val(CCcode);
+                var SCode = $('#SCode').val(); SCode += $(element).val() + ','; $('#SCode').val(SCode);
+            }
+            else {
+                let str = $('#CCcode').val(); let res = str.replace($(element).val()+',', ""); $('#CCcode').val(res);
+                let str2 = $('#SCode').val(); let res2 = str2.replace($(element).val() + ',', ""); $('#SCode').val(res2);
+            }
+        }
+
+        $(document).ready(function () {
+            $('#checkBoxAll').click(function () {
+                if ($(this).is(":checked")) {
+                    $(".checkstatus").prop("checked", true)
+                }
+                else {
+                    $(".checkstatus").prop("checked", false)
+                }
+            });
+        });
+    </script>
+}

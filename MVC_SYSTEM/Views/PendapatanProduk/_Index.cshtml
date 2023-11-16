@@ -1,0 +1,89 @@
+﻿@using MVC_SYSTEM.ClassBudget;
+@{
+    bgtApproval bgtapproval = new bgtApproval();
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    BudgetUserMatrix UserMatrix = new BudgetUserMatrix();//new oct
+    var userid = User.Identity.Name;
+    var RoleScreen = UserMatrix.RoleScreen(userid, "I3");
+
+    if (@grid.TotalRowCount > 0)
+    {
+            @grid.GetHtml(htmlAttributes: new { id = "grid" },
+                tableStyle: "table table-bordered table-striped table-list table-hover",
+                headerStyle: "header_table",
+                alternatingRowStyle: "Grid-alt",
+                selectedRowStyle: "Grid-selected",
+                rowStyle: "Grid-rowstyle",
+                footerStyle: "table-pager",
+                mode: WebGridPagerModes.All,
+                columns: grid.Columns(
+                    grid.Column(header: GlobalResEstate.hdrNo, format: (item) => (grid.PageIndex * grid.RowsPerPage) + grid.Rows.IndexOf(item) + 1, style: "count"),
+                    grid.Column(columnName: "CostCenterCode", header: "Kod Cost Center", style: "CostC"),
+                    grid.Column(columnName: "CostCenterDesc", header: "Keterangan Cost Center", style: "CostCenterDesc"),
+                    grid.Column(columnName: "StesenName", header: "Stesen", style: "Amount"),
+                    grid.Column(columnName: "Total", header: "Jumlah (RM)", format: @<text> @if (item.Total != null) { @item.Total.ToString("#,##0.000") }</text>, style: "Amount"),
+                    grid.Column(columnName: "BudgetYear", header:"Tahun Bajet", style: "Amount "),
+                    grid.Column(GlobalResEstate.hdrAction, format: (item) =>
+                    {
+                        if (bgtapproval.GetBlockStatus(item.CostCenterCode, item.BudgetYear, "I3") == true)
+                        {
+                            var tindakan = "<a data-modal1='' href='" + @Url.Action("Views", "PendapatanProduk", new { costcenter = item.CostCenterCode, budgetyear = item.BudgetYear }) + "' class='btn btn-primary btn-sm' role='button' title='" + GlobalResEstate.btnView + "' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-list fa-sm'></i></a>&nbsp;";
+                                           //"<a disabled class='btn btn-success btn-sm' role='button' title='" + GlobalResEstate.btnUpdate + "'><i class='fa fa-edit fa-sm'></i></a>&nbsp;" +
+                                           //"<a disabled class='btn btn-danger btn-sm' role='button' title='" + GlobalResEstate.btnDelete + "'><i class='fa fa-trash fa-sm'></i></a>&nbsp;";
+
+                            return @Html.Raw(tindakan);
+                        }
+                        else
+                        {
+                            if (!RoleScreen.edit && !RoleScreen.delete)
+                            {
+                                var tindakan =  "<a data-modal1='' href='" + @Url.Action("Views", "PendapatanProduk", new { costcenter = item.CostCenterCode, budgetyear = item.BudgetYear }) + "' class='btn btn-primary btn-sm' role='button' title='" + GlobalResEstate.btnView + "' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-list fa-sm'></i></a>&nbsp;" +
+                                                "<a href='" + @Url.Action("Denied", "bgtAlert") + "' class='btn btn-success  btn-sm' role='button' title='" + GlobalResEstate.btnUpdate + "'><i class='fa fa-edit fa-sm'></i></a>&nbsp;" +
+                                                "<a href='" + @Url.Action("Denied", "bgtAlert") + "' class='btn btn-danger btn-sm' role='button' title='" + GlobalResEstate.btnDelete + "'><i class='fa fa-trash fa-sm'></i></a>&nbsp;";
+
+                                return @Html.Raw(tindakan);
+                            }
+                            else if (RoleScreen.edit && !RoleScreen.delete)
+                            {
+                                var tindakan =  "<a data-modal1='' href='" + @Url.Action("Views", "PendapatanProduk", new { costcenter = item.CostCenterCode, budgetyear = item.BudgetYear }) + "' class='btn btn-primary btn-sm' role='button' title='" + GlobalResEstate.btnView + "' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-list fa-sm'></i></a>&nbsp;" +
+                                                "<a href='" + @Url.Action("Update", "PendapatanProduk", new { BudgetYear = item.BudgetYear, CostCenter = item.CostCenterCode, stationcode = item.stationcode, stationname = item.StesenName }) + "' class='btn btn-success  btn-sm' role='button' title='" + GlobalResEstate.btnUpdate + "' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-sm'></i></a>&nbsp;" +
+                                                "<a href='" + @Url.Action("Denied", "bgtAlert") + "' class='btn btn-danger btn-sm' role='button' title='" + GlobalResEstate.btnDelete + "'><i class='fa fa-trash fa-sm'></i></a>&nbsp;";
+
+                                return @Html.Raw(tindakan);
+                            }
+                            else if (!RoleScreen.edit && RoleScreen.delete)
+                            {
+                                var tindakan =  "<a data-modal1='' href='" + @Url.Action("Views", "PendapatanProduk", new { costcenter = item.CostCenterCode, budgetyear = item.BudgetYear }) + "' class='btn btn-primary btn-sm' role='button' title='" + GlobalResEstate.btnView + "' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-list fa-sm'></i></a>&nbsp;" +
+                                                "<a href='" + @Url.Action("Denied", "bgtAlert") + "' class='btn btn-success  btn-sm' role='button' title='" + GlobalResEstate.btnUpdate + "'><i class='fa fa-edit fa-sm'></i></a>&nbsp;" +
+                                                "<a data-modal1='' href='" + @Url.Action("Delete", "PendapatanProduk", new { costcenter = item.CostCenterCode, budgetyear = item.BudgetYear }) + "' class='btn btn-danger btn-sm' role='button' title='" + GlobalResEstate.btnDelete + "' onclick='return DisplayProgressMessage(this);'><i class='fa fa-trash fa-sm'></i></a>&nbsp;";
+
+                                return @Html.Raw(tindakan);
+                            }
+                            else
+                            {
+                                var tindakan =  "<a data-modal1='' href='" + @Url.Action("Views", "PendapatanProduk", new { costcenter = item.CostCenterCode, budgetyear = item.BudgetYear }) + "' class='btn btn-primary btn-sm' role='button' title='" + GlobalResEstate.btnView + "' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-list fa-sm'></i></a>&nbsp;" +
+                                                "<a href='" + @Url.Action("Update", "PendapatanProduk", new { BudgetYear = item.BudgetYear, CostCenter = item.CostCenterCode, stationcode = item.stationcode, stationname = item.StesenName }) + "' class='btn btn-success  btn-sm' role='button' title='" + GlobalResEstate.btnUpdate + "' onclick='return DisplayProgressMessage2(this);'><i class='fa fa-edit fa-sm'></i></a>&nbsp;" +
+                                                "<a data-modal1='' href='" + @Url.Action("Delete", "PendapatanProduk", new { costcenter = item.CostCenterCode, budgetyear = item.BudgetYear }) + "' class='btn btn-danger btn-sm' role='button' title='" + GlobalResEstate.btnDelete + "' onclick='return DisplayProgressMessage(this);'><i class='fa fa-trash fa-sm'></i></a>&nbsp;";
+
+                                return @Html.Raw(tindakan);
+                            }
+                        }
+                    }, canSort: false, style: "tindakan")
+                    ))
+        }
+        else
+        {
+            <hr />
+            <div class="text-center text-danger">
+                @Html.Label(GlobalResEstate.msgErrorSearch)
+            </div>
+            <hr />
+        }
+    }

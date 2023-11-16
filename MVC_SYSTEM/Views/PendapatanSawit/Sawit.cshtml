@@ -1,0 +1,156 @@
+﻿@model MVC_SYSTEM.ModelsBudget.PagedList<MVC_SYSTEM.ModelsBudget.ViewModels.IncomeSawitListViewModel>
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("I1");
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "sawit",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+
+    BudgetUserMatrix UserMatrix = new BudgetUserMatrix();//new oct
+    var userid = User.Identity.Name;
+    var RoleScreen = UserMatrix.RoleScreen(userid, "I1");
+}
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/AjaxModal.js")
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom:16px;">
+        @using (Ajax.BeginForm("_Sawit", "PendapatanSawit", null, options, new { @id = "" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-sm-3">
+                    @Html.Label("Tahun Bajet")
+                    @Html.DropDownList("BudgetYear", new SelectList(ViewBag.BudgetYear, "Value", "Text"), htmlAttributes: new { @class = "form-control", id = "BudgetYear" })
+                </div>
+                <div class="col-sm-3">
+                    @Html.Label("Keterangan Cost Center")
+                    @Html.TextBox("CostCenter", ViewBag.CostCenter as string, htmlAttributes: new { @class = "form-control", placeholder = "", @id = "CostCenter" })
+                </div>
+                <div class="col-sm-1 btn-group" style="padding-top: 24px;">
+                    <input class="btn btn-primary btn-block" type="submit" id="submit" name="Lihat" value=@GlobalResEstate.btnView />
+                </div>
+                <div class="col-sm-5" style="padding-top:25px;" id="AllDownload">
+                    <a class="btn btn-default btn-sm" href="#" id="downloadpdflistingsawit">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                    </a>
+                    <a class="btn btn-default btn-sm" href="#" id="downloadexcellistingsawit"><span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel</a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well" style="margin-top:7px;">
+        <div class="modal-body">
+            <div class="panel panel-success">
+                <div class="panel-heading">@GetBudgetClass.GetScreenName("I1")</div>
+                <div class="panel-body">
+                    <div id="sawit">
+                        @Html.Action("_Sawit", new { BudgetYear = year, })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            @if (!RoleScreen.add)
+            {
+                <a class="btn btn-success" href="@Url.Action("Denied", "bgtAlert")">@GetBudgetClass.GetScreenName("I1") - ADD</a>
+            }
+            else
+            {
+                <a class="btn btn-success" data-modal1="" href="@Url.Action("Create", "PendapatanSawit")" id="btnCreate" onclick="return DisplayProgressMessage2(this);">@GetBudgetClass.GetScreenName("I1") - ADD</a>
+                <a class="btn btn-warning" href=@Url.Action("Index", "Income") role="button" onclick="return DisplayProgressMessage(this);">@GlobalResEstate.btnBack.ToUpper()</a>
+            }
+        </div>
+    </div>
+</section>
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog" style="width: 99%">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostCenterDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .Amount {
+        width: 90px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 100px;
+        text-align: center;
+    }
+</style>
+
+<script>
+    $("#downloadpdflistingsawit").click(function () {
+        //$("#AllDownload").hide();
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter;
+        @*PDFObject.embed("@Url.Action("PrintList", "PendapatanSawit")" + param, "#sawit", { height: "400px" });*@
+        @*PDFObject.embed("@Url.Action("exportPDF", "PendapatanSawit")" + param, "#sawit", { height: "400px" });*@
+        location.href = "@Url.Action("PrintList", "PendapatanSawit")" + param;
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+
+    $("#downloadexcellistingsawit").click(function () {
+        //$("#AllDownload").hide();
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter + '&format=EXCEL';
+        location.href="@Url.Action("PrintList", "PendapatanSawit")" + param;
+        @*PDFObject.embed("@Url.Action("ExportExcel", "PendapatanSawit")" + param);*@
+        //return location.reload();
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+</script>

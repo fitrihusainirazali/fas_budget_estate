@@ -1,0 +1,78 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesCapitalDeleteViewModel
+
+@using (Html.BeginForm("Delete", "ExpensesCapital", FormMethod.Post, htmlAttributes: new { id = "form-expenses-capital-delete" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("CostCenter", new { @Value = ViewBag.CostCenter })
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">@GlobalResEstate.titleDelete</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.BudgetYear)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.BudgetYear, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.CostCenterCode)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.CostCenterCode, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.CostCenterDesc)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.CostCenterDesc, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">@Html.DisplayNameFor(model => model.Total)</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.Total, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title - Details</div>
+                    <div class="panel-body">
+                        <div id="RecordsPartialDelete">
+                            @Html.Action("RecordsGL", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 style="margin-top:0;">
+                    <span class="label label-danger">@GlobalResEstate.msgDelete</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">@GlobalResEstate.btnYes.ToUpper()</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnNo.ToUpper()</button>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#RecordsPartialDelete').find('table').find('thead tr th:last-child').remove();
+        $('#RecordsPartialDelete').find('table').find('tbody tr td:last-child').remove();
+    });
+</script>

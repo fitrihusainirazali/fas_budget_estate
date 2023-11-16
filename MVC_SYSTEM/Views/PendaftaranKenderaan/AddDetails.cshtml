@@ -1,0 +1,174 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_vehicle_register
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    int budgetyear = GetBudgetClass.GetBudgetYear();
+    ViewBag.Title = @GetBudgetClass.GetScreenName("E13");
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.HiddenFor(m => m.abvr_budgeting_year, new { @class = "form-control", @readonly = "true", id = "yr", @Value = ViewBag.BudgetYear })
+        @Html.HiddenFor(m => m.abvr_cost_center_code, new { @class = "form-control", @readonly = "true", id = "cc", @Value = ViewBag.CostCenter })
+        @Html.HiddenFor(m => m.abvr_cost_center_desc, new { @class = "form-control", @readonly = "true", id = "ccd", @Value = ViewBag.CostCenterDesc })
+
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="panel panel-success">
+                    <div class="panel-heading">@GetBudgetClass.GetScreenName("E13")</div>
+                    <div class="panel-body">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                @Html.Label("Jenis Kenderaan", htmlAttributes: new { @class = "text-nowrap" })
+                                @Html.DropDownListFor(m => m.abvr_jenis_code, new List<SelectListItem>
+                                {
+                                    new SelectListItem { Value = "0", Text = "Please Select" },
+                                    new SelectListItem { Value = "01", Text = "01-Sebenar" },
+                                    new SelectListItem { Value = "02", Text = "02-Bajet" }
+                                }, htmlAttributes: new { @class = "KodJenisKenderaan form-control select2", onchange = "SelectedChanged(this)", @required = "true" })
+                                @Html.ValidationMessage("KodJenisKenderaan", "", new { @class = "text-danger" })
+                                @Html.HiddenFor(m => m.abvr_jenis_name, new { @class = "form-control input-sm", @id = "NamaJenisKenderaan" })
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Parent Kenderaan", htmlAttributes: new { @class = "text-nowrap" })
+                                @Html.DropDownList("ParentKenderaanList", new SelectList(ViewBag.ParentKenderaanList, "Value", "Text"), "Please Select", htmlAttributes: new { @class = "KodParentKenderaan form-control select2", @required = "true" })
+                                @Html.ValidationMessage("ParentKenderaanList", "", new { @class = "text-danger" })
+                                @Html.HiddenFor(m => m.abvr_material_name, new { @class = "form-control input-sm", @id = "NamaMaterial" })
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Kod Kenderaan", htmlAttributes: new { @class = "text-nowrap" })
+                                @Html.Hidden("Kod_Material", null, htmlAttributes: new { @class = "form-control input-sm", @id = "KodMaterial", @readonly = "true" })
+                                @Html.Hidden("Additional_Code", null, htmlAttributes: new { @class = "form-control input-sm", @id = "AdditionalCode", @readonly = "true" })
+                                @Html.TextBoxFor(m => m.abvr_material_code, null, htmlAttributes: new { @class = "form-control input-sm", @id = "NewKodMaterial", @readonly = "true", @required = "true" })
+                                @Html.ValidationMessageFor(m => m.abvr_material_code, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                @Html.Label("Model Kenderaan", htmlAttributes: new { @class = "text-nowrap" })
+                                @Html.TextBoxFor(m => m.abvr_model, null, htmlAttributes: new { @class = "form-control input-sm text-uppercase", @id = "ModelKenderaan", @required = "true" })
+                                @Html.ValidationMessageFor(m => m.abvr_model, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("No Pendaftaran Kenderaan", htmlAttributes: new { @class = "text-nowrap" })
+                                @Html.TextBoxFor(m => m.abvr_register_no, null, htmlAttributes: new { @class = "form-control input-sm text-uppercase", @id = "NoDaftarKenderaan", @required = "true" })
+                                @Html.ValidationMessageFor(m => m.abvr_register_no, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Tahun Dibuat", htmlAttributes: new { @class = "text-nowrap" })
+                                @Html.TextBoxFor(m => m.abvr_tahun_dibuat, null, htmlAttributes: new { @class = "form-control input-sm", @required = "true" })
+                                @Html.ValidationMessageFor(m => m.abvr_tahun_dibuat, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Active?", htmlAttributes: new { @class = "text-nowrap" })<br />
+                                @Html.CheckBoxFor(m => m.abvr_status, new { @checked = "checked" })
+                                @*@Html.ValidationMessageFor(m => m.abvr_status, "", new { @class = "text-danger" })*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" onclick="return DisplayProgressMessage2(this);">@GlobalResEstate.btnSave.ToUpper()</button>
+            @*<a style="text-align:right" href="@Url.Action("Index", "PendaftaranKenderaan")" class="btn btn-warning" title="Back to list">@GlobalResEstate.btnBack.ToUpper()</a>*@
+            <button class="btn btn-warning" type="button" data-dismiss="modal">@GlobalResEstate.btnBack.ToUpper()</button>
+        </div>
+    }
+</section>
+<link href="~/Asset/select2/css/select2.min.css" rel="stylesheet" />
+<script src="~/Asset/select2/js/select2.full.min.js"></script>
+<style>
+    .table tbody > tr > th, .table tfoot > tr > th, .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
+        padding: 3px;
+    }
+
+    .frm {
+        text-align: center;
+        vertical-align: middle !important;
+        font-size: 11px;
+    }
+
+    .frm2 {
+        text-align: right;
+        vertical-align: middle !important;
+    }
+    .select2-container .select2-selection--single {
+            height: 30px;
+            border: 1px solid #cccccc;
+            font-size: 12px;
+        }
+    .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-left: 15px;
+            padding-top: 1px;
+        }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 2px;
+        }
+    .text-uppercase {
+        text-transform:uppercase;
+    }
+</style>
+<script>
+        $(document).find(".form-control").addClass("input-sm");
+        $("form").removeData("validator");
+        $("form").removeData("unobtrusiveValidation");
+        $.validator.unobtrusive.parse("form");
+
+    $('.select2').select2({
+        width: '100%'
+    });
+
+    function SelectedChanged(element) {
+        var id = $(element).attr('id');
+        //var no = parseInt(id.replace(/[^0-9]/g, ''));
+        var val = $(element).find('option:selected').val();
+        if (val == '01') {
+            document.getElementById('NamaJenisKenderaan').value = 'Sebenar';
+            document.getElementById('AdditionalCode').value = null;
+        }
+        else if (val == '02') {
+            document.getElementById('NamaJenisKenderaan').value = 'Bajet';
+            document.getElementById('AdditionalCode').value = 'B';
+        }
+        else {
+            document.getElementById('AdditionalCode').value = null;
+        }
+        //var val2 = document.getElementById('jumThn' + no).value;
+        //alert(val);
+    }
+
+    $(".KodParentKenderaan").on("change",
+        function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetInfoParentKenderaan", "PendaftaranKenderaan")',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify({ kod: $(this).val(), costcenter: $("#cc").val() }),
+                    success: function (result)
+                    {
+                        if (result.success) {
+                            document.getElementById("KodMaterial").value = result.KodMaterial;
+                            document.getElementById("NamaMaterial").value = result.NamaMaterial;
+                            document.getElementById("NewKodMaterial").value = result.NewKodMaterial;
+                        }
+                    }
+                });
+        });
+</script>

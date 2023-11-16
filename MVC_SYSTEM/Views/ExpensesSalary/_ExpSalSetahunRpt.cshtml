@@ -1,0 +1,223 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_expenses_Salary[]
+
+@using MVC_SYSTEM.ClassBudget;
+@{
+    //ViewBag.Title = "Perbelanjaan HQ (Butiran Gaji Kakitangan)";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    int i = 1;
+    int k = 0;
+    int yearW = DateTime.Now.Year;
+    
+}
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@*<script src="~/Asset/select2/dist/js/select2.js"></script>*@
+<link href="~/Asset/select2/dist/css/select2.min.css" rel="stylesheet" />
+@*<div class="modal-header">
+<div style="text-align:right; margin-top:10px">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+                </div>*@
+@if (Model != null && Model.Count() != 0)
+{
+    <section class="content-wrapper main-content clear-fix">
+        <div class="well" style="margin-top: 10px">
+            
+            <div class="modal-body">
+                <div style="text-align:right; margin-top:10px" id="allprint">
+                    <a href="@Url.Action("ExpSalSetahunRptPDF", new { year = Model.FirstOrDefault().abes_budgeting_year, costCenter = ViewBag.CostCenter, format = "PDF" })" target="_blank" class="btn btn-default btn-sm">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                    </a>
+                    <a href="@Url.Action("ExpSalSetahunRptEXCEL", new { year = Model.FirstOrDefault().abes_budgeting_year, costCenter = ViewBag.CostCenter, format = "EXCEL" })" class="btn btn-default btn-sm">
+                        <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                    </a>
+                    <a class="btn btn-warning" href=@Url.Action("ExpSalViewKeseluruhan", "ExpensesSalary") role="button" id="btnback" onclick="return DisplayProgressMessage(this);">X</a>
+                </div>
+            </div>
+            <div id="printarea" class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <span style="font-weight:bold; font-size:16px;">FGV AGRICULTURAL SERVICES SDN BHD<br />(Company No.: 353791-M)</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <hr style="margin-top:0; margin-bottom:0; border-top:2px solid red;" />
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="width:20%;">
+                                    <img src="~/Asset/Images/logo_FTPSB.jpg" id="logo" style="float:left; width:80px; margin-top:-60px; margin-left:5px;" />
+                                </td>
+                                <td class="text-center" style="vertical-align:top;">
+                                    <span style="font-weight:bold; font-size:14px;">BAJET @Model.FirstOrDefault().abes_budgeting_year<br />@ViewBag.Title</span>
+                                </td>
+                                <td style="width:20%; vertical-align:top;">
+                                    <table style="float:right;">
+                                        <tr>
+                                            <td class="text-right">Tarikh</td>
+                                            <td>:</td>
+                                            <td class="text-left">@DateTime.Now.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right">M.Surat</td>
+                                            <td>:</td>
+                                            <td class="text-left">1 of 1</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right">Revision</td>
+                                            <td>:</td>
+                                            <td class="text-left">DRAFT</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="width:30%; vertical-align:top;">
+                                    <table style="float:left;">
+                                        <tr>
+                                            <td class="text-left">Tahun</td>
+                                            <td>:</td>
+                                            <td class="text-left">@Model.FirstOrDefault().abes_budgeting_year</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Cost Center</td>
+                                            <td>:</td>
+                                            <td class="text-left">@ViewBag.CostCenterS</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Jenis Paparan</td>
+                                            <td>:</td>
+                                            <td class="text-left">Setahun</td>
+                                        </tr>
+                                    </table>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <table class="table table-hover table-bordered" style="font-size: 8px;" width="100%">
+                    <thead>
+
+                        <tr>
+                            <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" rowspan="2">Bil</th>
+                            <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Keterangan GL</th>
+                            @foreach (var a in Model.GroupBy(g => g.abes_gl_code).Select(s => s.FirstOrDefault()).OrderBy(o => o.abes_gl_code))
+                            {
+                                <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@a.abes_gl_desc</th>
+                                <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" rowspan="2">Qty</th>
+                            }
+                            <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1" rowspan="2">JUMLAH (RM)</th>
+                        </tr>
+                        <tr>
+
+                            <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">Cost Center</th>
+                            @foreach (var a in Model.GroupBy(g => g.abes_gl_code).Select(s => s.FirstOrDefault()).OrderBy(o => o.abes_gl_code))
+                            {
+                                <th width="200" class="headerviewsawit" style="text-align:center;vertical-align:middle !important;border:1px solid black;" border="1">@a.abes_gl_code</th>
+
+                            }
+
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.GroupBy(g => g.abes_cost_center).Select(s => s.FirstOrDefault()).OrderBy(o => o.abes_gl_code))
+                        {
+                            <tr>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@i@Html.Raw(".")</td>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@a.abes_cost_center</td>
+                                @foreach (var bb in Model.Where(w => w.abes_cost_center == a.abes_cost_center).GroupBy(g => g.abes_gl_code).Select(s => s.FirstOrDefault()))
+                                {
+                                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@bb.abes_jumlah_setahun.Value.ToString("N")</td>
+                                    <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@(bb.abes_jumlah_keseluruhan_qty.HasValue ? bb.abes_jumlah_keseluruhan_qty.Value.ToString("#,##0") : "0") </td>
+                                }
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1">@Model.Where(wx => wx.abes_cost_center == a.abes_cost_center).Sum(s => s.abes_jumlah_setahun).Value.ToString("N")</td>
+
+                            </tr>
+                            i++;
+                        }
+
+
+                        <tr>
+
+                            <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1" colspan="2"><b>JUMLAH KESELURUHAN</b></td>
+                            @foreach (var aa in Model.GroupBy(g => g.abes_gl_code).Select(s => s.FirstOrDefault()).OrderBy(o => o.abes_gl_code))
+                            {
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1"><b>@Model.Where(wx => wx.abes_gl_code == aa.abes_gl_code).Sum(s => s.abes_jumlah_setahun).Value.ToString("N")</b></td>
+                                <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1"><b>@Model.Where(wx => wx.abes_gl_code == aa.abes_gl_code).Sum(s => s.abes_jumlah_keseluruhan_qty)</b></td>
+                            }
+                        <td align="center" style="vertical-align:middle !important;border:1px solid black;" border="1"><b>@Model.Sum(m => m.abes_jumlah_keseluruhan).Value.ToString("N")</b></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+                <br />
+                <br />
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div id="printarea" class="modal-body" style="text-align: center">
+        <p style="color: red">@ViewBag.Message</p>
+    </div>
+}
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+
+    .headerviewsawit {
+        color: #ffffff;
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+</style>
+@*<script src="~/Asset/Scripts/FromHTML.js"></script>*@
+<script src="~/Asset/Scripts/FileSaver.js"></script>
+
+<style>
+    #page td {
+        padding: 2px;
+        margin: 2px;
+    }
+
+    table {
+        page-break-inside: avoid
+    }
+
+    #content {
+        display: table;
+    }
+
+    #pageFooter {
+        display: table-footer-group;
+    }
+
+    #page_number:after {
+        content: "";
+        counter-increment: pagenumber;
+        content: "Page" counter(pagenumber) "of" counter(pagenumber);
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-row-group
+    }
+
+    tr {
+        page-break-inside: avoid
+    }
+</style>

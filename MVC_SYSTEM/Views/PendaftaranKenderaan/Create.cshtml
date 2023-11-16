@@ -1,0 +1,92 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_vehicle_register
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    int budgetyear = GetBudgetClass.GetBudgetYear();
+    ViewBag.Title = GetBudgetClass.GetScreenName("E13");
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+}
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom:16px;">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="panel panel-success">
+                        <div class="panel-heading">@GetBudgetClass.GetScreenName("E13")</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>Tahun</label>
+                                    @Html.TextBox("budgetyear", budgetyear, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>@GlobalResEstate.lblCostCenter</label>
+                                    @Html.DropDownList("CostCenter", new SelectList(ViewBag.CostCenterList, "Value", "Text"), "Please Select", htmlAttributes: new { @class = "CostCenterCode form-control select2", @required = "true" })
+                                    @Html.ValidationMessage("CostCenter", "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    &nbsp;
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>@GlobalResEstate.hdrUnit</label>
+                                    @Html.TextBoxFor(m => m.abvr_cost_center_desc, null, new { @class = "form-control", @readonly = "true", @id = "CCDesc" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">@GlobalResEstate.btnAdd.ToUpper()</button>
+                <a style="text-align:right" href="@Url.Action("Index", "PendaftaranKenderaan")" class="btn btn-warning" title="Back to list">@GlobalResEstate.btnBack.ToUpper()</a>
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+    .frm {
+        text-align: center;
+        vertical-align: middle !important;
+        font-size: 11px;
+    }
+
+    .frm2 {
+        text-align: right;
+        vertical-align: middle !important;
+    }
+</style>
+<script>
+    //$(document).find(".form-control").addClass("input-sm");
+    //$("form").removeData("validator");
+    //$("form").removeData("unobtrusiveValidation");
+    //$.validator.unobtrusive.parse("form");
+
+    $('.select2').select2({
+        width: '100%'
+    });
+
+    $(".CostCenterCode").on("change",
+        function () {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetCostCenterDesc", "PendaftaranKenderaan")',
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify({ costcentercode: $(this).val() }),
+                success: function (result)
+                {
+                    if (result.success)
+                    {
+                        document.getElementById("CCDesc").value = result.costcenterdesc;
+                    }
+                }
+            });
+    });
+</script>

@@ -1,0 +1,115 @@
+﻿<style type="text/css">
+    table th.text-center {
+        background-color: unset;
+    }
+
+    .table tbody > tr > td {
+        vertical-align: middle !important;
+    }
+
+    .reject {
+        text-align:center;
+        background-color: unset;
+        column-width: 50px;
+    }
+</style>
+
+@{ 
+    var bgtroleid = ViewBag.RoleID;
+
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (grid.TotalRowCount > 0)
+    {
+        @Html.Hidden("ScreenCode", null, htmlAttributes: new { @class = "form-control", @id = "SCode" })
+        @Html.Hidden("CostCenter", null, htmlAttributes: new { @class = "form-control", @id = "CCcode" })
+        @Html.Hidden("RoleID", null, htmlAttributes: new { @class = "form-control", @id = "RoleID", @Value = bgtroleid })
+
+        @grid.GetHtml(
+            htmlAttributes: new { id = "grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                grid.Column(header: GlobalResEstate.hdrNo, format: (item) => (grid.PageIndex * grid.RowsPerPage) + grid.Rows.IndexOf(item) + 1, style: "text-center"),
+                
+                grid.Column("icon", "", style: "text-center", format: @<text> 
+                @if (bgtroleid == 9 && (item.aprv_status == "1" || item.aprv_status == "4")) //role exebudget(9) + prepare(1) + reject(4)
+                { 
+                    @Html.CheckBox("checkstatus", new { onclick = "CheckFunction(this)", @Value = item.aprv_cost_center_code + item.aprv_scrCode })
+                }
+                else if (bgtroleid == 9 && (item.aprv_status == "2" || item.aprv_status == "3" || item.aprv_status == "5")) //check(2) + approve(3,5)
+                {
+                    @Html.CheckBox("checkstatus", new { onclick = "CheckFunction(this)", @disabled = "true" })
+                }
+                else if (bgtroleid == 1 && item.aprv_status == "2") //MANAGER -> check
+                {
+                    @Html.CheckBox("checkstatus", new { onclick = "CheckFunction(this)", @Value = item.aprv_cost_center_code + item.aprv_scrCode })
+                }
+                else if (bgtroleid == 1 && (item.aprv_status == null || item.aprv_status == "1" || item.aprv_status == "3" || item.aprv_status == "5" || item.aprv_status == "4")) //MANAGER -> prepare+approve(3,5)+reject
+                {
+                    @Html.CheckBox("checkstatus", new { onclick = "CheckFunction(this)", @disabled = "true" })
+                }
+                else
+                {
+                    @Html.CheckBox("checkstatus", new { onclick = "CheckFunction(this)", @Value = item.aprv_cost_center_code + item.aprv_scrCode })
+                }
+                </text>),
+                grid.Column("aprv_status", "Status", style: "reject", 
+                format: @<text> 
+                    @if (item.aprv_status == "1" || item.aprv_status == "6")
+                    { <img src="~/Asset/Images/P.jpg" width="17"/>; }
+                    else if (item.aprv_status=="2") 
+                    { <img src="~/Asset/Images/C.jpg" width="17"/>; }
+                    else if(item.aprv_status == "3" || item.aprv_status == "5")
+                    { <img src="~/Asset/Images/A.jpg" width="17"/>; }
+                    else if (item.aprv_status == "4")
+                    { <img src="~/Asset/Images/R.jpg" width="17"/> @Html.Raw("<a title='Reject Info' href='" + @Url.Action("Note", new { id = item.aprv_id }) + "' data-edit=''><i class='fa fa-info-circle fa-500px'></i></a>"); }
+                    else if (item.aprv_status == "6")
+                    { <img src="~/Asset/Images/R.jpg" width="17"/>; }
+                    
+                    else 
+                    { <img src="~/Asset/Images/P.jpg" width="17"/>; }
+                </text>),
+                grid.Column("aprv_station", "Station (Lokasi)", style: "text-center"),
+                grid.Column("aprv_cost_center_code", "Kod Cost Center", style: "text-center"),
+                grid.Column("aprv_cost_center_desc", "Keterangan Cost Center", style: "text-center"),
+                grid.Column("sum_income", "Jumlah Pendapatan (RM)", style: "text-center", format: @<text>@item.sum_income.ToString("#,##0.00")</text>),
+                grid.Column("sum_expenses", "Jumlah Perbelanjaan (RM)", style: "text-center", format: @<text>@item.sum_expenses.ToString("#,##0.00")</text>),
+                grid.Column("aprv_prepared_by", "Send for Approval Oleh", style: "text-center"),
+                grid.Column("aprv_Send_date", "Tarikh Send for Approval", style: "text-center", format: @<text> @if (item.aprv_Send_date == null) { @item.aprv_Send_date } else { @item.aprv_Send_date.ToString("dd/M/yyyy HH:mm:ss") } </text>),
+                grid.Column("aprv_Approve_by", "Approve/Reject Oleh", style: "text-center"),
+                grid.Column("aprv_date", "Tarikh Approve/Reject", style: "text-center", format: @<text> @if (item.aprv_date == null) { @item.aprv_date } else { @item.aprv_date.ToString("dd/M/yyyy HH:mm:ss") } </text>),
+                //grid.Column("aprv_budgeting_year", "Tahun Bajet", style: "text-center", format: @<text> @if (item.aprv_budgeting_year != null) { @item.aprv_budgeting_year; }  </text>),
+                grid.Column("ScreenName", "Nama Skrin", style: "text-center"),
+                grid.Column("aprv_status", "STATUS HQ", style: "text-center", 
+                format: @<text>
+                    @if (item.aprv_status == "3")
+                    { <img src="~/Asset/Images/C.jpg" width="17"/>; }
+                    else if(item.aprv_status == "5")
+                    { <img src="~/Asset/Images/A.jpg" width="17"/>; }
+                    else if(item.aprv_status == "6")
+                    { <img src="~/Asset/Images/R.jpg" width="17"/>; }
+                    else 
+                    { <span>&nbsp;</span>; }
+                </text>),
+                grid.Column("aprv_status", "Reject Note", style: "text-center", format: @<text>@if (item.aprv_status == "6") { @Html.Raw("<a title='Reject Info' href='" + @Url.Action("Note", new { id = item.aprv_id }) + "' data-edit=''><i class='fa fa-info-circle fa-1000px'></i></a>"); }</text>),
+                grid.Column("aprv_revision", "Revision", style: "text-center", format: @<text><span>Draft</span></text>)
+                ))
+                }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label(GlobalResEstate.msgErrorSearch)
+        </div>
+        <hr />
+    }
+}

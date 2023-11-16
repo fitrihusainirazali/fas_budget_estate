@@ -1,0 +1,85 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+
+    var screens = ViewBag.Screens as List<MVC_SYSTEM.ModelsBudget.bgt_Screen>;
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">@ViewBag.Title</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <label>Senarai Bajet Pendapatan</label>
+                                    @*<select id="ExpensesList" class="form-control" name="ExpensesList" required onchange="listChange(this);">
+                                        @{ var i = 1; }
+                                        @foreach (var scr in screens)
+                                        {
+                                            var label = scr.ScrNameLongDesc;
+                                            var url = "javascript:void(0);";
+                                            if (string.IsNullOrEmpty(label))
+                                            {
+                                                label = scr.ScrName;
+                                            }
+                                            if (scr.ScrCode.Equals("I1"))
+                                            {
+                                                url = Url.Action("Sawit", "PendapatanSawit");
+                                            }
+                                            <option value="@scr.ScrID" data-url="@url">@i. @label</option>
+                                            i++;
+                                        }
+                                    </select>*@
+                                    @Html.DropDownList("ScrCode", new SelectList(ViewBag.ScrCode, "Value", "Text"), htmlAttributes: new { @class = "Screen form-control", @required = "true" })
+                                    @Html.ValidationMessage("ScrCode", "", new { @class = "text-danger" })
+                                    @Html.Hidden("ScreenCode", null, htmlAttributes: new { @class = "form-control", id = "ScreenCodeID" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<a id="btnGo" href="javascript:void(0);" class="btn btn-primary">@GlobalResEstate.btnGo</a>*@
+                <input class="btn btn-primary" type="submit" value=@GlobalResEstate.btnGo />
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            listChange('#ExpensesList');
+        });
+
+        function listChange(element) {
+            var url = $(element).find('option:selected').data('url');
+            $('#btnGo').attr('href', url);
+        }
+
+        //fitri test
+    $(".Screen").on("change",
+    function() {
+        $.ajax({
+        type: 'POST',
+        url: '@Url.Action("GetScreen", "Income")',
+        dataType: 'json',
+        contentType: 'application/json',
+        async: false,
+        data: JSON.stringify({ screencode: $(this).val() }),
+        success: function(result)
+        {
+            if (result.success){
+                document.getElementById("ScreenCodeID").value = result.ScCode;
+            }}
+        });
+    });
+    </script>
+}

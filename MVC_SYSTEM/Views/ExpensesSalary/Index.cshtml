@@ -1,0 +1,86 @@
+﻿@model MVC_SYSTEM.Models.bgt_expenses_Depreciation[]
+
+@using MVC_SYSTEM.ClassBudget;
+@using MVC_SYSTEM.Class;
+@{
+    ViewBag.Title = "Perbelanjaan HQ (Susutnilai Untuk Tahun (Keseluruhan))";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    int id = 4;
+    var GetScreenGL = GetBudgetClass.GetScreenGL(id) as List<MVC_SYSTEM.MasterModels.tbl_SAPGLPUP>;
+    int GetCountGL = GetBudgetClass.GetCountGL(id);
+    //var add = RolePage.add;
+    int i = 1;
+    int x = 1;
+   
+}
+<section class="content-wrapper main-content clear-fix">
+
+    <div class="well" style="margin-top: 10px">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                Perbelanjaan HQ (Susutnilai Untuk Tahun 2023(Keseluruhan))
+            </div>
+                @foreach (var item in Model)
+                {
+                    <table class="table table-bordered" id="scrollArea2" style="font-size: 11px;" cellspacing="0" border="0" width="100%">
+                        <tr>
+                            <th style="text-align:center">Keterangan GL</th>
+                            <th style="text-align:center; vertical-align:middle !important;">@Html.DisplayFor(modelItem => item.abed_gl_desc)</th>  
+                            <th style="text-align:center; vertical-align:middle !important;">JUMLAH (RM)</th>
+                            <th style="text-align:center; vertical-align:middle !important;">Action</th>
+                        </tr>
+                        <tr>
+                            <th style="text-align:center">Cost Center</th>
+                            <th style="text-align:center; vertical-align:middle !important;">@Html.DisplayFor(modelItem => item.abed_gl_code)</th>
+                            <th style="text-align:center"></th>
+                            <th style="text-align:center"></th>
+
+                        </tr>
+                        <tr>
+                            <th style="text-align:center">@Html.DisplayFor(modelItem => item.abed_cost_center)</th>
+                            <th style="text-align:left; vertical-align:middle !important;">@Html.DisplayFor(modelItem => item.abed_jumlah_keseluruhan)</th>  
+                            <th style="text-align:center">@Html.DisplayFor(modelItem => item.abed_jumlah_RM)</th>
+                            
+                            <th align="center" style="vertical-align:middle !important;border:1px solid black;font-size:small; padding:5px" border="1">
+                                @Html.ActionLink("Edit", "ExpensesDepreciationEdit", new { year = item.abed_budgeting_year, idCC = item.abed_cost_center }, new { @class = "btn btn-success" })                                }
+                                if (item.abed_Deleted == 1)
+                                {
+                                @Html.ActionLink("Deactive ", "DeleteDetail", new { id = item.abed_id, status = "DELETE" }, new { @class = "btn btn-danger" })
+                                }
+                                else
+                                {
+                                @Html.ActionLink("Activate ", "DeleteDetail", new { id = item.abed_id, status = "RESTORE" }, new { @class = "btn btn-danger" })
+                                }
+                            </th>
+                        </tr>
+
+                    </table>
+              }
+                               
+            </div>
+        @Html.ActionLink("Back", "ExpensesDepreciation", null, new { @class = "btn btn-primary" })
+    </div>
+</section>
+
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+@*@section scripts{
+        @Scripts.Render("~/Asset/Scripts/appjs.js?v=1.1")
+    }*@
+<style>
+    .frm {
+        /*width: 80px;*/
+        text-align: center;
+        vertical-align: middle !important;
+    }
+</style>
+
+
+

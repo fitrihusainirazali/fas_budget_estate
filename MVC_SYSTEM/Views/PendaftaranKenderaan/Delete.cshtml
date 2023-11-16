@@ -1,0 +1,186 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_vehicle_register[]
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("E13");
+    int i = 0;
+}
+
+<style type="text/css">
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .ProductDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .MaterialDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: center;
+        text-transform: uppercase;
+        vertical-align: middle !important;
+    }
+
+    .Amount {
+        width: 90px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .RegNo {
+        width: 100px;
+        text-align: center;
+        text-transform: uppercase;
+        vertical-align: middle !important;
+    }
+
+    .active {
+        width: 50px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 100px;
+        text-align: center;
+        text-wrap: none;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">@GlobalResEstate.titleDelete</h3>
+    </div>
+    @Html.AntiForgeryToken()
+    @*<div class="modal-body">
+        <div class="form-horizontal">
+            <div class="panel panel-success">
+                <div class="panel-heading">@GetBudgetClass.GetScreenName("E13")</div>
+                <fieldset class="panel-body">
+                    @foreach (var val in Model)
+                    {
+                        @Html.HiddenFor(m => m[i].abvr_id, new { @Class = "form-control", @Value = val.abvr_id })
+                        @Html.HiddenFor(m => m[i].abvr_budgeting_year, new { @Class = "form-control", @Value = val.abvr_budgeting_year })
+                        @Html.HiddenFor(m => m[i].abvr_cost_center_code, new { @Class = "form-control", @Value = val.abvr_cost_center_code })
+                        i++;
+                    }
+                    
+                    <fieldset disabled>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.lblYear:</label>
+                            <div class="col-sm-6">
+                                @Html.TextBox("yr", null, new { @class = "form-control", @readonly = "true", @Value = Model.FirstOrDefault().abvr_budgeting_year })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">@GlobalResEstate.lblCostCenter:</label>
+                            <div class="col-sm-6">
+                                @Html.TextBox("cc", null, htmlAttributes: new { @class = "form-control", @readonly = "true", @Value = Model.FirstOrDefault().abvr_cost_center_code })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Unit:</label>
+                            <div class="col-sm-6">
+                                @Html.TextBox("ccd", null, htmlAttributes: new { @class = "form-control", @readonly = "true", @Value = Model.FirstOrDefault().abvr_cost_center_desc })
+                            </div>
+                        </div>
+                    </fieldset>
+                </fieldset>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 text-center">
+                    <h3>
+                        <span class="label label-danger">
+                            @GlobalResEstate.msgDelete
+                        </span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    foreach (var val in Model)
+    {
+        @Html.HiddenFor(m => m[i].abvr_id, new { @Class = "form-control", @Value = val.abvr_id })
+        @Html.HiddenFor(m => m[i].abvr_budgeting_year, new { @Class = "form-control", @Value = val.abvr_budgeting_year })
+        @Html.HiddenFor(m => m[i].abvr_cost_center_code, new { @Class = "form-control", @Value = val.abvr_cost_center_code })
+        i++;
+    }
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">@GlobalResEstate.lblYear:</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.FirstOrDefault().abvr_budgeting_year, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">@GlobalResEstate.lblCostCenter:</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.FirstOrDefault().abvr_cost_center_code, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Keterangan Cost Center:</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.FirstOrDefault().abvr_cost_center_desc, htmlAttributes: new { @class = "form-control input-sm", @readonly = "readonly" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title - Details</div>
+                    <div class="panel-body">
+                        <div id="RecordsPartialDelete">
+                            @Html.Action("_RekodKenderaan", new { BudgetYear = Model.FirstOrDefault().abvr_budgeting_year, CostCenter = Model.FirstOrDefault().abvr_cost_center_code })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 style="margin-top:0;">
+                    <span class="label label-danger">@GlobalResEstate.msgDelete</span>
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input class="btn btn-success" type="submit" value=@GlobalResEstate.btnYes.ToUpper() />
+        <button class="btn btn-danger" data-dismiss="modal">@GlobalResEstate.btnNo.ToUpper()</button>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#RecordsPartialDelete').find('table').find('thead tr:first-child th:last-child').remove();
+        $('#RecordsPartialDelete').find('table').find('tbody tr td:last-child').remove();
+    });
+</script>

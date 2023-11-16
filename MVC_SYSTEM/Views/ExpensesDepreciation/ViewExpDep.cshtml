@@ -1,0 +1,162 @@
+﻿@model MVC_SYSTEM.ModelsBudget.bgt_expenses_Depreciation[]
+
+<style type="text/css">
+    table th.text-center {
+        text-align: center;
+        width: unset;
+        background-color: unset;
+        color: unset;
+        vertical-align: middle !important;
+        border: 2px solid red !important;
+    }
+
+    table tfoot th {
+        border-top: 2px solid red !important;
+        border-bottom: 2px solid red !important;
+    }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+
+    .fixed-width {
+        width: 75px;
+        min-width: 75px;
+        max-width: 75px;
+    }
+</style>
+
+<div class="modal-header">
+    <div style="float: right;">
+        <a href="@Url.Action("ViewExpDepPDF", new { year = Model.FirstOrDefault().abed_budgeting_year, costCenter = Model.FirstOrDefault().abed_cost_center, format = "PDF" })" target="_blank" class="btn btn-default btn-sm">
+            <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+        </a>
+        <a href="@Url.Action("ViewExpDepEXCEL", new { year = Model.FirstOrDefault().abed_budgeting_year, costCenter = Model.FirstOrDefault().abed_cost_center, format = "EXCEL" })" target="_blank" class="btn btn-default btn-sm">
+            <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+        </a>
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+    </div>
+    <h3 class="modal-title">@ViewBag.Title</h3>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <span style="font-weight:bold; font-size:16px;">FGV AGRICULTURAL SERVICES SDN BHD<br />(Company No.: 353791-M)</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <hr style="margin-top:0; margin-bottom:0; border-top:2px solid red;" />
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:20%;">
+                        <img src="~/Asset/Images/logo_FTPSB.jpg" id="logo" style="float:left; width:80px; margin-top:-60px; margin-left:5px;" />
+                    </td>
+                    <td class="text-center" style="vertical-align:top;">
+                        <span style="font-weight:bold; font-size:14px;">BAJET @Model.FirstOrDefault().abed_budgeting_year<br />@ViewBag.Title</span>
+                    </td>
+                    <td style="width:20%; vertical-align:top;">
+                        <table style="float:right;">
+                            <tr>
+                                <td class="text-right">Tarikh</td>
+                                <td>:</td>
+                                <td class="text-left">@DateTime.Now.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                    <td class="text-right">M.Surat</td>
+                                    <td>:</td>
+                                    <td class="text-left">1 of 1</td>
+                                </tr>
+                            <tr>
+                                <td class="text-right">Revision</td>
+                                <td>:</td>
+                                <td class="text-left">DRAFT</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="margin-bottom:10px;">
+            <span style="font-weight:bold;">UNIT: @Model.FirstOrDefault().abed_cost_center - @Model.FirstOrDefault().abed_cost_center_name</span>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="text-center">Kod GL</th>
+                            <th rowspan="2" class="text-center">Keterangan GL</th>
+                            <th colspan="12" class="text-center">Month</th>
+                            <th rowspan="2" class="text-center">Jumlah (RM)</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">Jan</th>
+                            <th class="text-center">Feb</th>
+                            <th class="text-center">Mac</th>
+                            <th class="text-center">Apr</th>
+                            <th class="text-center">Mei</th>
+                            <th class="text-center">Jun</th>
+                            <th class="text-center">Jul</th>
+                            <th class="text-center">Ogo</th>
+                            <th class="text-center">Sep</th>
+                            <th class="text-center">Okt</th>
+                            <th class="text-center">Nov</th>
+                            <th class="text-center">Dis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var items in Model.GroupBy(g => g.abed_gl_code).Select(s => s.FirstOrDefault()).OrderBy(o => o.abed_gl_code))
+                        {
+                            <tr>
+                                <td class="text-center">@items.abed_gl_code</td>
+                                <td>@items.abed_gl_desc</td>
+
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_1).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_2).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_3).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_4).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_5).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_6).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_7).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_8).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_9).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_10).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_11).Value.ToString("N")</td>
+                                <td class="text-right fixed-width">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_month_12).Value.ToString("N")</td>
+                                <td class="text-right">@Model.Where(wx => wx.abed_gl_code == items.abed_gl_code).Sum(s => s.abed_jumlah_keseluruhan).Value.ToString("N")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="2" class="text-right"><b>Jumlah Keseluruhan</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_1)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_2)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_3)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_4)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_5)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_6)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_7)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_8)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_9)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_10)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_11)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_month_12)))</b></th>
+                            <th class="text-right"><b>@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abed_jumlah_keseluruhan)))</b></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

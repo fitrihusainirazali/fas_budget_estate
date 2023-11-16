@@ -1,0 +1,171 @@
+﻿@model List<MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesPAUListDetailViewModel>
+
+<style type="text/css">
+    table th.text-center {
+        text-align: center;
+        width: unset;
+        background-color: unset;
+        color: unset;
+        vertical-align: middle !important;
+        border: 2px solid red !important;
+    }
+    table tfoot th {
+        border-top: 2px solid red !important;
+        border-bottom: 2px solid red !important;
+    }
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+    .fixed-width {
+        width: 75px;
+        min-width: 75px;
+        max-width: 75px;
+    }
+</style>
+
+<div class="modal-header">
+    <div style="float: right;">
+        <a href="@Url.Action("PrintView", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Format = "PDF" })" target="_blank" class="btn btn-default btn-sm">
+            <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+        </a>
+        <a href="@Url.Action("PrintView", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Format = "EXCEL" })" target="_blank" class="btn btn-default btn-sm">
+            <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+        </a>
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+    </div>
+    <h3 class="modal-title">@ViewBag.Title</h3>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <span style="font-weight:bold; font-size:16px;">FGV Agri Services Sdn Bhd<br />(Company No.: 353791-M)</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <hr style="margin-top:0; margin-bottom:0; border-top:2px solid red;" />
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:20%;">
+                        <img src="~/Asset/Images/logo_FTPSB.jpg" id="logo" style="float:left; width:80px; margin-top:-60px; margin-left:5px;" />
+                    </td>
+                    <td class="text-center" style="vertical-align:top;">
+                        <span style="font-weight:bold; font-size:14px;">BAJET @ViewBag.BudgetYear<br />@ViewBag.Title</span>
+                    </td>
+                    <td style="width:20%; vertical-align:top;">
+                        <table style="float:right;">
+                            <tr>
+                                <td class="text-right">Tarikh</td>
+                                <td>:</td>
+                                <td class="text-left">@DateTime.Now.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            @*<tr>
+                                <td class="text-right">M.Surat</td>
+                                <td>:</td>
+                                <td class="text-left">1/1</td>
+                            </tr>*@
+                            <tr>
+                                <td class="text-right">Revision</td>
+                                <td>:</td>
+                                <td class="text-left">@(Model.FirstOrDefault() != null && !string.IsNullOrEmpty(Model.FirstOrDefault().abep_status) ? Model.FirstOrDefault().abep_status : string.Empty)</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="margin-bottom:10px;">
+            <span style="font-weight:bold;">UNIT: @(Model.FirstOrDefault() != null ? Model.FirstOrDefault().abep_cost_center_code + " - " + @Model.FirstOrDefault().abep_cost_center_desc : string.Empty)</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center" colspan="2">Jualan</th>
+                            <th class="text-center" colspan="3">Belian</th>
+                            <th class="text-center" rowspan="2">Produk</th>
+                            <th class="text-center" rowspan="2">Kuantiti</th>
+                            <th class="text-center" rowspan="2">Kos / Unit</th>
+                            <th class="text-center" colspan="12">Jangkaan Perbelanjaan Bulanan (RM)</th>
+                            <th class="text-center" rowspan="2">Jumlah (RM)</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">Kod CC</th>
+                            <th class="text-center">Kod GL</th>
+                            <th class="text-center">Kod CC</th>
+                            <th class="text-center">Kod GL</th>
+                            <th class="text-center">Keterangan GL</th>
+                            <th class="text-center">Jan</th>
+                            <th class="text-center">Feb</th>
+                            <th class="text-center">Mac</th>
+                            <th class="text-center">Apr</th>
+                            <th class="text-center">Mei</th>
+                            <th class="text-center">Jun</th>
+                            <th class="text-center">Jul</th>
+                            <th class="text-center">Ogo</th>
+                            <th class="text-center">Sep</th>
+                            <th class="text-center">Okt</th>
+                            <th class="text-center">Nov</th>
+                            <th class="text-center">Dis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">@item.abep_cost_center_jualan_code</td>
+                                <td class="text-center">@item.abep_gl_income_code</td>
+                                <td class="text-center">@item.abep_cost_center_code</td>
+                                <td class="text-center">@item.abep_gl_expenses_code</td>
+                                <td>@item.abep_gl_expenses_name</td>
+                                <td>@item.abep_product_name</td>
+                                <td class="text-right">@(item.abep_total_quantity.HasValue ? item.abep_total_quantity.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right">@(item.abep_rate.HasValue ? item.abep_rate.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_1.HasValue ? item.abep_amount_1.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_2.HasValue ? item.abep_amount_2.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_3.HasValue ? item.abep_amount_3.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_4.HasValue ? item.abep_amount_4.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_5.HasValue ? item.abep_amount_5.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_6.HasValue ? item.abep_amount_6.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_7.HasValue ? item.abep_amount_7.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_8.HasValue ? item.abep_amount_8.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_9.HasValue ? item.abep_amount_9.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_10.HasValue ? item.abep_amount_10.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_11.HasValue ? item.abep_amount_11.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right fixed-width">@(item.abep_amount_12.HasValue ? item.abep_amount_12.Value.ToString("#,##0.00") : "0.00")</td>
+                                <td class="text-right">@(item.abep_total.HasValue ? item.abep_total.Value.ToString("#,##0.00") : "0.00")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="8"></th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_1)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_2)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_3)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_4)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_5)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_6)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_7)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_8)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_9)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_10)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_11)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_amount_12)))</th>
+                            <th class="text-right">@(string.Format("{0:#,##0.00}", Model.Sum(c => c.abep_total)))</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

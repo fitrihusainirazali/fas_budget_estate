@@ -1,0 +1,636 @@
+﻿@model MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesOtherEditDetailViewModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.abeo_budgeting_year)
+    @Html.HiddenFor(model => model.abeo_cost_center_code)
+    @Html.HiddenFor(model => model.abeo_cost_center_desc)
+    <div class="modal-body">
+        <div class="panel panel-success">
+            <div class="panel-heading">@ViewBag.Title - Details</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abeo_gl_expenses_code)
+                            @Html.DropDownListFor(model => model.abeo_gl_expenses_code, new SelectList(ViewBag.GLs, "Value", "Text"), "GL Perbelanjaan", htmlAttributes: new { @class = "form-control select2" })
+                            @Html.HiddenFor(model => model.abeo_gl_expenses_name)
+                            @Html.ValidationMessageFor(model => model.abeo_gl_expenses_code, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abeo_note)
+                            @Html.TextAreaFor(model => model.abeo_note, htmlAttributes: new { @class = "form-control", rows = "4" })
+                            @Html.ValidationMessageFor(model => model.abeo_note, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table style="width:100%;">
+                                <tr>
+                                    <th colspan="4"><u>FAKTOR 1</u></th>
+                                    <th colspan="4"><u>FAKTOR 2</u></th>
+                                    <th colspan="4"><u>FAKTOR 3</u></th>
+                                    <th colspan="2"></th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_unit_1, new { @class = "text-nowrap text-sm" })
+                                            @Html.EditorFor(model => model.abeo_unit_1, new { htmlAttributes = new { @class = "form-control text-right input-number" } })
+                                            @Html.ValidationMessageFor(model => model.abeo_unit_1, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_uom_1, new { @class = "text-nowrap text-sm" })
+                                            @Html.DropDownListFor(model => model.abeo_uom_1, new SelectList(ViewBag.UOMs, "Value", "Text"), htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.abeo_uom_1, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_operation_1, new { @class = "text-nowrap text-sm" })
+                                            @Html.DropDownListFor(model => model.abeo_operation_1, new SelectList(ViewBag.Operations, "Value", "Text"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.abeo_operation_1, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td style="width:20px;">&nbsp;</td>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_unit_2, new { @class = "text-nowrap text-sm" })
+                                            @Html.EditorFor(model => model.abeo_unit_2, new { htmlAttributes = new { @class = "form-control text-right input-number" } })
+                                            @Html.ValidationMessageFor(model => model.abeo_unit_2, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_uom_2, new { @class = "text-nowrap text-sm" })
+                                            @Html.DropDownListFor(model => model.abeo_uom_2, new SelectList(ViewBag.UOMs, "Value", "Text"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.abeo_uom_2, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_operation_2, new { @class = "text-nowrap text-sm" })
+                                            @Html.DropDownListFor(model => model.abeo_operation_2, new SelectList(ViewBag.Operations, "Value", "Text"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.abeo_operation_2, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td style="width:20px;">&nbsp;</td>
+                                    <td class="faktor3_show">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_unit_3, new { @class = "text-nowrap text-sm" })
+                                            @Html.EditorFor(model => model.abeo_unit_3, new { htmlAttributes = new { @class = "form-control text-right input-number" } })
+                                            @Html.ValidationMessageFor(model => model.abeo_unit_3, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td class="faktor3_show">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_uom_3, new { @class = "text-nowrap text-sm" })
+                                            @Html.DropDownListFor(model => model.abeo_uom_3, new SelectList(ViewBag.UOMs, "Value", "Text"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.abeo_uom_3, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label>&nbsp</label><br />
+                                            @Html.Label("@", new { @style = "font-size:20px;" })
+                                            @Html.HiddenFor(model => model.abeo_operation_3, htmlAttributes: new { @Value = "*" })
+                                        </div>
+                                    </td>
+                                    <td style="width:20px;">&nbsp;</td>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_rate, new { @class = "text-nowrap text-sm" })
+                                            @Html.EditorFor(model => model.abeo_rate, new { htmlAttributes = new { @class = "form-control text-right input-number" } })
+                                            @Html.ValidationMessageFor(model => model.abeo_rate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.abeo_total, new { @class = "text-nowrap text-sm" })
+                                            @Html.EditorFor(model => model.abeo_total, new { htmlAttributes = new { @class = "form-control text-right", @readonly = "readonly" } })
+                                            @Html.ValidationMessageFor(model => model.abeo_total, "", new { @class = "text-danger" })
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.abeo_proration)
+                            @Html.DropDownListFor(model => model.abeo_proration, new List<SelectListItem>{
+                                new SelectListItem { Value = "keyin", Text = "Key In" },
+                                new SelectListItem { Value = "monthly", Text = "Monthly" },
+                                new SelectListItem { Value = "quarterly", Text = "Quarterly" },
+                                new SelectListItem { Value = "semi_annually", Text = "Semi Annually" },
+                                new SelectListItem { Value = "annually", Text = "Annually" }
+                            }, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.abeo_proration, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2" style="margin-top:35px;">
+                        <div class="form-group">
+                            @Html.Label("Jumlah (RM) Tahunan")
+                            @Html.TextBox("total_month", null, htmlAttributes: new { @class = "form-control text-right", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_1)
+                                    @Html.EditorFor(model => model.abeo_month_1, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_1, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_2)
+                                    @Html.EditorFor(model => model.abeo_month_2, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_2, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_3)
+                                    @Html.EditorFor(model => model.abeo_month_3, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_3, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_4)
+                                    @Html.EditorFor(model => model.abeo_month_4, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_4, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_5)
+                                    @Html.EditorFor(model => model.abeo_month_5, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_5, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_6)
+                                    @Html.EditorFor(model => model.abeo_month_6, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_6, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_7)
+                                    @Html.EditorFor(model => model.abeo_month_7, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_7, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_8)
+                                    @Html.EditorFor(model => model.abeo_month_8, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_8, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_9)
+                                    @Html.EditorFor(model => model.abeo_month_9, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_9, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_10)
+                                    @Html.EditorFor(model => model.abeo_month_10, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_10, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_11)
+                                    @Html.EditorFor(model => model.abeo_month_11, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_11, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.abeo_month_12)
+                                    @Html.EditorFor(model => model.abeo_month_12, new { htmlAttributes = new { @class = "form-control text-right input-number input_proration" } })
+                                    @Html.ValidationMessageFor(model => model.abeo_month_12, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-danger">
+                        Baki: <span id="balance">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button id="btn_submit" type="submit" class="btn btn-primary">@GlobalResEstate.btnSave.ToUpper()</button>
+        <button type="button" class="btn btn-warning" data-dismiss="modal">@GlobalResEstate.btnBack.ToUpper()</button>
+    </div>
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        glChange();
+        prorationChange();
+        setTotalMonth();
+        setBalance();
+        faktor3_showHide();
+
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        $('input[type="number"]').on('keydown', function (e) {
+            var val = $(this).val();
+            //var regex = /^\d+(\.\d{0,1})?$/;
+            var regex = /^\d+(\.\d{0,2})?$/;
+            if (!regex.test(val)) {
+                var match = val.match(regex);
+                if (match !== null) {
+                    $(this).val(match[0]);
+                } else {
+                    var newVal = val.replace(/(\.\d{1})\d+/g, '$1');
+                    $(this).val(newVal);
+                }
+            }
+            if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+                e.preventDefault();
+            } else if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+            }
+        });
+
+        $('.input-number').on('focus', function () {
+            $(this).val($(this).val().replace(/,/g, ''));
+            $(this).attr('type', 'number');
+        });
+        $('.input-number').on('blur', function () {
+            $(this).attr('type', 'text');
+            if ($(this).val()) {
+                var value = parseFloat($(this).val());
+                $(this).val(value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }));
+            }
+        });
+
+        $('#abeo_gl_expenses_code').on('change', function () {
+            glChange();
+        });
+
+        $('#abeo_unit_1, #abeo_unit_2, #abeo_unit_3, #abeo_rate').on('keyup', function () {
+            setTotal();
+            prorationChange(true);
+            setTotalMonth();
+            setBalance();
+        });
+
+        $('#abeo_operation_1, #abeo_operation_2, #abeo_operation_3').on('change', function () {
+            setTotal();
+            prorationChange(true);
+            setTotalMonth();
+            setBalance();
+        });
+
+        $('#abeo_proration').on('change', function () {
+            prorationChange(true);
+            setTotalMonth();
+            setBalance();
+        });
+
+        $('#abeo_month_1, #abeo_month_2, #abeo_month_3, #abeo_month_4, #abeo_month_5, #abeo_month_6, #abeo_month_7, #abeo_month_8, #abeo_month_9, #abeo_month_10, #abeo_month_11, #abeo_month_12').on('keyup', function () {
+            setTotalMonth();
+            setBalance();
+        });
+
+        $('#abeo_unit_2').on('keyup', function () {
+            faktor3_showHide();
+        });
+        $('#abeo_operation_2').on('change', function () {
+            faktor3_showHide();
+        });
+    });
+
+    function glChange() {
+        var val = $('#abeo_gl_expenses_code').find('option:selected').val();
+        var text = $('#abeo_gl_expenses_code').find('option:selected').text();
+        if (val) {
+            $('#abeo_gl_expenses_name').val(text.substr(11));
+        } else {
+            $('#abeo_gl_expenses_name').val(null);
+        }
+    }
+
+    function setTotal() {
+        var total = calcTotal();
+        $('#abeo_total').val(total.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function setTotalMonth() {
+        var totalmonth = calcTotalMonth();
+        $('#total_month').val(totalmonth.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function setBalance() {
+        var balance = calcBalance();
+        if (balance == 0)
+            enableSubmit();
+        else
+            disableSubmit();
+
+        $('#balance').text(balance.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    function calcTotal() {
+        var rate = $('#abeo_rate').val() ? parseFloat($('#abeo_rate').val().replace(/,/g, '')) : 0;
+        var total = 0;
+
+        if ($('#abeo_unit_1').val() && $('#abeo_unit_2').val() && $('#abeo_unit_3').val()) {
+            var unit_1 = $('#abeo_unit_1').val() ? parseFloat($('#abeo_unit_1').val().replace(/,/g, '')) : 0;
+            var operation_1 = $('#abeo_operation_1').find('option:selected').val();
+            var unit_2 = $('#abeo_unit_2').val() ? parseFloat($('#abeo_unit_2').val().replace(/,/g, '')) : 0;
+            var operation_2 = $('#abeo_operation_2').find('option:selected').val();
+            var unit_3 = $('#abeo_unit_3').val() ? parseFloat($('#abeo_unit_3').val().replace(/,/g, '')) : 0;
+
+            if (operation_1 == '*' || operation_1 == '/') {
+                if (operation_1 == '*') {
+                    total = unit_1 * unit_2;
+                } else {
+                    total = unit_1 / unit_2;
+                }
+
+                if (operation_2 == '*') {
+                    total = total * unit_3;
+                } else if (operation_2 == '/') {
+                    total = total / unit_3;
+                } else if (operation_2 == '+') {
+                    total = total + unit_3;
+                } else if (operation_2 == '-') {
+                    total = total - unit_3;
+                }
+            } else if (operation_2 == '*' || operation_2 == '/') {
+                if (operation_2 == '*') {
+                    total = unit_2 * unit_3;
+                } else {
+                    total = unit_2 / unit_3;
+                }
+
+                if (operation_1 == '+') {
+                    total = unit_1 + total;
+                } else if (operation_1 == '-') {
+                    total = unit_1 - total;
+                }
+            } else if ((operation_1 == '+' || operation_1 == '-') && (operation_2 == '+' || operation_2 == '-' || operation_2 == '')) {
+                if (operation_1 == '+') {
+                    total = unit_1 + unit_2;
+                } else {
+                    total = unit_1 - unit_2;
+                }
+
+                if (operation_2 != '') {
+                    if (operation_2 == '+') {
+                        total = total + unit_3;
+                    } else if (operation_2 == '-') {
+                        total = total - unit_3;
+                    }
+                }
+            }
+        } else if ($('#abeo_unit_1').val() && $('#abeo_unit_2').val()) {
+            var unit_1 = $('#abeo_unit_1').val() ? parseFloat($('#abeo_unit_1').val().replace(/,/g, '')) : 0;
+            var operation_1 = $('#abeo_operation_1').find('option:selected').val();
+            var unit_2 = $('#abeo_unit_2').val() ? parseFloat($('#abeo_unit_2').val().replace(/,/g, '')) : 0;
+
+            if (operation_1 == '+') {
+                total = unit_1 + unit_2;
+            } else if (operation_1 == '-') {
+                total = unit_1 - unit_2;
+            } else if (operation_1 == '*') {
+                total = unit_1 * unit_2;
+            } else if (operation_1 == '/') {
+                total = unit_1 / unit_2;
+            } else {
+                total = unit_1
+            }
+        } else if ($('#abeo_unit_1').val()) {
+            var unit_1 = $('#abeo_unit_1').val() ? parseFloat($('#abeo_unit_1').val().replace(/,/g, '')) : 0;
+            total = unit_1;
+        }
+
+        return total * rate;
+    }
+
+    function calcTotalMonth() {
+        var month1 = $('#abeo_month_1').val() ? parseFloat($('#abeo_month_1').val().replace(/,/g, '')) : 0;
+        var month2 = $('#abeo_month_2').val() ? parseFloat($('#abeo_month_2').val().replace(/,/g, '')) : 0;
+        var month3 = $('#abeo_month_3').val() ? parseFloat($('#abeo_month_3').val().replace(/,/g, '')) : 0;
+        var month4 = $('#abeo_month_4').val() ? parseFloat($('#abeo_month_4').val().replace(/,/g, '')) : 0;
+        var month5 = $('#abeo_month_5').val() ? parseFloat($('#abeo_month_5').val().replace(/,/g, '')) : 0;
+        var month6 = $('#abeo_month_6').val() ? parseFloat($('#abeo_month_6').val().replace(/,/g, '')) : 0;
+        var month7 = $('#abeo_month_7').val() ? parseFloat($('#abeo_month_7').val().replace(/,/g, '')) : 0;
+        var month8 = $('#abeo_month_8').val() ? parseFloat($('#abeo_month_8').val().replace(/,/g, '')) : 0;
+        var month9 = $('#abeo_month_9').val() ? parseFloat($('#abeo_month_9').val().replace(/,/g, '')) : 0;
+        var month10 = $('#abeo_month_10').val() ? parseFloat($('#abeo_month_10').val().replace(/,/g, '')) : 0;
+        var month11 = $('#abeo_month_11').val() ? parseFloat($('#abeo_month_11').val().replace(/,/g, '')) : 0;
+        var month12 = $('#abeo_month_12').val() ? parseFloat($('#abeo_month_12').val().replace(/,/g, '')) : 0;
+        return month1 + month2 + month3 + month4 + month5 + month6 + month7 + month8 + month9 + month10 + month11 + month12;
+    }
+
+    function calcBalance() {
+        var total = calcTotal();
+        var total2 = parseFloat(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        var totalmonth = calcTotalMonth();
+        var totalmonth2 = parseFloat(totalmonth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, ''));
+        return total2 - totalmonth2;
+    }
+
+    function prorationChange(trigger = false) {
+        var val = $('#abeo_proration').find('option:selected').val();
+        if (val) {
+            if (val == 'keyin') {
+                $('.input_proration').removeAttr('readonly');
+                $('.input_proration').on('keydown', function (e) {
+                    var val = $(this).val();
+                    //var regex = /^\d+(\.\d{0,1})?$/;
+                    var regex = /^\d+(\.\d{0,2})?$/;
+                    if (!regex.test(val)) {
+                        var match = val.match(regex);
+                        if (match !== null) {
+                            $(this).val(match[0]);
+                        } else {
+                            var newVal = val.replace(/(\.\d{1})\d+/g, '$1');
+                            $(this).val(newVal);
+                        }
+                    }
+                    if ($(this).val() < 0 && e.keyCode !== 8 && e.keyCode !== 46) {
+                        e.preventDefault();
+                    } else if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                        e.preventDefault();
+                    }
+                });
+
+                if (trigger) {
+                    $('#abeo_month_1').val(null);
+                    $('#abeo_month_2').val(null);
+                    $('#abeo_month_3').val(null);
+                    $('#abeo_month_4').val(null);
+                    $('#abeo_month_5').val(null);
+                    $('#abeo_month_6').val(null);
+                    $('#abeo_month_7').val(null);
+                    $('#abeo_month_8').val(null);
+                    $('#abeo_month_9').val(null);
+                    $('#abeo_month_10').val(null);
+                    $('#abeo_month_11').val(null);
+                    $('#abeo_month_12').val(null);
+                }
+            } else {
+                $('.input_proration').attr('readonly', 'readonly');
+                $('.input_proration').attr('type', 'text');
+                $('.input_proration').addClass('text-right');
+
+                var total = calcTotal();
+                var month1 = 0;
+                var month2 = 0;
+                var month3 = 0;
+                var month4 = 0;
+                var month5 = 0;
+                var month6 = 0;
+                var month7 = 0;
+                var month8 = 0;
+                var month9 = 0;
+                var month10 = 0;
+                var month11 = 0;
+                var month12 = 0;
+
+                if (val == 'monthly') {
+                    month1 = total / 12;
+                    month2 = total / 12;
+                    month3 = total / 12;
+                    month4 = total / 12;
+                    month5 = total / 12;
+                    month6 = total / 12;
+                    month7 = total / 12;
+                    month8 = total / 12;
+                    month9 = total / 12;
+                    month10 = total / 12;
+                    month11 = total / 12;
+                    month12 = total - (parseFloat((total / 12).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 11);
+                } else if (val == 'quarterly') {
+                    month3 = total / 4;
+                    month6 = total / 4;
+                    month9 = total / 4;
+                    month12 = total - (parseFloat((total / 4).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 3);
+                } else if (val == 'semi_annually') {
+                    month6 = total / 2;
+                    month12 = total - (parseFloat((total / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,/g, '')) * 1);
+                } else if (val == 'annually') {
+                    month12 = total;
+                }
+
+                $('#abeo_month_1').val(month1.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_2').val(month2.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_3').val(month3.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_4').val(month4.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_5').val(month5.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_6').val(month6.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_7').val(month7.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_8').val(month8.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_9').val(month9.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_10').val(month10.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_11').val(month11.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+                $('#abeo_month_12').val(month12.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })).change();
+            }
+        }
+    }
+
+    function enableSubmit() {
+        $('#btn_submit').attr('type', 'submit');
+        $('#btn_submit').removeClass('disabled');
+        $('#btn_submit').prop('disabled', false);
+    }
+
+    function disableSubmit() {
+        $('#btn_submit').attr('type', 'button');
+        $('#btn_submit').addClass('disabled');
+        $('#btn_submit').prop('disabled', true);
+    }
+
+    function faktor3_showHide() {
+        var unit_2 = $('#abeo_unit_2').val();
+        var operation_2 = $('#abeo_operation_2').find('option:selected').val();
+        if (unit_2 && operation_2) {
+            $('.faktor3_show').show();
+        } else {
+            $('.faktor3_show').hide();
+        }
+    }
+</script>

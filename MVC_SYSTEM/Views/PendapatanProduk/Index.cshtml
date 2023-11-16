@@ -1,0 +1,218 @@
+﻿@*@model MVC_SYSTEM.ModelsBudget.PagedList<MVC_SYSTEM.ModelsBudget.bgt_income_product>*@
+@model PagedList.PagedList<MVC_SYSTEM.ModelsBudget.ViewModels.IncomeProductListViewModel>
+@using MVC_SYSTEM.ClassBudget;
+@{
+    GetBudgetClass GetBudgetClass = new GetBudgetClass();
+    ViewBag.Title = GetBudgetClass.GetScreenName("I3");
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "Get",
+        UpdateTargetId = "produk",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+
+    BudgetUserMatrix UserMatrix = new BudgetUserMatrix();//new oct
+    var userid = User.Identity.Name;
+    var RoleScreen = UserMatrix.RoleScreen(userid, "I3");
+}
+<script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+@section scripts{
+    @Scripts.Render("~/Asset/Scripts/AjaxModal.js")
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well bottom" style="padding-bottom:16px;">
+        @using (Ajax.BeginForm("_Index", "PendapatanProduk", null, options, new { @id = "" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-sm-2">
+                    @Html.Label("Tahun Bajet")
+                    @Html.DropDownList("BudgetYear", new SelectList(ViewBag.BudgetYear, "Value", "Text"), htmlAttributes: new { @class = "form-control", @id = "BudgetYear" })
+                </div>
+                <div class="col-sm-3">
+                    @Html.Label("Keterangan Cost Center")
+                    @Html.TextBox("CostCenter", ViewBag.CostCenter as string, htmlAttributes: new { @class = "form-control", @id = "CostCenter" })
+                </div>
+                <div class="col-sm-2">
+                    @Html.Label("Stesen")
+                    @Html.TextBox("Stesen", ViewBag.Stesen as string, htmlAttributes: new { @class = "form-control", @id = "Stesen" })
+                </div>
+                <div class="col-sm-1 btn-group" style="padding-top: 24px;">
+                    <input class="btn btn-primary btn-block" type="submit" id="submit" name="View" value=@GlobalResEstate.btnView />
+                </div>
+                <div class="col-sm-3" style="padding-top:25px;" id="AllDownload">
+                    <a class="btn btn-default btn-sm" href="#" id="downloadpdflistingproduk">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                    </a>
+                    <a class="btn btn-default btn-sm" href="#" id="downloadexcellistingproduk"><span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel</a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well" style="margin-top:7px;">
+        <div class="panel panel-success">
+            <div class="panel-heading">@GetBudgetClass.GetScreenName("I3")</div>
+            <div class="panel-body">
+                <div id="produk">
+                    @Html.Action("_Index", new { BudgetYear = year @*, CostCenter = ViewBag.CostCenter*@ })
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12 text-right" style="margin-bottom: 20px">
+                @if (!RoleScreen.add)
+                {
+                    <a class="btn btn-success" href="@Url.Action("Denied", "bgtAlert")">@GetBudgetClass.GetScreenName("I3") - ADD</a>
+                    <a class="btn btn-warning" href=@Url.Action("Index", "Income") role="button" onclick="return DisplayProgressMessage(this);">@GlobalResEstate.btnBack.ToUpper()</a>
+                }
+                else
+                {
+                    <a class="btn btn-success" href="@Url.Action("Create", "PendapatanProduk")" id="btnCreate" onclick="return DisplayProgressMessage2(this);">@GetBudgetClass.GetScreenName("I3") - ADD</a>
+                    <a class="btn btn-warning" href=@Url.Action("Index", "Income") role="button" onclick="return DisplayProgressMessage(this);">@GlobalResEstate.btnBack.ToUpper()</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id='myModal1' class='modal fade in'>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    /* Remove arrow input number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    /* Remove arrow input number */
+
+    /*input[type="number"] {
+        text-align: right;
+    }*/
+
+    .btn.disabled, [disabled].btn, fieldset[disabled] .btn {
+        opacity: 0.65 !important;
+    }
+
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    tr.webgrid-header th {
+        text-align: center;
+    }
+
+    .modal-lg {
+        width: 99% !important;
+    }
+
+    @@media only screen and (max-width: 768px) {
+        .modal-lg {
+            width: inherit !important;
+        }
+    }
+
+    .header_table th {
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .count {
+        width: 30px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .ProductDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .GLDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .CostC {
+        width: 100px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .CostCenterDesc {
+        width: 200px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: middle !important;
+    }
+
+    .Amount {
+        width: 90px;
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle !important;
+    }
+
+    .tindakan {
+        width: 100px;
+        text-align: center;
+    }
+</style>
+
+<script>
+    $("#downloadpdflistingproduk").click(function () {
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var Stesen = $("#Stesen").val();
+        var param = '/?BudgetYear=' + BudgetYear + '&CostCenter=' + CostCenter + '&Stesen=' + Stesen;
+        location.href = "@Url.Action("PrintList", "PendapatanProduk")" + param;
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+
+    $("#downloadexcellistingproduk").click(function () {
+        var BudgetYear = $("#BudgetYear").val();
+        var CostCenter = $("#CostCenter").val();
+        var Stesen = $("#Stesen").val();
+        var param = '/?budgetyear=' + BudgetYear + '&costcenter=' + CostCenter + '&Stesen=' + Stesen + '&format=EXCEL';
+        location.href="@Url.Action("PrintList", "PendapatanProduk")" + param;
+        return false;
+        });
+
+        $("#Submit").click(function () {
+            $("#AllDownload").show();
+        });
+</script>
