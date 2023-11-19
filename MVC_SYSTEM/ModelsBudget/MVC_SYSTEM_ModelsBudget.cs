@@ -37,6 +37,7 @@ namespace MVC_SYSTEM.ModelsBudget
         public virtual DbSet<tbl_UpahAktiviti> tbl_UpahAktiviti { get; set; }
         public virtual DbSet<bgt_RoleScrAction> bgt_RoleScrAction { get; set; }//user matrix
         public virtual DbSet<bgt_Struc> bgt_Struc { get; set; }//new nov
+        public virtual DbSet<bgt_PrdAct_NC> bgt_PrdAct_NCs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -86,7 +86,8 @@ namespace MVC_SYSTEM.ControllersBudget
             }
             if (newScrCode == "E4")//IT
             {
-                return RedirectToAction("ExpITListing", "ExpensesIT");
+                //return RedirectToAction("ExpITListing", "ExpensesIT");
+                return RedirectToAction("ButiranBelanjaIT", "bgtHQExpensesIT");
             }
             if (newScrCode == "E5")// ctrlHQ
             {

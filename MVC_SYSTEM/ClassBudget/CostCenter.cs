@@ -111,6 +111,30 @@ namespace MVC_SYSTEM.ClassBudget
             }
         }
 
+        public List<tbl_SAPCCPUP> GetCostCenters(string ccCode = null, string codePP = null, string codeLL = null)
+        {
+            int? NegaraID, SyarikatID, WilayahID, LadangID = 0;
+            int? getuserid = getidentity.ID(HttpContext.Current.User.Identity.Name);
+            string host, catalog, user, pass = "";
+            GetNSWL.GetData(out NegaraID, out SyarikatID, out WilayahID, out LadangID, getuserid, HttpContext.Current.User.Identity.Name);
+            Connection.GetConnection(out host, out catalog, out user, out pass, WilayahID.Value, SyarikatID.Value, NegaraID.Value);
+
+            using (var db = new MVC_SYSTEM_MasterModels())
+            {
+                var costCenters = db.tbl_SAPCCPUP
+                    .Where(w => w.fld_LadangID == LadangID && w.fld_WilayahID == WilayahID && w.fld_SyarikatID == SyarikatID && ((w.fld_Deleted.HasValue && !w.fld_Deleted.Value) || !w.fld_Deleted.HasValue));
+
+                if (!string.IsNullOrEmpty(ccCode))
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Equals(ccCode));
+                if (!string.IsNullOrEmpty(codePP))
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(3, 2).Equals(codePP));
+                if (!string.IsNullOrEmpty(codeLL))
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(5, 2).Equals(codeLL));
+
+                return costCenters.OrderBy(c => c.fld_CostCenter).ToList();
+            }
+        }
+
         public string GetCostCenterDesc(string costCenterCode)
         {
             using (var db = new MVC_SYSTEM_MasterModels())

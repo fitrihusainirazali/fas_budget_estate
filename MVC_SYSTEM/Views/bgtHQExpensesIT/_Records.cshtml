@@ -1,0 +1,38 @@
+﻿
+@{
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (grid.TotalRowCount > 0)
+    {
+        @grid.GetHtml(
+            htmlAttributes: new { id = "grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                grid.Column("No", style: "text-center col-md-1", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex),
+                grid.Column("BudgetYear", "Budget Year", style: "text-center"),
+                grid.Column("UploadedBy", "Upload By", style: "text-center"),
+                grid.Column("UploadedDate", "Upload Date", style: "text-center"),
+                grid.Column("Version", "Version", style: "text-center"),
+                grid.Column("Action", canSort: false, style: "text-center text-nowrap col-md-1", format: @<text>
+                        @Html.Raw("<a href='" + @Url.Action("Details", new { BudgetYear = item.BudgetYear, Version = item.Version }) + "' class='btn btn-primary btn-sm' data-modal2=''><i class='fa fa-list'></i></a>")
+                        @Html.Raw("<a href='" + @Url.Action("Download", new { BudgetYear = item.BudgetYear, Version = item.Version }) + "' class='btn btn-success btn-sm'><i class='fa fa-download'></i></a>")
+                </text>)))
+    }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label("No Data")
+        </div>
+        <hr />
+    }
+}

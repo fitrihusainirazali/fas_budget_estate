@@ -116,6 +116,13 @@
 
         public bool? abet_history { get; set; }
 
+        [StringLength(255)]
+        public string abet_createdby { get; set; }
+
+        public DateTime? abet_upload_date { get; set; }
+
+        public int? abet_version { get; set; }
+
     }
 
 }

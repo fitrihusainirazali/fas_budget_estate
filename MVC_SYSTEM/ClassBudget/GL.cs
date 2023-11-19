@@ -18,5 +18,18 @@ namespace MVC_SYSTEM.ClassBudget
                     return db.tbl_SAPGLPUP.OrderBy(g => g.fld_GLCode).ToList();
             }
         }
+
+        public string GetGLDesc(string glCode)
+        {
+            using (var db = new MVC_SYSTEM_MasterModels())
+            {
+                var gl = db.tbl_SAPGLPUP.Where(g => g.fld_GLCode.Contains(glCode) && ((g.fld_Deleted.HasValue && !g.fld_Deleted.Value) || !g.fld_Deleted.HasValue)).FirstOrDefault();
+                if (gl != null)
+                {
+                    return gl.fld_GLDesc;
+                }
+                return string.Empty;
+            }
+        }
     }
 }
