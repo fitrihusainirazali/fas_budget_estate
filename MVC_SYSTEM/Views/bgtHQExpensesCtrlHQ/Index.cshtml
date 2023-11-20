@@ -16,6 +16,7 @@
     .text-nowrap {
         white-space: nowrap;
     }
+
     tr.webgrid-header th {
         text-align: center;
     }
@@ -23,7 +24,7 @@
 
 <section class="content-wrapper main-content clear-fix">
     <div class="well" style="margin-bottom: 20px;">
-        @using (Html.BeginForm("ButiranBelanjaIT", "bgtHQExpensesIT", FormMethod.Get))
+        @using (Html.BeginForm("Index", "bgtHQExpensesCtrlHQ", FormMethod.Get))
         {
             <div class="row">
                 <div class="col-md-2">
@@ -58,7 +59,7 @@
             </div>
         </div>
         <hr style="margin-top:0;" />
-        @using (Html.BeginForm("Upload", "bgtHQExpensesIT", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Upload", "bgtHQExpensesCtrlHQ", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.Hidden("year", year)
             <div class="row">

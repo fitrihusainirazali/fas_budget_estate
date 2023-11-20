@@ -35,7 +35,7 @@
 
 <section class="content-wrapper main-content clear-fix">
     <div class="well" style="margin-bottom: 20px;">
-        @using (Html.BeginForm("Details", "bgtHQExpensesIT", FormMethod.Get))
+        @using (Html.BeginForm("Details", "bgtHQExpensesCtrlHQ", FormMethod.Get))
         {
             <div class="row">
                 <div class="col-md-4">
@@ -88,7 +88,7 @@
             <div class="row">
                 <div class="col-md-12 text-right" style="margin-bottom:20px;">
                     <button type="submit" class="btn btn-primary">@GlobalResEstate.btnView</button>
-                    <a href="@Url.Action("ButiranBelanjaIT", "bgtHQExpensesIT")" class="btn btn-warning">@GlobalResEstate.btnBack</a>
+                    <a href="@Url.Action("Index", "bgtHQExpensesCtrlHQ")" class="btn btn-warning">@GlobalResEstate.btnBack</a>
                 </div>
             </div>
         }
@@ -105,22 +105,6 @@
                     <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
                 </a>
             </div>
-            @*<div class="col-md-offset-10 text-right" style="margin-bottom:20px;">
-            <div class="row">
-                <div class="col-md-6">
-                    <a href="@Url.Action("ExportList", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Version = ViewBag.Version,
-                            ProductActivity = ViewBag.ProductActivity, ViewBag.Station, ViewBag.Views, ViewBag.Option, format = "PDF" })" target="_blank" class="btn btn-default btn-sm btn-block">
-                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="@Url.Action("ExportList", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Version = ViewBag.Version,
-                            ProductActivity = ViewBag.ProductActivity, ViewBag.Station, ViewBag.Views, ViewBag.Option, format = "EXCEL" })" target="_blank" class="btn btn-default btn-sm btn-block">
-                        <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
-                    </a>
-                </div>
-            </div>
-        </div>*@
         </div>
         <div class="row">
             <div class="col-md-12">

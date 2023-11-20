@@ -91,11 +91,13 @@ namespace MVC_SYSTEM.ControllersBudget
             }
             if (newScrCode == "E5")// ctrlHQ
             {
-                return RedirectToAction("ExpCHQListing", "ExpensesCtrlHQ");
+                //return RedirectToAction("ExpCHQListing", "ExpensesCtrlHQ");
+                return RedirectToAction("Index", "bgtHQExpensesCtrlHQ");
             }
             if (newScrCode == "E6")// CorpServ
             {
                 return RedirectToAction("ExpCorpSListing", "ExpensesCorpServ");
+                //return RedirectToAction("Index", "bgtHQExpensesCorp");
             }
             if (newScrCode == "E7")//medical
             {

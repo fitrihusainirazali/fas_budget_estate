@@ -116,6 +116,13 @@
 
         public bool? abhq_history { get; set; }
 
+        [StringLength(255)]
+        public string abhq_createdby { get; set; }
+
+        public DateTime? abhq_upload_date { get; set; }
+
+        public int? abhq_version { get; set; }
+
     }
 
 }
