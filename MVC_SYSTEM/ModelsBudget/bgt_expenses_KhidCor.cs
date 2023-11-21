@@ -116,6 +116,13 @@
 
         public bool? abcs_history { get; set; }
 
+        [StringLength(255)]
+        public string abcs_createdby { get; set; }
+
+        public DateTime? abcs_upload_date { get; set; }
+
+        public int? abcs_version { get; set; }
+
     }
 
 }

@@ -96,8 +96,8 @@ namespace MVC_SYSTEM.ControllersBudget
             }
             if (newScrCode == "E6")// CorpServ
             {
-                return RedirectToAction("ExpCorpSListing", "ExpensesCorpServ");
-                //return RedirectToAction("Index", "bgtHQExpensesCorp");
+                //return RedirectToAction("ExpCorpSListing", "ExpensesCorpServ");
+                return RedirectToAction("Index", "bgtHQExpensesCorp");
             }
             if (newScrCode == "E7")//medical
             {

@@ -39,6 +39,8 @@ namespace MVC_SYSTEM.ModelsBudget
         public virtual DbSet<bgt_Struc> bgt_Struc { get; set; }//new nov
         public virtual DbSet<bgt_PrdAct_NC> bgt_PrdAct_NCs { get; set; }
 
+        public virtual DbSet<bgt_HQExpXcel> bgt_HQExpXcels { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<bgt_Screen>()

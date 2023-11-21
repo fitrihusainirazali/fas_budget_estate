@@ -1,0 +1,599 @@
+﻿@model List<MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesHQListDetailViewModel>
+
+@{ 
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+
+    var budgetYear = ViewBag.BudgetYear as string;
+    var costCenters = ViewBag.CostCenters as List<MVC_SYSTEM.MasterModels.tbl_SAPCCPUP>;
+    var gls = ViewBag.GLs as List<MVC_SYSTEM.MasterModels.tbl_SAPGLPUP>;
+}
+
+<style type="text/css">
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+    .text-nowrap {
+        white-space: nowrap;
+    }
+    .table thead tr th {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .fixed-width {
+        width: 150px;
+        min-width: 150px;
+    }
+    .fixed-width2 {
+        width: 70px;
+        min-width: 70px;
+    }
+</style>
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well" style="margin-bottom: 20px;">
+        @using (Html.BeginForm("Details", "bgtHQExpensesCorp", FormMethod.Get))
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.Label("Budget Year")
+                        @Html.DropDownList("BudgetYear", new SelectList(ViewBag.FilterYears, "Value", "Text"), htmlAttributes: new { @class = "form-control input-sm select2" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Product/Activity")
+                        @Html.DropDownList("ProductActivity", new SelectList(ViewBag.FilterProductActivities, "Value", "Text"), "All", htmlAttributes: new { @class = "form-control input-sm select2" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Station")
+                        @Html.DropDownList("Station", new SelectList(ViewBag.FilterStations, "Value", "Text"), "All", htmlAttributes: new { @class = "form-control input-sm select2" })
+                    </div>
+                </div>
+                <div class="col-md-6 col-md-offset-1">
+                    <div class="form-group">
+                        @Html.Label("Cost Center")
+                        @Html.DropDownList("CostCenter", new SelectList(ViewBag.FilterCostCenters, "Value", "Text"), "All", htmlAttributes: new { @class = "form-control input-sm select2" })
+                    </div>
+                    <div id="div_filter_view" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.Label("Proration")
+                                @Html.DropDownList("Views", new List<SelectListItem> {
+                                    new SelectListItem { Value = "monthly", Text = "Monthly", Selected = ViewBag.FilterViews != null && ViewBag.FilterViews.Equals("monthly", StringComparison.OrdinalIgnoreCase) ? true : false },
+                                    new SelectListItem { Value = "quarterly", Text = "Quarterly", Selected = ViewBag.FilterViews != null && ViewBag.FilterViews.Equals("quarterly", StringComparison.OrdinalIgnoreCase) ? true : false },
+                                    new SelectListItem { Value = "semiannually", Text = "Semi Annually", Selected = ViewBag.FilterViews != null && ViewBag.FilterViews.Equals("semiannually", StringComparison.OrdinalIgnoreCase) ? true : false },
+                                    new SelectListItem { Value = "annually", Text = "Annually", Selected = ViewBag.FilterViews != null && ViewBag.FilterViews.Equals("annually", StringComparison.OrdinalIgnoreCase) ? true : false }
+                                }, htmlAttributes: new { @class = "form-control input-sm select2" })
+                            </div>
+                        </div>
+                    </div>
+                    <div id="div_filter_option" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.Label("Option")
+                                @Html.DropDownList("Option", new List<SelectListItem> {
+                                    new SelectListItem { Value = "summary", Text = "Summary", Selected = ViewBag.FilterOption == null || (ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("summary", StringComparison.OrdinalIgnoreCase)) ? true : false },
+                                    new SelectListItem { Value = "details", Text = "Details", Selected = ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("details", StringComparison.OrdinalIgnoreCase) ? true : false }
+                                }, htmlAttributes: new { @class = "form-control input-sm select2" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @Html.Hidden("Version", null, new { @Value = ViewBag.Version })
+            <hr style="margin-top:0;" />
+            <div class="row">
+                <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                    <button type="submit" class="btn btn-primary">@GlobalResEstate.btnView</button>
+                    <a href="@Url.Action("Index", "bgtHQExpensesCorp")" class="btn btn-warning">@GlobalResEstate.btnBack</a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="well">
+        <div class="row">
+            <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                <a href="@Url.Action("ExportList", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Version = ViewBag.Version,
+                            ProductActivity = ViewBag.ProductActivity, ViewBag.Station, ViewBag.Views, ViewBag.Option, format = "PDF" })" target="_blank" class="btn btn-default">
+                    <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                </a>
+                <a href="@Url.Action("ExportList", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Version = ViewBag.Version,
+                            ProductActivity = ViewBag.ProductActivity, ViewBag.Station, ViewBag.Views, ViewBag.Option, format = "EXCEL" })" target="_blank" class="btn btn-default">
+                    <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                @if (ViewBag.FilterViews.Equals("monthly", StringComparison.OrdinalIgnoreCase) || ViewBag.FilterViews.Equals("quarterly", StringComparison.OrdinalIgnoreCase) || ViewBag.FilterViews.Equals("semiannually", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    decimal month1 = 0;
+                                    decimal month2 = 0;
+                                    decimal month3 = 0;
+                                    decimal month4 = 0;
+                                    decimal month5 = 0;
+                                    decimal month6 = 0;
+                                    decimal month7 = 0;
+                                    decimal month8 = 0;
+                                    decimal month9 = 0;
+                                    decimal month10 = 0;
+                                    decimal month11 = 0;
+                                    decimal month12 = 0;
+                                    decimal total = 0;
+                                    decimal value_per_month = 0;
+                                    decimal value_last_month = 0;
+
+                                    decimal sum_month1 = 0;
+                                    decimal sum_month2 = 0;
+                                    decimal sum_month3 = 0;
+                                    decimal sum_month4 = 0;
+                                    decimal sum_month5 = 0;
+                                    decimal sum_month6 = 0;
+                                    decimal sum_month7 = 0;
+                                    decimal sum_month8 = 0;
+                                    decimal sum_month9 = 0;
+                                    decimal sum_month10 = 0;
+                                    decimal sum_month11 = 0;
+                                    decimal sum_month12 = 0;
+                                    decimal sum_total = 0;
+
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th rowspan="2">No</th>
+                                                    <th rowspan="2">Kod GL</th>
+                                                    <th rowspan="2">Keterangan GL</th>
+                                                    <th colspan="12">Month</th>
+                                                    <th rowspan="2">Jumlah (RM)</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fixed-width2">Jan</th>
+                                                    <th class="fixed-width2">Feb</th>
+                                                    <th class="fixed-width2">Mac</th>
+                                                    <th class="fixed-width2">Apr</th>
+                                                    <th class="fixed-width2">Mei</th>
+                                                    <th class="fixed-width2">Jun</th>
+                                                    <th class="fixed-width2">Jul</th>
+                                                    <th class="fixed-width2">Ogo</th>
+                                                    <th class="fixed-width2">Sep</th>
+                                                    <th class="fixed-width2">Okt</th>
+                                                    <th class="fixed-width2">Nov</th>
+                                                    <th class="fixed-width2">Dis</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.Count > 0)
+                                                {
+                                                    for (int i = 0; i < Model.Count; i++)
+                                                    {
+                                                        total = Model[i].Total;
+                                                        if (ViewBag.FilterViews.Equals("monthly", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            month1 = Model[i].Month1;
+                                                            month2 = Model[i].Month2;
+                                                            month3 = Model[i].Month3;
+                                                            month4 = Model[i].Month4;
+                                                            month5 = Model[i].Month5;
+                                                            month6 = Model[i].Month6;
+                                                            month7 = Model[i].Month7;
+                                                            month8 = Model[i].Month8;
+                                                            month9 = Model[i].Month9;
+                                                            month10 = Model[i].Month10;
+                                                            month11 = Model[i].Month11;
+                                                            month12 = Model[i].Month12;
+                                                        }
+                                                        else if (ViewBag.FilterViews.Equals("quarterly", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            value_per_month = Math.Round(total / 4, 2);
+                                                            value_last_month = total - value_per_month * 3;
+
+                                                            month1 = 0;
+                                                            month2 = 0;
+                                                            month3 = value_per_month;
+                                                            month4 = 0;
+                                                            month5 = 0;
+                                                            month6 = value_per_month;
+                                                            month7 = 0;
+                                                            month8 = 0;
+                                                            month9 = value_per_month;
+                                                            month10 = 0;
+                                                            month11 = 0;
+                                                            month12 = value_last_month;
+                                                        }
+                                                        else if (ViewBag.FilterViews.Equals("semiannually", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            value_per_month = Math.Round(total / 2, 2);
+                                                            value_last_month = total - value_per_month * 1;
+
+                                                            month1 = 0;
+                                                            month2 = 0;
+                                                            month3 = 0;
+                                                            month4 = 0;
+                                                            month5 = 0;
+                                                            month6 = value_per_month;
+                                                            month7 = 0;
+                                                            month8 = 0;
+                                                            month9 = 0;
+                                                            month10 = 0;
+                                                            month11 = 0;
+                                                            month12 = value_last_month;
+                                                        }
+
+                                                        sum_month1 += month1;
+                                                        sum_month2 += month2;
+                                                        sum_month3 += month3;
+                                                        sum_month4 += month4;
+                                                        sum_month5 += month5;
+                                                        sum_month6 += month6;
+                                                        sum_month7 += month7;
+                                                        sum_month8 += month8;
+                                                        sum_month9 += month9;
+                                                        sum_month10 += month10;
+                                                        sum_month11 += month11;
+                                                        sum_month12 += month12;
+                                                        sum_total += total;
+
+                                                        <tr>
+                                                            <td class="text-center">@(i + 1)</td>
+                                                            <td class="text-center">@Model[i].GLCode</td>
+                                                            <td>@Model[i].GLDesc</td>
+                                                            <td class="text-right">@month1.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month2.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month3.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month4.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month5.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month6.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month7.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month8.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month9.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month10.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month11.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@month12.ToString("#,##0.00")</td>
+                                                            <td class="text-right">@total.ToString("#,##0.00")</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="16">@Html.Label("No Data")</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="3" class="text-right">Jumlah Keseluruhan</th>
+                                                    <th class="text-right">@sum_month1.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month2.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month3.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month4.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month5.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month6.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month7.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month8.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month9.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month10.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month11.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_month12.ToString("#,##0.00")</th>
+                                                    <th class="text-right">@sum_total.ToString("#,##0.00")</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (ViewBag.FilterOption.Equals("details", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (costCenters.Count > 0)
+                                        {
+                                            for (int i = 0; i < costCenters.Count; i++)
+                                            {
+                                                decimal month1 = 0;
+                                                decimal month2 = 0;
+                                                decimal month3 = 0;
+                                                decimal month4 = 0;
+                                                decimal month5 = 0;
+                                                decimal month6 = 0;
+                                                decimal month7 = 0;
+                                                decimal month8 = 0;
+                                                decimal month9 = 0;
+                                                decimal month10 = 0;
+                                                decimal month11 = 0;
+                                                decimal month12 = 0;
+                                                decimal total = 0;
+                                                decimal value_per_month = 0;
+                                                decimal value_last_month = 0;
+
+                                                decimal sum_month1 = 0;
+                                                decimal sum_month2 = 0;
+                                                decimal sum_month3 = 0;
+                                                decimal sum_month4 = 0;
+                                                decimal sum_month5 = 0;
+                                                decimal sum_month6 = 0;
+                                                decimal sum_month7 = 0;
+                                                decimal sum_month8 = 0;
+                                                decimal sum_month9 = 0;
+                                                decimal sum_month10 = 0;
+                                                decimal sum_month11 = 0;
+                                                decimal sum_month12 = 0;
+                                                decimal sum_total = 0;
+
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <label>Cost Center: @costCenters[i].fld_CostCenter.TrimStart('0') - @costCenters[i].fld_CostCenterDesc</label>
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-hover table-condensed">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th rowspan="2">No</th>
+                                                                        <th rowspan="2">Kod GL</th>
+                                                                        <th rowspan="2">Keterangan GL</th>
+                                                                        <th colspan="12">Month</th>
+                                                                        <th rowspan="2">Jumlah (RM)</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="fixed-width2">Jan</th>
+                                                                        <th class="fixed-width2">Feb</th>
+                                                                        <th class="fixed-width2">Mac</th>
+                                                                        <th class="fixed-width2">Apr</th>
+                                                                        <th class="fixed-width2">Mei</th>
+                                                                        <th class="fixed-width2">Jun</th>
+                                                                        <th class="fixed-width2">Jul</th>
+                                                                        <th class="fixed-width2">Ogo</th>
+                                                                        <th class="fixed-width2">Sep</th>
+                                                                        <th class="fixed-width2">Okt</th>
+                                                                        <th class="fixed-width2">Nov</th>
+                                                                        <th class="fixed-width2">Dis</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (gls.Count > 0 && Model.Count > 0)
+                                                                    {
+                                                                        for (int j = 0; j < gls.Count; j++)
+                                                                        {
+                                                                            var data = Model.Where(m => m.CostCenterCode.Equals(costCenters[i].fld_CostCenter.TrimStart('0')) && m.GLCode.Equals(gls[j].fld_GLCode)).FirstOrDefault();
+                                                                            if (data == null)
+                                                                            {
+                                                                                data = new MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesHQListDetailViewModel();
+                                                                            }
+
+                                                                            month1 = data.Month1;
+                                                                            month2 = data.Month2;
+                                                                            month3 = data.Month3;
+                                                                            month4 = data.Month4;
+                                                                            month5 = data.Month5;
+                                                                            month6 = data.Month6;
+                                                                            month7 = data.Month7;
+                                                                            month8 = data.Month8;
+                                                                            month9 = data.Month9;
+                                                                            month10 = data.Month10;
+                                                                            month11 = data.Month11;
+                                                                            month12 = data.Month12;
+                                                                            total = data.Total;
+
+                                                                            sum_month1 += month1;
+                                                                            sum_month2 += month2;
+                                                                            sum_month3 += month3;
+                                                                            sum_month4 += month4;
+                                                                            sum_month5 += month5;
+                                                                            sum_month6 += month6;
+                                                                            sum_month7 += month7;
+                                                                            sum_month8 += month8;
+                                                                            sum_month9 += month9;
+                                                                            sum_month10 += month10;
+                                                                            sum_month11 += month11;
+                                                                            sum_month12 += month12;
+                                                                            sum_total += total;
+
+                                                                            <tr>
+                                                                                <td class="text-center">@(j + 1)</td>
+                                                                                <td class="text-center">@data.GLCode</td>
+                                                                                <td>@data.GLDesc</td>
+                                                                                <td class="text-right">@month1.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month2.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month3.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month4.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month5.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month6.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month7.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month8.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month9.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month10.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month11.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@month12.ToString("#,##0.00")</td>
+                                                                                <td class="text-right">@total.ToString("#,##0.00")</td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <tr>
+                                                                            <td colspan="16">@Html.Label("No Data")</td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <th colspan="3" class="text-right">Jumlah Keseluruhan</th>
+                                                                        <th class="text-right">@sum_month1.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month2.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month3.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month4.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month5.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month6.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month7.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month8.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month9.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month10.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month11.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_month12.ToString("#,##0.00")</th>
+                                                                        <th class="text-right">@sum_total.ToString("#,##0.00")</th>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <hr />
+                                            <div class="text-center text-danger">
+                                                @Html.Label("No Data")
+                                            </div>
+                                            <hr />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        decimal[] sum_row = new decimal[costCenters.Count];
+                                        decimal[] sum_col = new decimal[gls.Count];
+                                        decimal sum_all = 0;
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover table-condensed" style="width: max-content !important;">
+                                                <thead>
+                                                    <tr>
+                                                        <th rowspan="2">No</th>
+                                                        <th>Keterangan GL</th>
+                                                        @foreach (var gl in gls)
+                                                        {
+                                                            <th class="fixed-width">@gl.fld_GLDesc</th>
+                                                        }
+                                                        <th rowspan="2" class="fixed-width">Jumlah (RM)</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Cost Center</th>
+                                                        @foreach (var gl in gls)
+                                                        {
+                                                            <th>@gl.fld_GLCode</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (costCenters.Count > 0)
+                                                    {
+                                                        for (int i = 0; i < costCenters.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td class="text-center">@(i + 1)</td>
+                                                                <td class="text-center">@costCenters[i].fld_CostCenter.TrimStart('0')</td>
+                                                                @for (int j = 0; j < gls.Count; j++)
+                                                                {
+                                                                    if (Model.Count > 0)
+                                                                    {
+                                                                        for (int k = 0; k < Model.Count; k++)
+                                                                        {
+                                                                            if (Model[k].CostCenterCode.Equals(costCenters[i].fld_CostCenter.TrimStart('0')) && Model[k].GLCode.Equals(gls[j].fld_GLCode))
+                                                                            {
+                                                                                decimal data = Model[k].Month1 + Model[k].Month2 + Model[k].Month3 + Model[k].Month4 + Model[k].Month5 + Model[k].Month6 + Model[k].Month7 + Model[k].Month8 + Model[k].Month9 + Model[k].Month10 + Model[k].Month11 + Model[k].Month12;
+                                                                                sum_row[i] += data;
+                                                                                sum_col[j] += data;
+                                                                                <td class="text-right">@data.ToString("#,##0.00")</td>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="text-right">-</td>
+                                                                    }
+                                                                }
+                                                                <td class="text-right">@sum_row[i].ToString("#,##0.00")</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="@(gls.Count + 3)" class="text-center">@Html.Label("No Data")</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th colspan="2">Jumlah Keseluruhan</th>
+                                                        @for (int l = 0; l < gls.Count; l++)
+                                                        {
+                                                            sum_all += sum_col[l];
+                                                            <th class="text-right">@sum_col[l].ToString("#,##0.00")</th>
+                                                        }
+                                                        <th class="text-right">@sum_all.ToString("#,##0.00")</th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.select2').select2({
+                width: '100%'
+            });
+
+            filterCostCenterChange();
+            //filterViewChange();
+
+            $('#CostCenter').on('change', function () {
+                filterCostCenterChange();
+            });
+
+            //$('#Views').on('change', function () {
+            //    filterViewChange();
+            //});
+        });
+
+        function filterCostCenterChange() {
+            var costCenter = $('#CostCenter').find('option:selected').val();
+            var views = $('#Views').find('option:selected').val();
+            var option = $('#Option').find('option:selected').val();
+            if (costCenter) {
+                $('#div_filter_view').show();
+                $('#div_filter_option').hide();
+
+                if (views == '' || views == null) {
+                    $('#Views').val('monthly').trigger('change');
+                }
+                $('#Option').val(null).trigger('change');
+            } else {
+                $('#div_filter_view').hide();
+                $('#div_filter_option').show();
+                $('#Views').val(null).trigger('change');
+                if (option == '' || option == null) {
+                    $('#Option').val('summary').trigger('change');
+                }
+            }
+
+            //filterViewChange();
+        }
+
+        //function filterViewChange() {
+        //    var view = $('#Views').find('option:selected').val();
+        //    if (view) {
+        //        $('#div_filter_option').show();
+        //    } else {
+        //        $('#div_filter_option').hide();
+        //        $('#Option').val(null).trigger('change');
+        //    }
+        //}
+    </script>
+}

@@ -35,7 +35,7 @@ using MVC_SYSTEM.ModelsBudgetView;
 namespace MVC_SYSTEM.ControllersBudget
 {
     [AccessDeniedAuthorizeAttribute(Roles = "Super Power Admin,Super Admin,Admin 1,Admin 2,Admin 3,Super Power User,Super User,Normal User")]
-    public class bgtHQExpensesITController : Controller
+    public class bgtHQExpensesCorpController : Controller
     {
         private MVC_SYSTEM_ModelsBudget db = new MVC_SYSTEM_ModelsBudget();
         private MVC_SYSTEM_ModelsBudgetEst dbe = new ConnectionBudget().GetConnection();
@@ -50,7 +50,7 @@ namespace MVC_SYSTEM.ControllersBudget
         private Wilayah wilayah = new Wilayah();
         private Ladang ladang = new Ladang();
         private errorlog errlog = new errorlog();
-        private readonly string screenCode = "E4";
+        private readonly string screenCode = "E6";
 
         private GetIdentity getidentity = new GetIdentity();
         private GetNSWL GetNSWL = new GetNSWL();
@@ -67,12 +67,7 @@ namespace MVC_SYSTEM.ControllersBudget
             return _localTime;
         }
 
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult ButiranBelanjaIT(string BudgetYear = null)
+        public ActionResult Index(string BudgetYear = null)
         {
             var years = new SelectList(GetYears().Select(s => new SelectListItem
             {
@@ -109,7 +104,7 @@ namespace MVC_SYSTEM.ControllersBudget
         {
             if (string.IsNullOrEmpty(BudgetYear) || string.IsNullOrEmpty(Version))
             {
-                return RedirectToAction("ButiranBelanjaIT", new { BudgetYear = BudgetYear });
+                return RedirectToAction("Index", new { BudgetYear = BudgetYear });
             }
 
             var years = new SelectList(GetYears().Select(s => new SelectListItem
@@ -153,7 +148,7 @@ namespace MVC_SYSTEM.ControllersBudget
             }
 
             var gls = gl.GetGLs(screen.ScrID);
-            var expensesInsurances = GetRecordsDetail(budgetYear, CostCenter, version);
+            var expensesRecord = GetRecordsDetail(budgetYear, CostCenter, version);
 
             ViewBag.Title = screen.ScrNameLongDesc;
             ViewBag.FilterYears = years;
@@ -174,7 +169,7 @@ namespace MVC_SYSTEM.ControllersBudget
             ViewBag.CostCenters = costCenters;
             ViewBag.GLs = gls;
 
-            return View(expensesInsurances);
+            return View(expensesRecord);
         }
 
         private List<ExpensesHQListViewModel> GetRecords(int? BudgetYear = null, int? Page = null, int? PageSize = null)
@@ -183,25 +178,25 @@ namespace MVC_SYSTEM.ControllersBudget
             var wilayahId = wilayah.GetWilayahID() != 0 ? wilayah.GetWilayahID() : null;
             var ladangId = ladang.GetLadangID() != 0 ? ladang.GetLadangID() : null;
 
-            var query = from i in dbe.bgt_expenses_IT
-                        where !i.abet_Deleted
+            var query = from i in dbe.bgt_expenses_KhidCor
+                        where !i.abcs_Deleted
                         group i by new
                         {
-                            i.abet_budgeting_year,
-                            i.abet_createdby,
-                            i.abet_version,
-                            i.abet_SyarikatID,
-                            i.abet_WilayahID,
-                            i.abet_LadangID
+                            i.abcs_budgeting_year,
+                            i.abcs_createdby,
+                            i.abcs_version,
+                            i.abcs_SyarikatID,
+                            i.abcs_WilayahID,
+                            i.abcs_LadangID
                         } into g
                         select new
                         {
-                            BudgetYear = g.Key.abet_budgeting_year,
-                            UploadedBy = g.Key.abet_createdby,
-                            Version = g.Key.abet_version,
-                            SyarikatId = g.Key.abet_SyarikatID,
-                            WilayahId = g.Key.abet_WilayahID,
-                            LadangId = g.Key.abet_LadangID
+                            BudgetYear = g.Key.abcs_budgeting_year,
+                            UploadedBy = g.Key.abcs_createdby,
+                            Version = g.Key.abcs_version,
+                            SyarikatId = g.Key.abcs_SyarikatID,
+                            WilayahId = g.Key.abcs_WilayahID,
+                            LadangId = g.Key.abcs_LadangID
                         };
 
             if (BudgetYear.HasValue)
@@ -236,7 +231,6 @@ namespace MVC_SYSTEM.ControllersBudget
                               BudgetYear = q.BudgetYear.Value,
                               UploadedBy = q.UploadedBy ?? string.Empty,
                               UploadedDate = q.UploadedBy != null && q.Version != null ? GetFirstUploadDate(q.BudgetYear.Value, q.UploadedBy, q.Version.Value).ToString("dd/MM/yyyy hh:mm:ss tt") : "", 
-                              //GetFirstUploadDate(q.BudgetYear.Value, q.UploadedBy, q.Version.Value).ToString("dd/MM/yyyy hh:mm:ss tt"), //string.Format("{0:dd/MM/yyyy}", q.UploadedDate),
                               Version = q.Version ?? 0
                           }).Distinct();
 
@@ -249,25 +243,25 @@ namespace MVC_SYSTEM.ControllersBudget
             var wilayahId = wilayah.GetWilayahID();
             var ladangId = ladang.GetLadangID();
 
-            var query = from i in dbe.bgt_expenses_IT
-                        where !i.abet_Deleted
+            var query = from i in dbe.bgt_expenses_KhidCor
+                        where !i.abcs_Deleted
                         select i;
 
             if (BudgetYear.HasValue)
             {
-                query = query.Where(q => q.abet_budgeting_year == BudgetYear);
+                query = query.Where(q => q.abcs_budgeting_year == BudgetYear);
                 if (BudgetYear.Value > 2023)
                 {
-                    query = query.Where(q => q.abet_SyarikatID == syarikatId && q.abet_WilayahID == wilayahId && q.abet_LadangID == ladangId);
+                    query = query.Where(q => q.abcs_SyarikatID == syarikatId && q.abcs_WilayahID == wilayahId && q.abcs_LadangID == ladangId);
                 }
             }
             if (!string.IsNullOrEmpty(CostCenter))
             {
-                query = query.Where(q => q.abet_cost_center.Contains(CostCenter) || q.abet_cost_center_name.Contains(CostCenter));
+                query = query.Where(q => q.abcs_cost_center.Contains(CostCenter) || q.abcs_cost_center_name.Contains(CostCenter));
             }
             if (Version.HasValue)
             {
-                query = query.Where(q => q.abet_version == Version);
+                query = query.Where(q => q.abcs_version == Version);
             }
 
             var query2 = query.AsQueryable();
@@ -275,44 +269,44 @@ namespace MVC_SYSTEM.ControllersBudget
             if (Page.HasValue && PageSize.HasValue)
             {
                 query2 = query2
-                    .OrderByDescending(q => q.abet_budgeting_year)
-                    .ThenByDescending(q => q.abet_version)
-                    .ThenBy(q => q.abet_cost_center)
-                    .ThenBy(q => q.abet_gl_code)
+                    .OrderByDescending(q => q.abcs_budgeting_year)
+                    .ThenByDescending(q => q.abcs_version)
+                    .ThenBy(q => q.abcs_cost_center)
+                    .ThenBy(q => q.abcs_gl_code)
                     .Skip((Page.Value - 1) * PageSize.Value)
                     .Take(PageSize.Value);
             }
             else
             {
                 query2 = query2
-                    .OrderByDescending(q => q.abet_budgeting_year)
-                    .ThenByDescending(q => q.abet_version)
-                    .ThenBy(q => q.abet_cost_center)
-                    .ThenBy(q => q.abet_gl_code);
+                    .OrderByDescending(q => q.abcs_budgeting_year)
+                    .ThenByDescending(q => q.abcs_version)
+                    .ThenBy(q => q.abcs_cost_center)
+                    .ThenBy(q => q.abcs_gl_code);
             }
 
             var query3 = (from q in query2.AsEnumerable()
                           select new ExpensesHQListDetailViewModel
                           {
-                              Id = q.abet_id,
-                              BudgetYear = q.abet_budgeting_year ?? DateTime.Now.ToLocalDateTime().Year,
-                              CostCenterCode = q.abet_cost_center.TrimStart('0'),
-                              CostCenterDesc = q.abet_cost_center_name,
-                              GLCode = q.abet_gl_code,
-                              GLDesc = q.abet_gl_desc,
-                              Month1 = q.abet_month_1 ?? 0,
-                              Month2 = q.abet_month_2 ?? 0,
-                              Month3 = q.abet_month_3 ?? 0,
-                              Month4 = q.abet_month_4 ?? 0,
-                              Month5 = q.abet_month_5 ?? 0,
-                              Month6 = q.abet_month_6 ?? 0,
-                              Month7 = q.abet_month_7 ?? 0,
-                              Month8 = q.abet_month_8 ?? 0,
-                              Month9 = q.abet_month_9 ?? 0,
-                              Month10 = q.abet_month_10 ?? 0,
-                              Month11 = q.abet_month_11 ?? 0,
-                              Month12 = q.abet_month_12 ?? 0,
-                              Total = q.abet_jumlah_keseluruhan ?? 0
+                              Id = q.abcs_id,
+                              BudgetYear = q.abcs_budgeting_year ?? DateTime.Now.ToLocalDateTime().Year,
+                              CostCenterCode = q.abcs_cost_center.TrimStart('0'),
+                              CostCenterDesc = q.abcs_cost_center_name,
+                              GLCode = q.abcs_gl_code,
+                              GLDesc = q.abcs_gl_desc,
+                              Month1 = q.abcs_month_1 ?? 0,
+                              Month2 = q.abcs_month_2 ?? 0,
+                              Month3 = q.abcs_month_3 ?? 0,
+                              Month4 = q.abcs_month_4 ?? 0,
+                              Month5 = q.abcs_month_5 ?? 0,
+                              Month6 = q.abcs_month_6 ?? 0,
+                              Month7 = q.abcs_month_7 ?? 0,
+                              Month8 = q.abcs_month_8 ?? 0,
+                              Month9 = q.abcs_month_9 ?? 0,
+                              Month10 = q.abcs_month_10 ?? 0,
+                              Month11 = q.abcs_month_11 ?? 0,
+                              Month12 = q.abcs_month_12 ?? 0,
+                              Total = q.abcs_jumlah_keseluruhan ?? 0
                           }).Distinct();
 
             return query3.ToList();
@@ -360,10 +354,10 @@ namespace MVC_SYSTEM.ControllersBudget
                     datas.Add(data);
                 }
 
-                var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE4")).FirstOrDefault() ?? new bgt_HQExpXcel();
+                var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE6")).FirstOrDefault() ?? new bgt_HQExpXcel();
 
-                var screenName = hqExpXcel.hqxc_ScrName.Trim() ?? scr.GetScreen(screenCode).ScrName.Trim();
-                var tabName = hqExpXcel.hqxc_TabName.Trim();
+                var screenName = hqExpXcel.hqxc_ScrName.Trim() ?? scr.GetScreen(screenCode).ScrName.Trim(); //"Kawal Korporat";
+                var tabName =  hqExpXcel.hqxc_TabName.Trim(); //"Sheet1";
                 var fileName = syarikat.GetSyarikat().fld_NamaPndkSyarikat + " Bajet HQ " + year + " (" + screenName + ") VER1 " + DateTime.Now.ToString("ddMMyy");
 
                 //excelExporter.ExportFromList(datas, header1, header2, tabName, fileName, ExcelExporter.ExcelFormat.Xls, false, null, syarikat.GetSyarikat().fld_NamaSyarikat.ToUpper(), "BAJET " + year, scr.GetScreen(screenCode).ScrNameLongDesc.ToUpper(), 6);
@@ -374,7 +368,7 @@ namespace MVC_SYSTEM.ControllersBudget
                 throw ex;
             }
 
-            return RedirectToAction("ButiranBelanjaIT");
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -398,7 +392,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     else
                     {
                         TempData["SweetAlert"] = SweetAlert.SetAlert("Unsupported file format.", SweetAlert.SweetAlertType.Error);
-                        return RedirectToAction("ButiranBelanjaIT", new { BudgetYear = BudgetYear });
+                        return RedirectToAction("Index", new { BudgetYear = BudgetYear });
                     }
 
                     try
@@ -415,9 +409,9 @@ namespace MVC_SYSTEM.ControllersBudget
                                 columnNames[cellIndex] = cell.ToString();
                             }
 
-                            var list_old = dbe.bgt_expenses_IT
-                                .Where(i => i.abet_budgeting_year == BudgetYear)
-                                .GroupBy(i => i.abet_budgeting_year)
+                            var list_old = dbe.bgt_expenses_KhidCor
+                                .Where(i => i.abcs_budgeting_year == BudgetYear)
+                                .GroupBy(i => i.abcs_budgeting_year)
                                 .Select(g => g.Key)
                                 .ToList();
                             var version = list_old.Count + 1;
@@ -452,42 +446,42 @@ namespace MVC_SYSTEM.ControllersBudget
 
                                             if (!string.IsNullOrEmpty(ccCode) && !string.IsNullOrEmpty(glCode))
                                             {
-                                                var expenses_hq = new bgt_expenses_IT
+                                                var expenses_hq = new bgt_expenses_KhidCor
                                                 {
-                                                    abet_budgeting_year = BudgetYear,
-                                                    abet_cost_center = ccCode,
-                                                    abet_cost_center_name = cc.GetCostCenterDesc(ccCode),
-                                                    abet_gl_code = glCode,
-                                                    abet_gl_desc = gl.GetGLDesc(glCode),
-                                                    abet_proration = "monthly",
-                                                    abet_jumlah_setahun = totalAmount,
-                                                    abet_month_1 = monthlyAmount,
-                                                    abet_month_2 = monthlyAmount,
-                                                    abet_month_3 = monthlyAmount,
-                                                    abet_month_4 = monthlyAmount,
-                                                    abet_month_5 = monthlyAmount,
-                                                    abet_month_6 = monthlyAmount,
-                                                    abet_month_7 = monthlyAmount,
-                                                    abet_month_8 = monthlyAmount,
-                                                    abet_month_9 = monthlyAmount,
-                                                    abet_month_10 = monthlyAmount,
-                                                    abet_month_11 = monthlyAmount,
-                                                    abet_month_12 = monthLastAmount,
-                                                    abet_jumlah_RM = totalAmount,
-                                                    abet_jumlah_keseluruhan = totalAmount,
+                                                    abcs_budgeting_year = BudgetYear,
+                                                    abcs_cost_center = ccCode,
+                                                    abcs_cost_center_name = cc.GetCostCenterDesc(ccCode),
+                                                    abcs_gl_code = glCode,
+                                                    abcs_gl_desc = gl.GetGLDesc(glCode),
+                                                    abcs_proration = "monthly",
+                                                    abcs_jumlah_setahun = totalAmount,
+                                                    abcs_month_1 = monthlyAmount,
+                                                    abcs_month_2 = monthlyAmount,
+                                                    abcs_month_3 = monthlyAmount,
+                                                    abcs_month_4 = monthlyAmount,
+                                                    abcs_month_5 = monthlyAmount,
+                                                    abcs_month_6 = monthlyAmount,
+                                                    abcs_month_7 = monthlyAmount,
+                                                    abcs_month_8 = monthlyAmount,
+                                                    abcs_month_9 = monthlyAmount,
+                                                    abcs_month_10 = monthlyAmount,
+                                                    abcs_month_11 = monthlyAmount,
+                                                    abcs_month_12 = monthLastAmount,
+                                                    abcs_jumlah_RM = totalAmount,
+                                                    abcs_jumlah_keseluruhan = totalAmount,
                                                     last_modified = DateTime.Now,
-                                                    abet_NegaraID = 1,
-                                                    abet_SyarikatID = syarikatObj.fld_SyarikatID != 0 ? syarikatObj.fld_SyarikatID : (int?)null,
-                                                    abet_WilayahID = wilayahObj.fld_ID != 0 ? wilayahObj.fld_ID : (int?)null,
-                                                    abet_LadangID = ladangObj.fld_ID != 0 ? ladangObj.fld_ID : (int?)null,
-                                                    abet_revision = 0,
-                                                    abet_status = "DRAFT",
-                                                    abet_history = false,
-                                                    abet_createdby = User.Identity.Name,
-                                                    abet_upload_date = DateTime.Now.ToLocalDateTime(),
-                                                    abet_version = version
+                                                    abcs_NegaraID = 1,
+                                                    abcs_SyarikatID = syarikatObj.fld_SyarikatID != 0 ? syarikatObj.fld_SyarikatID : (int?)null,
+                                                    abcs_WilayahID = wilayahObj.fld_ID != 0 ? wilayahObj.fld_ID : (int?)null,
+                                                    abcs_LadangID = ladangObj.fld_ID != 0 ? ladangObj.fld_ID : (int?)null,
+                                                    abcs_revision = 0,
+                                                    abcs_status = "DRAFT",
+                                                    abcs_history = false,
+                                                    abcs_createdby = User.Identity.Name,
+                                                    abcs_upload_date = DateTime.Now.ToLocalDateTime(),
+                                                    abcs_version = version
                                                 };
-                                                dbe.bgt_expenses_IT.Add(expenses_hq);
+                                                dbe.bgt_expenses_KhidCor.Add(expenses_hq);
                                             }
                                         }
                                     }
@@ -509,7 +503,7 @@ namespace MVC_SYSTEM.ControllersBudget
                 TempData["SweetAlert"] = SweetAlert.SetAlert("No file.", SweetAlert.SweetAlertType.Error);
             }
 
-            return RedirectToAction("ButiranBelanjaIT", new { BudgetYear = BudgetYear });
+            return RedirectToAction("Index", new { BudgetYear = BudgetYear });
         }
 
         public ActionResult Download(string BudgetYear, string Version)
@@ -554,7 +548,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     datas.Add(data);
                 }
 
-                var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE4")).FirstOrDefault() ?? new bgt_HQExpXcel();
+                var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE6")).FirstOrDefault() ?? new bgt_HQExpXcel();
 
                 var screenName = hqExpXcel.hqxc_ScrName.Trim() ?? scr.GetScreen(screenCode).ScrName.Trim();
                 var tabName = hqExpXcel.hqxc_TabName.Trim();
@@ -568,7 +562,7 @@ namespace MVC_SYSTEM.ControllersBudget
                 throw ex;
             }
 
-            return RedirectToAction("ButiranBelanjaIT", new { BudgetYear = BudgetYear });
+            return RedirectToAction("Index", new { BudgetYear = BudgetYear });
         }
 
         public ActionResult ExportList(int BudgetYear, string CostCenter, int Version, string ProductActivity, string Station, string Views, string Option, string format = "PDF")
@@ -791,29 +785,29 @@ namespace MVC_SYSTEM.ControllersBudget
 
         private DateTime GetFirstUploadDate(int year, string uploadedBy, int version)
         {
-            var data = dbe.bgt_expenses_IT
-                .Where(x => x.abet_budgeting_year == year)
-                .Where(x => x.abet_createdby.Contains(uploadedBy))
-                .Where(x => x.abet_version == version)
+            var data = dbe.bgt_expenses_KhidCor
+                .Where(x => x.abcs_budgeting_year == year)
+                .Where(x => x.abcs_createdby.Contains(uploadedBy))
+                .Where(x => x.abcs_version == version)
                 .FirstOrDefault();
             if (data != null)
             {
-                return data.abet_upload_date ?? DateTime.Now;
+                return data.abcs_upload_date ?? DateTime.Now;
             }
             return DateTime.Now;
         }
 
         private decimal GetDataValue(int year, int version, string costCenterCode, string glCode)
         {
-            var data = dbe.bgt_expenses_IT
-                .Where(x => x.abet_budgeting_year == year)
-                .Where(x => x.abet_version == version)
-                .Where(x => x.abet_cost_center.Contains(costCenterCode))
-                .Where(x => x.abet_gl_code.Contains(glCode))
+            var data = dbe.bgt_expenses_KhidCor
+                .Where(x => x.abcs_budgeting_year == year)
+                .Where(x => x.abcs_version == version)
+                .Where(x => x.abcs_cost_center.Contains(costCenterCode))
+                .Where(x => x.abcs_gl_code.Contains(glCode))
                 .FirstOrDefault();
             if (data != null)
             {
-                return data.abet_jumlah_keseluruhan ?? 0;
+                return data.abcs_jumlah_keseluruhan ?? 0;
             }
             return 0;
         }

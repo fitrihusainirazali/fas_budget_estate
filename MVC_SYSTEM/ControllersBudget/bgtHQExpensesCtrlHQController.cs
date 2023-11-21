@@ -67,7 +67,6 @@ namespace MVC_SYSTEM.ControllersBudget
             return _localTime;
         }
 
-        // GET: bgtHQExpenses
         public ActionResult Index(string BudgetYear = null)
         {
             var years = new SelectList(GetYears().Select(s => new SelectListItem
@@ -101,7 +100,6 @@ namespace MVC_SYSTEM.ControllersBudget
             return PartialView("_Records", records);
         }
 
-        // GET: ExpensesInsurance/Details
         public ActionResult Details(string BudgetYear, string CostCenter = null, string ProductActivity = null, string Station = null, string Views = null, string Option = null, string Version = "1")
         {
             if (string.IsNullOrEmpty(BudgetYear) || string.IsNullOrEmpty(Version))
@@ -357,13 +355,14 @@ namespace MVC_SYSTEM.ControllersBudget
                     datas.Add(data);
                 }
 
-                //var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE3")).FirstOrDefault() ?? new bgt_HQExpXcel();
+                var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE5")).FirstOrDefault() ?? new bgt_HQExpXcel();
 
-                var screenName = "Kawal HQ";//hqExpXcel.hqxc_ScrName.Trim() ?? scr.GetScreen(screenCode).ScrName.Trim();
-                var tabName = "Sheet1"; // hqExpXcel.hqxc_TabName.Trim();
+                var screenName = hqExpXcel.hqxc_ScrName.Trim() ?? scr.GetScreen(screenCode).ScrName.Trim();
+                var tabName = hqExpXcel.hqxc_TabName.Trim();
                 var fileName = syarikat.GetSyarikat().fld_NamaPndkSyarikat + " Bajet HQ " + year + " (" + screenName + ") VER1 " + DateTime.Now.ToString("ddMMyy");
 
-                excelExporter.ExportFromList(datas, header1, header2, tabName, fileName, ExcelExporter.ExcelFormat.Xls, false, null, syarikat.GetSyarikat().fld_NamaSyarikat.ToUpper(), "BAJET " + year, scr.GetScreen(screenCode).ScrNameLongDesc.ToUpper(), 6);
+                //excelExporter.ExportFromList(datas, header1, header2, tabName, fileName, ExcelExporter.ExcelFormat.Xls, false, null, syarikat.GetSyarikat().fld_NamaSyarikat.ToUpper(), "BAJET " + year, scr.GetScreen(screenCode).ScrNameLongDesc.ToUpper(), 6);
+                excelExporter.ExportFromList(datas, header1, header2, tabName, fileName, ExcelExporter.ExcelFormat.Xls, false, "Total", syarikat.GetSyarikat().fld_NamaSyarikat.ToUpper(), "BAJET " + year, scr.GetScreen(screenCode).ScrNameLongDesc.ToUpper(), 6, "Total By GL", 2, 2);
             }
             catch (Exception ex)
             {
@@ -550,13 +549,14 @@ namespace MVC_SYSTEM.ControllersBudget
                     datas.Add(data);
                 }
 
-                //var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE3")).FirstOrDefault() ?? new bgt_HQExpXcel();
+                var hqExpXcel = db.bgt_HQExpXcels.Where(x => x.hqxc_ScrCode.Contains("EHQE5")).FirstOrDefault() ?? new bgt_HQExpXcel();
 
-                var screenName = "Kawal HQ"; // hqExpXcel.hqxc_ScrName.Trim() ?? scr.GetScreen(screenCode).ScrName.Trim();
-                var tabName = "Sheet1";// hqExpXcel.hqxc_TabName.Trim();
+                var screenName = hqExpXcel.hqxc_ScrName.Trim() ?? scr.GetScreen(screenCode).ScrName.Trim();
+                var tabName = hqExpXcel.hqxc_TabName.Trim();
                 var fileName = syarikat.GetSyarikat().fld_NamaPndkSyarikat + " Bajet HQ " + BudgetYear + " (" + screenName + ") VER" + Version + " " + DateTime.Now.ToString("ddMMyy");
 
-                excelExporter.ExportFromList(datas, header1, header2, tabName, fileName, ExcelExporter.ExcelFormat.Xls, false, null, syarikat.GetSyarikat().fld_NamaSyarikat.ToUpper(), "BAJET " + BudgetYear, scr.GetScreen(screenCode).ScrNameLongDesc.ToUpper(), 6);
+                //excelExporter.ExportFromList(datas, header1, header2, tabName, fileName, ExcelExporter.ExcelFormat.Xls, false, null, syarikat.GetSyarikat().fld_NamaSyarikat.ToUpper(), "BAJET " + BudgetYear, scr.GetScreen(screenCode).ScrNameLongDesc.ToUpper(), 6);
+                excelExporter.ExportFromList(datas, header1, header2, tabName, fileName, ExcelExporter.ExcelFormat.Xls, false, "Total", syarikat.GetSyarikat().fld_NamaSyarikat.ToUpper(), "BAJET " + BudgetYear, scr.GetScreen(screenCode).ScrNameLongDesc.ToUpper(), 6, "Total By GL", 2, 2);
             }
             catch (Exception ex)
             {
