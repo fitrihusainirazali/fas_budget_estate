@@ -57,6 +57,18 @@
                         @Html.Label("Cost Center")
                         @Html.DropDownList("CostCenter", new SelectList(ViewBag.FilterCostCenters, "Value", "Text"), "All", htmlAttributes: new { @class = "form-control input-sm select2" })
                     </div>
+                    <div id="div_filter_option" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.Label("Option")
+                                @Html.DropDownList("Option", new List<SelectListItem> {
+                                    new SelectListItem { Value = "summary", Text = "Summary", Selected = ViewBag.FilterOption == null || (ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("summary", StringComparison.OrdinalIgnoreCase)) ? true : false },
+                                    new SelectListItem { Value = "details", Text = "Details", Selected = ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("details", StringComparison.OrdinalIgnoreCase) ? true : false },
+                                    new SelectListItem { Value = "proration", Text = "Proration", Selected = ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("proration", StringComparison.OrdinalIgnoreCase) ? true : false }
+                                }, htmlAttributes: new { @class = "form-control input-sm select2" })
+                            </div>
+                        </div>
+                    </div>
                     <div id="div_filter_view" class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -70,23 +82,16 @@
                             </div>
                         </div>
                     </div>
-                    <div id="div_filter_option" class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                @Html.Label("Option")
-                                @Html.DropDownList("Option", new List<SelectListItem> {
-                                    new SelectListItem { Value = "summary", Text = "Summary", Selected = ViewBag.FilterOption == null || (ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("summary", StringComparison.OrdinalIgnoreCase)) ? true : false },
-                                    new SelectListItem { Value = "details", Text = "Details", Selected = ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("details", StringComparison.OrdinalIgnoreCase) ? true : false }
-                                }, htmlAttributes: new { @class = "form-control input-sm select2" })
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             @Html.Hidden("Version", null, new { @Value = ViewBag.Version })
             <hr style="margin-top:0;" />
             <div class="row">
                 <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                    <a href="@Url.Action("ExportList", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Version = ViewBag.Version,
+                            ProductActivity = ViewBag.ProductActivity, ViewBag.Station, ViewBag.Views, ViewBag.Option, format = "PDF" })" target="_blank" class="btn btn-default">
+                        <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
+                    </a>
                     <button type="submit" class="btn btn-primary">@GlobalResEstate.btnView</button>
                     <a href="@Url.Action("Index", "bgtHQExpensesCorp")" class="btn btn-warning">@GlobalResEstate.btnBack</a>
                 </div>
@@ -94,18 +99,6 @@
         }
     </div>
     <div class="well">
-        <div class="row">
-            <div class="col-md-12 text-right" style="margin-bottom:20px;">
-                <a href="@Url.Action("ExportList", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Version = ViewBag.Version,
-                            ProductActivity = ViewBag.ProductActivity, ViewBag.Station, ViewBag.Views, ViewBag.Option, format = "PDF" })" target="_blank" class="btn btn-default">
-                    <span><img src="~/Asset/Images/pdf-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadPdf
-                </a>
-                <a href="@Url.Action("ExportList", new { BudgetYear = ViewBag.BudgetYear, CostCenter = ViewBag.CostCenter, Version = ViewBag.Version,
-                            ProductActivity = ViewBag.ProductActivity, ViewBag.Station, ViewBag.Views, ViewBag.Option, format = "EXCEL" })" target="_blank" class="btn btn-default">
-                    <span><img src="~/Asset/Images/excel-icon.png" width="20" height="20" /></span> @GlobalResEstate.btnDownloadExcel
-                </a>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-success">
@@ -361,7 +354,7 @@
                                                                     {
                                                                         for (int j = 0; j < gls.Count; j++)
                                                                         {
-                                                                            var data = Model.Where(m => m.CostCenterCode.Equals(costCenters[i].fld_CostCenter.TrimStart('0')) && m.GLCode.Equals(gls[j].fld_GLCode)).FirstOrDefault();
+                                                                            var data = Model.Where(m => m.CostCenterCode.Equals(costCenters[i].fld_CostCenter) && m.GLCode.Equals(gls[j].fld_GLCode)).FirstOrDefault();
                                                                             if (data == null)
                                                                             {
                                                                                 data = new MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesHQListDetailViewModel();
@@ -494,7 +487,7 @@
                                                                     {
                                                                         for (int k = 0; k < Model.Count; k++)
                                                                         {
-                                                                            if (Model[k].CostCenterCode.Equals(costCenters[i].fld_CostCenter.TrimStart('0')) && Model[k].GLCode.Equals(gls[j].fld_GLCode))
+                                                                            if (Model[k].CostCenterCode.Equals(costCenters[i].fld_CostCenter) && Model[k].GLCode.Equals(gls[j].fld_GLCode))
                                                                             {
                                                                                 decimal data = Model[k].Month1 + Model[k].Month2 + Model[k].Month3 + Model[k].Month4 + Model[k].Month5 + Model[k].Month6 + Model[k].Month7 + Model[k].Month8 + Model[k].Month9 + Model[k].Month10 + Model[k].Month11 + Model[k].Month12;
                                                                                 sum_row[i] += data;
@@ -551,10 +544,15 @@
             });
 
             filterCostCenterChange();
+            filterOptionChange();
             //filterViewChange();
 
             $('#CostCenter').on('change', function () {
                 filterCostCenterChange();
+            });
+
+            $('#Option').on('change', function () {
+                filterOptionChange();
             });
 
             //$('#Views').on('change', function () {
@@ -577,13 +575,26 @@
             } else {
                 $('#div_filter_view').hide();
                 $('#div_filter_option').show();
-                $('#Views').val(null).trigger('change');
+                option != 'proration' ? ($('#Views').val(null).trigger('change')) : '';
+                //$('#Views').val(null).trigger('change');
                 if (option == '' || option == null) {
                     $('#Option').val('summary').trigger('change');
                 }
             }
 
             //filterViewChange();
+        }
+
+        function filterOptionChange() {
+            var costCenter = $('#CostCenter').find('option:selected').val();
+            var views = $('#Views').find('option:selected').val();
+            var option = $('#Option').find('option:selected').val();
+            if (option == 'proration') {
+                $('#div_filter_view').show();
+                if (views == '' || views == null) {
+                    $('#Views').val('monthly').trigger('change');
+                }
+            }
         }
 
         //function filterViewChange() {

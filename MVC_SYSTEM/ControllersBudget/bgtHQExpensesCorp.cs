@@ -80,8 +80,16 @@ namespace MVC_SYSTEM.ControllersBudget
             ViewBag.Title = scr.GetScreen(screenCode).ScrNameLongDesc;
             ViewBag.Years = years;
             ViewBag.SelectedYear = selectedYear;
+            ViewBag.isTemplateEnable = this.checkIsTemplateEnable(int.Parse(selectedYear));
 
             return View();
+        }
+
+        public Boolean checkIsTemplateEnable(int selectedYear)
+        {
+            int? totalCount = dbe.bgt_expenses_IT
+                .Where(i => i.abet_budgeting_year == selectedYear).Count();
+            return totalCount == 0;
         }
 
         public ActionResult Records(string BudgetYear, int page = 1)
@@ -117,7 +125,7 @@ namespace MVC_SYSTEM.ControllersBudget
 
             var filterCostCenters = new SelectList(cc.GetCostCenters().Select(s => new SelectListItem
             {
-                Value = s.fld_CostCenter.TrimStart('0'),
+                Value = s.fld_CostCenter,
                 Text = s.fld_CostCenter.TrimStart('0') + " - " + s.fld_CostCenterDesc,
                 Selected = !string.IsNullOrEmpty(CostCenter) ? s.fld_CostCenter.Contains(CostCenter) : false
             }), "Value", "Text").ToList();
@@ -290,7 +298,7 @@ namespace MVC_SYSTEM.ControllersBudget
                           {
                               Id = q.abcs_id,
                               BudgetYear = q.abcs_budgeting_year ?? DateTime.Now.ToLocalDateTime().Year,
-                              CostCenterCode = q.abcs_cost_center.TrimStart('0'),
+                              CostCenterCode = q.abcs_cost_center,
                               CostCenterDesc = q.abcs_cost_center_name,
                               GLCode = q.abcs_gl_code,
                               GLDesc = q.abcs_gl_desc,
@@ -409,22 +417,20 @@ namespace MVC_SYSTEM.ControllersBudget
                                 columnNames[cellIndex] = cell.ToString();
                             }
 
-                            var list_old = dbe.bgt_expenses_KhidCor
-                                .Where(i => i.abcs_budgeting_year == BudgetYear)
-                                .GroupBy(i => i.abcs_budgeting_year)
-                                .Select(g => g.Key)
-                                .ToList();
-                            var version = list_old.Count + 1;
+                            int? currentVersion = dbe.bgt_expenses_KhidCor
+                                .Where(i => i.abcs_budgeting_year == BudgetYear).Max(x => x.abcs_version);
+
+                            var version = (currentVersion ?? 0) + 1;
 
                             int skipRows = 6; // Number of rows to skip
-                            for (int rowNumber = skipRows; rowNumber <= sheet.LastRowNum; rowNumber++)
+                            for (int rowNumber = skipRows; rowNumber < sheet.LastRowNum; rowNumber++)
                             {
                                 IRow row = sheet.GetRow(rowNumber);
 
                                 if (row != null)
                                 {
                                     ICell cellCC = row.GetCell(1);
-                                    var ccCode = cellCC.ToString();
+                                    var ccCode = cellCC.ToString().PadLeft(10, '0');
 
                                     for (int cellIndex = 2; cellIndex < row.LastCellNum; cellIndex++)
                                     {
@@ -541,7 +547,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     data.Add(costCenters[i].fld_CostCenter.TrimStart('0'));
                     foreach (var gl in gls)
                     {
-                        var value = GetDataValue(int.Parse(BudgetYear), int.Parse(Version), costCenters[i].fld_CostCenter.TrimStart('0'), gl.fld_GLCode);
+                        var value = GetDataValue(int.Parse(BudgetYear), int.Parse(Version), costCenters[i].fld_CostCenter, gl.fld_GLCode);
                         data.Add(value.ToString("0.00"));
                     }
 
@@ -587,7 +593,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     var expenses_hq = new bgt_expenses_ITView
                     {
                         abet_budgeting_year = x.BudgetYear,
-                        abet_cost_center = x.CostCenterCode,
+                        abet_cost_center = x.CostCenterCode.TrimStart('0'),
                         abet_cost_center_name = x.CostCenterDesc,
                         abet_gl_code = x.GLCode,
                         abet_gl_desc = x.GLDesc,
@@ -618,7 +624,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     var expenses_hq = new bgt_expenses_ITView
                     {
                         abet_budgeting_year = x.BudgetYear,
-                        abet_cost_center = x.CostCenterCode,
+                        abet_cost_center = x.CostCenterCode.TrimStart('0'),
                         abet_cost_center_name = x.CostCenterDesc,
                         abet_gl_code = x.GLCode,
                         abet_gl_desc = x.GLDesc,
@@ -651,7 +657,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     var expenses_hq = new bgt_expenses_ITView
                     {
                         abet_budgeting_year = x.BudgetYear,
-                        abet_cost_center = x.CostCenterCode,
+                        abet_cost_center = x.CostCenterCode.TrimStart('0'),
                         abet_cost_center_name = x.CostCenterDesc,
                         abet_gl_code = x.GLCode,
                         abet_gl_desc = x.GLDesc,
@@ -681,7 +687,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     var expenses_hq = new bgt_expenses_ITView
                     {
                         abet_budgeting_year = x.BudgetYear,
-                        abet_cost_center = x.CostCenterCode,
+                        abet_cost_center = x.CostCenterCode.TrimStart('0'),
                         abet_cost_center_name = x.CostCenterDesc,
                         abet_gl_code = x.GLCode,
                         abet_gl_desc = x.GLDesc,
@@ -711,7 +717,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     var expenses_hq = new bgt_expenses_ITView
                     {
                         abet_budgeting_year = x.BudgetYear,
-                        abet_cost_center = x.CostCenterCode,
+                        abet_cost_center = x.CostCenterCode.TrimStart('0'),
                         abet_cost_center_name = x.CostCenterDesc,
                         abet_gl_code = x.GLCode,
                         abet_gl_desc = x.GLDesc,
@@ -740,7 +746,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     var expenses_hq = new bgt_expenses_ITView
                     {
                         abet_budgeting_year = x.BudgetYear,
-                        abet_cost_center = x.CostCenterCode,
+                        abet_cost_center = x.CostCenterCode.TrimStart('0'),
                         abet_cost_center_name = x.CostCenterDesc,
                         abet_gl_code = x.GLCode,
                         abet_gl_desc = x.GLDesc,
@@ -792,9 +798,9 @@ namespace MVC_SYSTEM.ControllersBudget
                 .FirstOrDefault();
             if (data != null)
             {
-                return data.abcs_upload_date ?? DateTime.Now;
+                return data.abcs_upload_date ?? DateTime.Now.ToLocalDateTime(); //DateTime.Now;
             }
-            return DateTime.Now;
+            return DateTime.Now.ToLocalDateTime(); //DateTime.Now;
         }
 
         private decimal GetDataValue(int year, int version, string costCenterCode, string glCode)
