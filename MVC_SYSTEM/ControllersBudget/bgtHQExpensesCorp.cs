@@ -31,6 +31,7 @@ using System.Web.WebPages;
 using Microsoft.Ajax.Utilities;
 using Microsoft.Reporting.WebForms;
 using MVC_SYSTEM.ModelsBudgetView;
+using System.Data.Entity;
 
 namespace MVC_SYSTEM.ControllersBudget
 {
@@ -87,8 +88,8 @@ namespace MVC_SYSTEM.ControllersBudget
 
         public Boolean checkIsTemplateEnable(int selectedYear)
         {
-            int? totalCount = dbe.bgt_expenses_IT
-                .Where(i => i.abet_budgeting_year == selectedYear).Count();
+            int? totalCount = dbe.bgt_expenses_KhidCor
+                .Where(i => i.abcs_budgeting_year == selectedYear).Count();
             return totalCount == 0;
         }
 
@@ -152,7 +153,13 @@ namespace MVC_SYSTEM.ControllersBudget
             var costCenters = cc.GetCostCenters().DistinctBy(x => x.fld_CostCenter).ToList();
             if (!string.IsNullOrEmpty(CostCenter) || !string.IsNullOrEmpty(ProductActivity) || !string.IsNullOrEmpty(Station))
             {
-                costCenters = cc.GetCostCenters(CostCenter, ProductActivity, Station);
+                //costCenters = cc.GetCostCenters(CostCenter, ProductActivity, Station);
+                if (!string.IsNullOrEmpty(CostCenter))
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Equals(CostCenter)).ToList();
+                if (!string.IsNullOrEmpty(ProductActivity))
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(3, 2).Equals(ProductActivity)).ToList();
+                if (!string.IsNullOrEmpty(Station))
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(5, 2).Equals(Station)).ToList();
             }
 
             var gls = gl.GetGLs(screen.ScrID);
@@ -571,6 +578,102 @@ namespace MVC_SYSTEM.ControllersBudget
             return RedirectToAction("Index", new { BudgetYear = BudgetYear });
         }
 
+        public async Task<ActionResult> UpdateProration(string BudgetYear, string CostCenter = null, string ProductActivity = null, string Station = null, string Views = null, string Option = null, string Version = "1")
+        {
+            if (!string.IsNullOrEmpty(BudgetYear) && !string.IsNullOrEmpty(CostCenter))
+            {
+                var year = int.Parse(BudgetYear);
+                var version = int.Parse(Version);
+
+                var expensesHQ = dbe.bgt_expenses_KhidCor
+                    .Where(i => i.abcs_budgeting_year == year && i.abcs_cost_center.Contains(CostCenter) && i.abcs_version == version)
+                    .ToList();
+                if (expensesHQ.Count > 0)
+                {
+                    for (int i = 0; i < expensesHQ.Count; i++)
+                    {
+                        var totalAmount = expensesHQ[i].abcs_jumlah_keseluruhan ?? 0;
+
+                        if (Views.Equals("monthly", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var monthlyAmount = Math.Round(totalAmount / 12, 2);
+                            var monthLastAmount = totalAmount - monthlyAmount * 11;
+
+                            expensesHQ[i].abcs_proration = Views;
+                            expensesHQ[i].abcs_month_1 = monthlyAmount;
+                            expensesHQ[i].abcs_month_2 = monthlyAmount;
+                            expensesHQ[i].abcs_month_3 = monthlyAmount;
+                            expensesHQ[i].abcs_month_4 = monthlyAmount;
+                            expensesHQ[i].abcs_month_5 = monthlyAmount;
+                            expensesHQ[i].abcs_month_6 = monthlyAmount;
+                            expensesHQ[i].abcs_month_7 = monthlyAmount;
+                            expensesHQ[i].abcs_month_8 = monthlyAmount;
+                            expensesHQ[i].abcs_month_9 = monthlyAmount;
+                            expensesHQ[i].abcs_month_10 = monthlyAmount;
+                            expensesHQ[i].abcs_month_11 = monthlyAmount;
+                            expensesHQ[i].abcs_month_12 = monthLastAmount;
+                            expensesHQ[i].last_modified = DateTime.Now.ToLocalDateTime();
+                            dbe.Entry(expensesHQ[i]).State = EntityState.Modified;
+                        }
+                        else if (Views.Equals("quarterly", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var monthlyAmount = Math.Round(totalAmount / 4, 2);
+                            var monthLastAmount = totalAmount - monthlyAmount * 3;
+
+                            expensesHQ[i].abcs_proration = Views;
+                            expensesHQ[i].abcs_month_1 = 0;
+                            expensesHQ[i].abcs_month_2 = 0;
+                            expensesHQ[i].abcs_month_3 = monthlyAmount;
+                            expensesHQ[i].abcs_month_4 = 0;
+                            expensesHQ[i].abcs_month_5 = 0;
+                            expensesHQ[i].abcs_month_6 = monthlyAmount;
+                            expensesHQ[i].abcs_month_7 = 0;
+                            expensesHQ[i].abcs_month_8 = 0;
+                            expensesHQ[i].abcs_month_9 = monthlyAmount;
+                            expensesHQ[i].abcs_month_10 = 0;
+                            expensesHQ[i].abcs_month_11 = 0;
+                            expensesHQ[i].abcs_month_12 = monthLastAmount;
+                            expensesHQ[i].last_modified = DateTime.Now.ToLocalDateTime();
+                            dbe.Entry(expensesHQ[i]).State = EntityState.Modified;
+                        }
+                        else if (Views.Equals("semiannually", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var monthlyAmount = Math.Round(totalAmount / 2, 2);
+                            var monthLastAmount = totalAmount - monthlyAmount * 1;
+
+                            expensesHQ[i].abcs_proration = Views;
+                            expensesHQ[i].abcs_month_1 = 0;
+                            expensesHQ[i].abcs_month_2 = 0;
+                            expensesHQ[i].abcs_month_3 = 0;
+                            expensesHQ[i].abcs_month_4 = 0;
+                            expensesHQ[i].abcs_month_5 = 0;
+                            expensesHQ[i].abcs_month_6 = monthlyAmount;
+                            expensesHQ[i].abcs_month_7 = 0;
+                            expensesHQ[i].abcs_month_8 = 0;
+                            expensesHQ[i].abcs_month_9 = 0;
+                            expensesHQ[i].abcs_month_10 = 0;
+                            expensesHQ[i].abcs_month_11 = 0;
+                            expensesHQ[i].abcs_month_12 = monthLastAmount;
+                            expensesHQ[i].last_modified = DateTime.Now.ToLocalDateTime();
+                            dbe.Entry(expensesHQ[i]).State = EntityState.Modified;
+                        }
+                    }
+                    await dbe.SaveChangesAsync();
+                }
+                TempData["SweetAlert"] = SweetAlert.SetAlert("Proration updated.", SweetAlert.SweetAlertType.Success);
+            }
+            return RedirectToAction("Details", new
+            {
+                BudgetYear = BudgetYear,
+                CostCenter = CostCenter,
+                ProductActivity = ProductActivity,
+                Station = Station,
+                Views = Views,
+                Option = Option,
+                Version = Version
+            });
+        }
+
         public ActionResult ExportList(int BudgetYear, string CostCenter, int Version, string ProductActivity, string Station, string Views, string Option, string format = "PDF")
         {
 
@@ -680,7 +783,7 @@ namespace MVC_SYSTEM.ControllersBudget
             }
             else if (Views == "annually")
             {
-                path = Path.Combine(Server.MapPath("~/ReportsBudget"), "HqExpIT_summary.rdlc");
+                path = Path.Combine(Server.MapPath("~/ReportsBudget"), "HqExpIT_detail.rdlc");
                 filename = title + " - Anually";
 
                 data.ForEach(x => {
@@ -691,18 +794,18 @@ namespace MVC_SYSTEM.ControllersBudget
                         abet_cost_center_name = x.CostCenterDesc,
                         abet_gl_code = x.GLCode,
                         abet_gl_desc = x.GLDesc,
-                        abet_month_1 = x.Month1,
-                        abet_month_2 = x.Month2,
-                        abet_month_3 = x.Month3,
-                        abet_month_4 = x.Month4,
-                        abet_month_5 = x.Month5,
-                        abet_month_6 = x.Month6,
-                        abet_month_7 = x.Month7,
-                        abet_month_8 = x.Month8,
-                        abet_month_9 = x.Month9,
-                        abet_month_10 = x.Month10,
-                        abet_month_11 = x.Month11,
-                        abet_month_12 = x.Month12,
+                        abet_month_1 = 0,
+                        abet_month_2 = 0,
+                        abet_month_3 = 0,
+                        abet_month_4 = 0,
+                        abet_month_5 = 0,
+                        abet_month_6 = 0,
+                        abet_month_7 = 0,
+                        abet_month_8 = 0,
+                        abet_month_9 = 0,
+                        abet_month_10 = 0,
+                        abet_month_11 = 0,
+                        abet_month_12 = x.Total,
                         abet_jumlah_keseluruhan = x.Total,
                     };
                     data2.Add(expenses_hq);

@@ -48,7 +48,7 @@
                 else { 
                     <div class="col-md-2">
                         <label>&nbsp;</label>
-                        <a disabled href="javascript:void(0);" class="btn btn-danger btn-block">EXCEL TEMPLATE FILE</a>
+                        <button type="button" class="btn btn-danger btn-block disabled" style="opacity: 0.65 !important;" disabled>EXCEL TEMPLATE FILE</button>
                     </div>
                 }
 
@@ -77,8 +77,8 @@
                     @Html.TextBox("file", "", new { type = "file", accept = ".xls,.xlsx" })
                 </div>
                 <div class="col-md-6 text-right" style="margin-bottom:20px;">
-                    <button type="submit" class="btn btn-success">@GlobalResEstate.btnUploadFile</button>
-                    <a href="@Url.Action("Index", "ExpensesHQ")" class="btn btn-warning">@GlobalResEstate.btnBack</a>
+                    <button type="submit" class="btn btn-success">@GlobalResEstate.btnUploadFile.ToUpper()</button>
+                    <a href="@Url.Action("Index", "ExpensesHQ")" class="btn btn-warning">@GlobalResEstate.btnBack.ToUpper()</a>
                 </div>
             </div>
         }

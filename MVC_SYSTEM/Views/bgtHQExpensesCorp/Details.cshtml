@@ -63,8 +63,7 @@
                                 @Html.Label("Option")
                                 @Html.DropDownList("Option", new List<SelectListItem> {
                                     new SelectListItem { Value = "summary", Text = "Summary", Selected = ViewBag.FilterOption == null || (ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("summary", StringComparison.OrdinalIgnoreCase)) ? true : false },
-                                    new SelectListItem { Value = "details", Text = "Details", Selected = ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("details", StringComparison.OrdinalIgnoreCase) ? true : false },
-                                    new SelectListItem { Value = "proration", Text = "Proration", Selected = ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("proration", StringComparison.OrdinalIgnoreCase) ? true : false }
+                                    new SelectListItem { Value = "details", Text = "Details", Selected = ViewBag.FilterOption != null && ViewBag.FilterOption.Equals("details", StringComparison.OrdinalIgnoreCase) ? true : false }
                                 }, htmlAttributes: new { @class = "form-control input-sm select2" })
                             </div>
                         </div>
@@ -106,7 +105,7 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-xs-12">
-                                @if (ViewBag.FilterViews.Equals("monthly", StringComparison.OrdinalIgnoreCase) || ViewBag.FilterViews.Equals("quarterly", StringComparison.OrdinalIgnoreCase) || ViewBag.FilterViews.Equals("semiannually", StringComparison.OrdinalIgnoreCase))
+                                @if (!string.IsNullOrEmpty(ViewBag.CostCenter))
                                 {
                                     decimal month1 = 0;
                                     decimal month2 = 0;
@@ -143,9 +142,9 @@
                                             <thead>
                                                 <tr>
                                                     <th rowspan="2">No</th>
-                                                    <th rowspan="2">Kod GL</th>
+                                                    <th rowspan="2">@GlobalResEstate.lblGLCode</th>
                                                     <th rowspan="2">Keterangan GL</th>
-                                                    <th colspan="12">Month</th>
+                                                    <th colspan="12">Jangkaan Perbelanjaan Bulanan (RM)</th>
                                                     <th rowspan="2">Jumlah (RM)</th>
                                                 </tr>
                                                 <tr>
@@ -169,22 +168,7 @@
                                                     for (int i = 0; i < Model.Count; i++)
                                                     {
                                                         total = Model[i].Total;
-                                                        if (ViewBag.FilterViews.Equals("monthly", StringComparison.OrdinalIgnoreCase))
-                                                        {
-                                                            month1 = Model[i].Month1;
-                                                            month2 = Model[i].Month2;
-                                                            month3 = Model[i].Month3;
-                                                            month4 = Model[i].Month4;
-                                                            month5 = Model[i].Month5;
-                                                            month6 = Model[i].Month6;
-                                                            month7 = Model[i].Month7;
-                                                            month8 = Model[i].Month8;
-                                                            month9 = Model[i].Month9;
-                                                            month10 = Model[i].Month10;
-                                                            month11 = Model[i].Month11;
-                                                            month12 = Model[i].Month12;
-                                                        }
-                                                        else if (ViewBag.FilterViews.Equals("quarterly", StringComparison.OrdinalIgnoreCase))
+                                                        if (ViewBag.FilterViews.Equals("quarterly", StringComparison.OrdinalIgnoreCase))
                                                         {
                                                             value_per_month = Math.Round(total / 4, 2);
                                                             value_last_month = total - value_per_month * 3;
@@ -218,6 +202,41 @@
                                                             month9 = 0;
                                                             month10 = 0;
                                                             month11 = 0;
+                                                            month12 = value_last_month;
+                                                        }
+                                                        else if (ViewBag.FilterViews.Equals("annually", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            value_last_month = total;
+
+                                                            month1 = 0;
+                                                            month2 = 0;
+                                                            month3 = 0;
+                                                            month4 = 0;
+                                                            month5 = 0;
+                                                            month6 = 0;
+                                                            month7 = 0;
+                                                            month8 = 0;
+                                                            month9 = 0;
+                                                            month10 = 0;
+                                                            month11 = 0;
+                                                            month12 = value_last_month;
+                                                        }
+                                                        else
+                                                        {
+                                                            value_per_month = Math.Round(total / 12, 2);
+                                                            value_last_month = total - value_per_month * 11;
+
+                                                            month1 = value_per_month;
+                                                            month2 = value_per_month;
+                                                            month3 = value_per_month;
+                                                            month4 = value_per_month;
+                                                            month5 = value_per_month;
+                                                            month6 = value_per_month;
+                                                            month7 = value_per_month;
+                                                            month8 = value_per_month;
+                                                            month9 = value_per_month;
+                                                            month10 = value_per_month;
+                                                            month11 = value_per_month;
                                                             month12 = value_last_month;
                                                         }
 
@@ -258,7 +277,7 @@
                                                 else
                                                 {
                                                     <tr>
-                                                        <td colspan="16">@Html.Label("No Data")</td>
+                                                        <td colspan="16">@Html.Label(GlobalResEstate.msgErrorSearch)</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -282,10 +301,23 @@
                                             </tfoot>
                                         </table>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 text-right">
+                                            <a href="@Url.Action("UpdateProration", new {
+                                                BudgetYear = ViewBag.BudgetYear,
+                                                CostCenter = ViewBag.CostCenter,
+                                                ProductActivity = ViewBag.ProductActivity,
+                                                Station = ViewBag.Station,
+                                                Views = ViewBag.Views,
+                                                Option = ViewBag.Option,
+                                                Version = ViewBag.Version
+                                            })" class="btn btn-success">@GlobalResEstate.btnSave</a>
+                                        </div>
+                                    </div>
                                 }
                                 else
                                 {
-                                    if (ViewBag.FilterOption.Equals("details", StringComparison.OrdinalIgnoreCase))
+                                    if (!string.IsNullOrEmpty(ViewBag.Option) && ViewBag.Option.Equals("details", StringComparison.OrdinalIgnoreCase))
                                     {
                                         if (costCenters.Count > 0)
                                         {
@@ -323,15 +355,15 @@
 
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <label>Cost Center: @costCenters[i].fld_CostCenter.TrimStart('0') - @costCenters[i].fld_CostCenterDesc</label>
+                                                        <label>Cost Center: @costCenters[i].fld_CostCenter.TrimStart(new char[] { '0' }) - @costCenters[i].fld_CostCenterDesc</label>
                                                         <div class="table-responsive">
                                                             <table class="table table-bordered table-hover table-condensed">
                                                                 <thead>
                                                                     <tr>
                                                                         <th rowspan="2">No</th>
-                                                                        <th rowspan="2">Kod GL</th>
+                                                                        <th rowspan="2">@GlobalResEstate.lblGLCode</th>
                                                                         <th rowspan="2">Keterangan GL</th>
-                                                                        <th colspan="12">Month</th>
+                                                                        <th colspan="12">Jangkaan Perbelanjaan Bulanan (RM)</th>
                                                                         <th rowspan="2">Jumlah (RM)</th>
                                                                     </tr>
                                                                     <tr>
@@ -360,19 +392,78 @@
                                                                                 data = new MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesHQListDetailViewModel();
                                                                             }
 
-                                                                            month1 = data.Month1;
-                                                                            month2 = data.Month2;
-                                                                            month3 = data.Month3;
-                                                                            month4 = data.Month4;
-                                                                            month5 = data.Month5;
-                                                                            month6 = data.Month6;
-                                                                            month7 = data.Month7;
-                                                                            month8 = data.Month8;
-                                                                            month9 = data.Month9;
-                                                                            month10 = data.Month10;
-                                                                            month11 = data.Month11;
-                                                                            month12 = data.Month12;
                                                                             total = data.Total;
+                                                                            if (ViewBag.Views.Equals("quarterly", StringComparison.OrdinalIgnoreCase))
+                                                                            {
+                                                                                value_per_month = Math.Round(total / 4, 2);
+                                                                                value_last_month = total - value_per_month * 3;
+
+                                                                                month1 = 0;
+                                                                                month2 = 0;
+                                                                                month3 = value_per_month;
+                                                                                month4 = 0;
+                                                                                month5 = 0;
+                                                                                month6 = value_per_month;
+                                                                                month7 = 0;
+                                                                                month8 = 0;
+                                                                                month9 = value_per_month;
+                                                                                month10 = 0;
+                                                                                month11 = 0;
+                                                                                month12 = value_last_month;
+                                                                            }
+                                                                            else if (ViewBag.Views.Equals("semiannually", StringComparison.OrdinalIgnoreCase))
+                                                                            {
+                                                                                value_per_month = Math.Round(total / 2, 2);
+                                                                                value_last_month = total - value_per_month * 1;
+
+                                                                                month1 = 0;
+                                                                                month2 = 0;
+                                                                                month3 = 0;
+                                                                                month4 = 0;
+                                                                                month5 = 0;
+                                                                                month6 = value_per_month;
+                                                                                month7 = 0;
+                                                                                month8 = 0;
+                                                                                month9 = 0;
+                                                                                month10 = 0;
+                                                                                month11 = 0;
+                                                                                month12 = value_last_month;
+                                                                            }
+                                                                            else if (ViewBag.Views.Equals("annually", StringComparison.OrdinalIgnoreCase))
+                                                                            {
+                                                                                value_last_month = total;
+
+                                                                                month1 = 0;
+                                                                                month2 = 0;
+                                                                                month3 = 0;
+                                                                                month4 = 0;
+                                                                                month5 = 0;
+                                                                                month6 = 0;
+                                                                                month7 = 0;
+                                                                                month8 = 0;
+                                                                                month9 = 0;
+                                                                                month10 = 0;
+                                                                                month11 = 0;
+                                                                                month12 = value_last_month;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                value_per_month = Math.Round(total / 12, 2);
+                                                                                value_last_month = total - value_per_month * 11;
+
+                                                                                month1 = value_per_month;
+                                                                                month2 = value_per_month;
+                                                                                month3 = value_per_month;
+                                                                                month4 = value_per_month;
+                                                                                month5 = value_per_month;
+                                                                                month6 = value_per_month;
+                                                                                month7 = value_per_month;
+                                                                                month8 = value_per_month;
+                                                                                month9 = value_per_month;
+                                                                                month10 = value_per_month;
+                                                                                month11 = value_per_month;
+                                                                                month12 = value_last_month;
+                                                                            }
 
                                                                             sum_month1 += month1;
                                                                             sum_month2 += month2;
@@ -411,41 +502,15 @@
                                                                     else
                                                                     {
                                                                         <tr>
-                                                                            <td colspan="16">@Html.Label("No Data")</td>
+                                                                            <td colspan="16">@Html.Label(GlobalResEstate.msgErrorSearch)</td>
                                                                         </tr>
                                                                     }
                                                                 </tbody>
-                                                                <tfoot>
-                                                                    <tr>
-                                                                        <th colspan="3" class="text-right">Jumlah Keseluruhan</th>
-                                                                        <th class="text-right">@sum_month1.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month2.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month3.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month4.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month5.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month6.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month7.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month8.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month9.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month10.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month11.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_month12.ToString("#,##0.00")</th>
-                                                                        <th class="text-right">@sum_total.ToString("#,##0.00")</th>
-                                                                    </tr>
-                                                                </tfoot>
                                                             </table>
                                                         </div>
                                                     </div>
                                                 </div>
                                             }
-                                        }
-                                        else
-                                        {
-                                            <hr />
-                                            <div class="text-center text-danger">
-                                                @Html.Label("No Data")
-                                            </div>
-                                            <hr />
                                         }
                                     }
                                     else
@@ -466,7 +531,7 @@
                                                         <th rowspan="2" class="fixed-width">Jumlah (RM)</th>
                                                     </tr>
                                                     <tr>
-                                                        <th>Cost Center</th>
+                                                        <th>@GlobalResEstate.lblCostCenter</th>
                                                         @foreach (var gl in gls)
                                                         {
                                                             <th>@gl.fld_GLCode</th>
@@ -480,7 +545,7 @@
                                                         {
                                                             <tr>
                                                                 <td class="text-center">@(i + 1)</td>
-                                                                <td class="text-center">@costCenters[i].fld_CostCenter.TrimStart('0')</td>
+                                                                <td class="text-center">@costCenters[i].fld_CostCenter.TrimStart(new char[] { '0' })</td>
                                                                 @for (int j = 0; j < gls.Count; j++)
                                                                 {
                                                                     if (Model.Count > 0)
@@ -508,7 +573,7 @@
                                                     else
                                                     {
                                                         <tr>
-                                                            <td colspan="@(gls.Count + 3)" class="text-center">@Html.Label("No Data")</td>
+                                                            <td colspan="@(gls.Count + 3)" class="text-center">@Html.Label(GlobalResEstate.msgErrorSearch)</td>
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -543,9 +608,8 @@
                 width: '100%'
             });
 
-            filterCostCenterChange();
-            filterOptionChange();
-            //filterViewChange();
+            filterCostCenterChange(false);
+            filterOptionChange()
 
             $('#CostCenter').on('change', function () {
                 filterCostCenterChange();
@@ -554,57 +618,55 @@
             $('#Option').on('change', function () {
                 filterOptionChange();
             });
-
-            //$('#Views').on('change', function () {
-            //    filterViewChange();
-            //});
         });
 
-        function filterCostCenterChange() {
+        function filterCostCenterChange(trigger = true) {
             var costCenter = $('#CostCenter').find('option:selected').val();
-            var views = $('#Views').find('option:selected').val();
             var option = $('#Option').find('option:selected').val();
+            var views = $('#Views').find('option:selected').val();
             if (costCenter) {
-                $('#div_filter_view').show();
                 $('#div_filter_option').hide();
-
+                $('#div_filter_view').show();
+                if (option != 'details') {
+                    $('#Option').val('details').trigger('change');
+                }
                 if (views == '' || views == null) {
                     $('#Views').val('monthly').trigger('change');
                 }
-                $('#Option').val(null).trigger('change');
             } else {
-                $('#div_filter_view').hide();
                 $('#div_filter_option').show();
-                option != 'proration' ? ($('#Views').val(null).trigger('change')) : '';
-                //$('#Views').val(null).trigger('change');
-                if (option == '' || option == null) {
+                $('#div_filter_view').hide();
+                if (trigger && option != 'summary') {
                     $('#Option').val('summary').trigger('change');
                 }
             }
-
-            //filterViewChange();
         }
 
         function filterOptionChange() {
             var costCenter = $('#CostCenter').find('option:selected').val();
-            var views = $('#Views').find('option:selected').val();
             var option = $('#Option').find('option:selected').val();
-            if (option == 'proration') {
+            var views = $('#Views').find('option:selected').val();
+            if (costCenter) {
+                $('#div_filter_option').hide();
                 $('#div_filter_view').show();
+                if (option != 'details') {
+                    $('#Option').val('details').trigger('change');
+                }
                 if (views == '' || views == null) {
                     $('#Views').val('monthly').trigger('change');
                 }
+            } else {
+                $('#div_filter_option').show();
+                if (option && option == 'details') {
+                    $('#div_filter_view').show();
+                    if (views == '' || views == null) {
+                        $('#Views').val('monthly').trigger('change');
+                    }
+                } else {
+                    $('#div_filter_view').hide();
+                    $('#Views').val(null).trigger('change');
+                }
             }
         }
-
-        //function filterViewChange() {
-        //    var view = $('#Views').find('option:selected').val();
-        //    if (view) {
-        //        $('#div_filter_option').show();
-        //    } else {
-        //        $('#div_filter_option').hide();
-        //        $('#Option').val(null).trigger('change');
-        //    }
-        //}
     </script>
 }
