@@ -60,6 +60,7 @@ namespace MVC_SYSTEM.ControllersBudget
         Connection Connection = new Connection();
         GlobalFunction globalFunction = new GlobalFunction();
         private ChangeTimeZone timezone = new ChangeTimeZone();
+        BudgetUserMatrix UserMatrix = new BudgetUserMatrix();//fitri nov
 
         public DateTime GetDateTime()
         {
@@ -70,6 +71,13 @@ namespace MVC_SYSTEM.ControllersBudget
 
         public ActionResult Index(string BudgetYear = null)
         {
+            //fitri
+            var userid = User.Identity.Name;
+            var RoleScreen = UserMatrix.RoleScreen(userid, "E5");
+            if (!RoleScreen.view)
+            {
+                return RedirectToAction("Denied", "bgtAlert");
+            }
             var years = new SelectList(GetYears().Select(s => new SelectListItem
             {
                 Value = s.ToString(),
@@ -111,6 +119,13 @@ namespace MVC_SYSTEM.ControllersBudget
 
         public ActionResult Details(string BudgetYear, string CostCenter = null, string ProductActivity = null, string Station = null, string Views = null, string Option = null, string Version = "1")
         {
+            //fitri
+            var userid = User.Identity.Name;
+            var RoleScreen = UserMatrix.RoleScreen(userid, "E5");
+            if (!RoleScreen.view)
+            {
+                return RedirectToAction("Denied", "bgtAlert");
+            }
             if (string.IsNullOrEmpty(BudgetYear) || string.IsNullOrEmpty(Version))
             {
                 return RedirectToAction("Index", new { BudgetYear = BudgetYear });
@@ -258,11 +273,23 @@ namespace MVC_SYSTEM.ControllersBudget
             var syarikatId = syarikat.GetSyarikatID();
             var wilayahId = wilayah.GetWilayahID();
             var ladangId = ladang.GetLadangID();
+            //origin code
+            //var query = from i in dbe.bgt_expenses_CtrlHQ
+            //            where !i.abhq_Deleted
+            //            select i;
 
+            //fitri add
+            var rawcostcenter = cc.GetCostCenters();
+            var cccode = new List<string>();
+
+            for (int i = 0; i < rawcostcenter.Count(); i++)
+            {
+                cccode.Add(rawcostcenter[i].fld_CostCenter.TrimStart(new char[] { '0' }));
+            }
             var query = from i in dbe.bgt_expenses_CtrlHQ
-                        where !i.abhq_Deleted
+                        where !i.abhq_Deleted && cccode.Contains(i.abhq_cost_center)
                         select i;
-
+            //end fitri
             if (BudgetYear.HasValue)
             {
                 query = query.Where(q => q.abhq_budgeting_year == BudgetYear);
@@ -330,6 +357,13 @@ namespace MVC_SYSTEM.ControllersBudget
 
         public ActionResult DownloadTemplate(string year = null)
         {
+            //fitri
+            var userid = User.Identity.Name;
+            var RoleScreen = UserMatrix.RoleScreen(userid, "E5");
+            if (!RoleScreen.download)
+            {
+                return RedirectToAction("Denied", "bgtAlert");
+            }
             ExcelExporter excelExporter = new ExcelExporter();
             year = !string.IsNullOrEmpty(year) ? year : (DateTime.Now.Year + 1).ToString();
 
@@ -390,6 +424,13 @@ namespace MVC_SYSTEM.ControllersBudget
         [HttpPost]
         public async Task<ActionResult> Upload(HttpPostedFileBase file, string year = null)
         {
+            //fitri
+            var userid = User.Identity.Name;
+            var RoleScreen = UserMatrix.RoleScreen(userid, "E5");
+            if (!RoleScreen.upload)
+            {
+                return RedirectToAction("Denied", "bgtAlert");
+            }
             var BudgetYear = !string.IsNullOrEmpty(year) ? int.Parse(year) : DateTime.Now.Year + 1;
 
             if (file != null && file.ContentLength > 0)
@@ -522,6 +563,13 @@ namespace MVC_SYSTEM.ControllersBudget
 
         public ActionResult Download(string BudgetYear, string Version)
         {
+            //fitri
+            var userid = User.Identity.Name;
+            var RoleScreen = UserMatrix.RoleScreen(userid, "E5");
+            if (!RoleScreen.download)
+            {
+                return RedirectToAction("Denied", "bgtAlert");
+            }
             ExcelExporter excelExporter = new ExcelExporter();
 
             try
@@ -581,6 +629,13 @@ namespace MVC_SYSTEM.ControllersBudget
 
         public async Task<ActionResult> UpdateProration(string BudgetYear, string CostCenter = null, string ProductActivity = null, string Station = null, string Views = null, string Option = null, string Version = "1")
         {
+            //fitri
+            var userid = User.Identity.Name;
+            var RoleScreen = UserMatrix.RoleScreen(userid, "E5");
+            if (!RoleScreen.edit)
+            {
+                return RedirectToAction("Denied", "bgtAlert");
+            }
             if (!string.IsNullOrEmpty(BudgetYear) && !string.IsNullOrEmpty(CostCenter))
             {
                 var year = int.Parse(BudgetYear);
@@ -677,7 +732,13 @@ namespace MVC_SYSTEM.ControllersBudget
 
         public ActionResult ExportList(int BudgetYear, string CostCenter, int Version, string ProductActivity, string Station, string Views, string Option, string format = "PDF")
         {
-
+            //fitri
+            var userid = User.Identity.Name;
+            var RoleScreen = UserMatrix.RoleScreen(userid, "E5");
+            if (!RoleScreen.download)
+            {
+                return RedirectToAction("Denied", "bgtAlert");
+            }
             LocalReport lr = new LocalReport();
             string path = "";
             string title = scr.GetScreen(screenCode).ScrNameLongDesc;

@@ -49,9 +49,16 @@ namespace MVC_SYSTEM.ClassBudget
         {
             if (!string.IsNullOrEmpty(userid) && !string.IsNullOrEmpty(strucid))
             {
-                return db.bgt_Struc.Where(w => w.str_User_ID == userid && w.str_Struc_ID == strucid).GroupBy(g => new { g.str_Struc_ID, g.str_CodeLL, g.str_Station }).Select(s => s.FirstOrDefault()).ToList();
+                if(strucid == "8")
+                {
+                    return db.bgt_Struc.Where(w => w.str_User_ID == userid && w.str_Struc_ID == strucid).ToList();
+                }
+                else
+                {
+                    return db.bgt_Struc.Where(w => w.str_User_ID == userid && w.str_Struc_ID == strucid).GroupBy(g => new { g.str_Struc_ID, g.str_CodeLL, g.str_Station }).Select(s => s.FirstOrDefault()).ToList();
+                }
             }
-            return db.bgt_Struc.Where(w => w.str_User_ID == userid && w.str_Struc_ID == strucid).GroupBy(g => new { g.str_Struc_ID, g.str_CodeLL, g.str_Station }).Select(s => s.FirstOrDefault()).ToList();
+            return null;
         }
     }
 }
