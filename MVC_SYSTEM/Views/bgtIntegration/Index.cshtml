@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Integration";
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+}
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well">
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <label>Senarai Integration</label>
+                                <select id="DataList" class="form-control" name="DataList" required onchange="listChange(this);">
+                                    <option value="1" data-url="@Url.Action("IntegrationDownload", "bgtIntegration")">Integration - Upload Budget to SAP</option>
+                                    <option value="2" data-url="@Url.Action("IntegrationUpload", "bgtIntegration")">Integration - Upload Actual Figure</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a id="btnGo" href="javascript:void(0);" class="btn btn-primary">Proceed</a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            listChange('#DataList');
+        });
+
+        function listChange(element) {
+            var url = $(element).find('option:selected').data('url');
+            $('#btnGo').attr('href', url);
+        }
+    </script>
+}

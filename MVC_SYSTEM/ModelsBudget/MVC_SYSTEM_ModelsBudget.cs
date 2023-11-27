@@ -40,6 +40,8 @@ namespace MVC_SYSTEM.ModelsBudget
         public virtual DbSet<bgt_PrdAct_NC> bgt_PrdAct_NCs { get; set; }
 
         public virtual DbSet<bgt_HQExpXcel> bgt_HQExpXcels { get; set; }
+        public virtual DbSet<bgt_Actual_Figure> bgt_Actual_Figure { get; set; }
+        public virtual DbSet<bgt_log_Actual_Figure> bgt_log_Actual_Figure { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -1,0 +1,37 @@
+﻿
+@{
+    var grid = new WebGrid(
+        canPage: true,
+        rowsPerPage: Model.PageSize,
+        canSort: false,
+        ajaxUpdateContainerId: "grid");
+
+    grid.Bind(Model.Content, rowCount: Model.TotalRecords, autoSortAndPage: false);
+
+    if (grid.TotalRowCount > 0)
+    {
+        @grid.GetHtml(
+            htmlAttributes: new { id = "grid" },
+            fillEmptyRows: false,
+            tableStyle: "table table-bordered table-hover",
+            headerStyle: "webgrid-header",
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+                grid.Column(GlobalResEstate.hdrNo, style: "text-center col-md-1", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex),
+                grid.Column("BudgetYear", "Budget Year", style: "text-center"),
+                grid.Column("DownloadBy", "Upload By", style: "text-center"),
+                grid.Column("DownloadDate", "Upload Date", style: "text-center"),
+                grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "text-center text-nowrap col-md-1", format: @<text>
+                        @Html.Raw("<a href='" + @Url.Action("DetailsFigure", new { BudgetYear = item.BudgetYear }) + "' class='btn btn-primary btn-sm' data-modal2=''><i class='fa fa-list'></i></a>")
+                        
+                </text>)))
+    }
+    else
+    {
+        <hr />
+        <div class="text-center text-danger">
+            @Html.Label(GlobalResEstate.msgErrorSearch)
+        </div>
+        <hr />
+    }
+}

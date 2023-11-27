@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+    var year = ViewBag.SelectedYear as string;
+    var costCenter = ViewBag.CostCenter as string;
+
+    AjaxOptions options = new AjaxOptions
+    {
+        HttpMethod = "GET",
+        UpdateTargetId = "RecordsPartial",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "UpdateProgress1"
+    };
+}
+
+<style type="text/css">
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    tr.webgrid-header th {
+        text-align: center;
+    }
+</style>
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well" style="margin-bottom: 20px;">
+        @using (Html.BeginForm("IntegrationUpload", "bgtIntegration", FormMethod.Get))
+        {
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        @Html.Label("Budget Year", htmlAttributes: new { @class = "text-nowrap" })
+                        @Html.DropDownList("BudgetYear", new SelectList(ViewBag.Years, "Value", "Text"), htmlAttributes: new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">@GlobalResEstate.btnView</button>
+                </div>
+                <div class="col-md-7"></div>
+            </div>
+        }
+    </div>
+    <div class="well">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">INTEGRATION - UPLOAD ACTUAL FIGURE</div>
+                    <div class="panel-body">
+                        <div id="RecordsPartial">
+                            @Html.Action("UploadFigureRecords", new { BudgetYear = year })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr style="margin-top:0;" />
+        @using (Html.BeginForm("UploadExcel", "bgtIntegration", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.Hidden("BudgetYear", year)
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.TextBox("file", "", new { type = "file", accept = ".xls,.xlsx" })
+                </div>
+                <div class="col-md-6 text-right" style="margin-bottom:20px;">
+                    <button type="submit" class="btn btn-success">@GlobalResEstate.btnUploadFile.ToUpper()</button>
+                    <a href="@Url.Action("Index", "bgtIntegration")" class="btn btn-warning">@GlobalResEstate.btnBack.ToUpper()</a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section scripts{
+    <script src="~/Asset/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+
+        
+
+    </script>
+}

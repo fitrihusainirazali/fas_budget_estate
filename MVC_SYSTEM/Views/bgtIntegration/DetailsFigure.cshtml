@@ -1,0 +1,109 @@
+﻿@model List<MVC_SYSTEM.ModelsBudget.ViewModels.IntegrationUploadFigureListModel>
+
+@{ 
+    Layout = "~/Views/Shared/_LayoutMainBudget.cshtml";
+
+    var budgetYear = ViewBag.BudgetYear as string;
+}
+
+<style type="text/css">
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+    .text-nowrap {
+        white-space: nowrap;
+    }
+    .table thead tr th {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .fixed-width {
+        width: 150px;
+        min-width: 150px;
+    }
+    .fixed-width2 {
+        width: 70px;
+        min-width: 70px;
+    }
+</style>
+
+<section class="content-wrapper main-content clear-fix">
+    <div class="well" style="margin-bottom: 20px;">
+        @using (Html.BeginForm("DetailsFigure", "bgtIntegration", FormMethod.Get))
+        {
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    @Html.Label("Budget Year")
+                    @Html.DropDownList("BudgetYear", new SelectList(ViewBag.FilterYears, "Value", "Text"), htmlAttributes: new { @class = "form-control input-sm select2" })
+                </div>
+            </div>
+            <div class="col-md-6 col-md-offset-1">
+
+            </div>
+        </div>
+        <hr style="margin-top:0;" />
+        <div class="row">
+            <div class="col-md-12 text-right" style="margin-bottom:20px;">
+                
+                <button type="submit" class="btn btn-primary">@GlobalResEstate.btnView</button>
+                <a href="@Url.Action("IntegrationUpload", "bgtIntegration" )" class="btn btn-warning">@GlobalResEstate.btnBack</a>
+            </div>
+        </div>
+        }
+    </div>
+    <div class="well">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">@ViewBag.Title</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>@GlobalResEstate.lblYear</th>
+                                                <th>GL Account</th>
+                                                <th>Profit Center</th>
+                                                <th>Actual Amount (RM)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.Count > 0)
+                                            {
+                                                for (int i = 0; i < Model.Count; i++)
+                                                { 
+                                                    <tr>
+                                                        <td class="text-center">@(i + 1)</td>
+                                                        <td class="text-center">@Model[i].actu_Year</td>
+                                                        <td class="text-center">@Model[i].actu_GLCode</td>
+                                                        <td class="text-center">@Model[i].actu_CostCenter</td>
+                                                        <td class="text-right">@Model[i].actu_ActualAmt.ToString("#,##0.00")</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="5">@Html.Label(GlobalResEstate.msgErrorSearch)</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>

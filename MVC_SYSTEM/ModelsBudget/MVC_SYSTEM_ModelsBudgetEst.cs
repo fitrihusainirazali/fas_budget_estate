@@ -57,6 +57,8 @@ namespace MVC_SYSTEM.ModelsBudget
         public virtual DbSet<sp_AktivitiGL> sp_AktivitiGL { get; set; }//atun add
         public virtual DbSet<sp_CCdetailsRecs> sp_CCdetailsRecs { get; set; }//atun add
 
+        public virtual DbSet<bgt_log_audit_trail> bgt_Log_Audit_Trail { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
