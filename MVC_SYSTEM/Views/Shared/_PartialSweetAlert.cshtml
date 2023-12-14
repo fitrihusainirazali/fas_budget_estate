@@ -1,0 +1,14 @@
+﻿<script src="~/Asset/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script type="text/javascript">
+    var sa_type = '@(TempData["SweetAlert"] != null ? FGV.Prodata.Web.Mvc.UI.SweetAlert.GetType(TempData["SweetAlert"] as KeyValuePair<string, string>?) : string.Empty)';
+    var sa_message = '@(TempData["SweetAlert"] != null ? FGV.Prodata.Web.Mvc.UI.SweetAlert.GetMessage(TempData["SweetAlert"] as KeyValuePair<string, string>?) : string.Empty)';
+    if (sa_type !== '' && sa_message !== '') {
+        $(function () {
+            Swal.fire(
+                sa_type.substr(0, 1).toUpperCase() + sa_type.substr(1) + '!',
+                sa_message,
+                sa_type
+            );
+        });
+    }
+</script>

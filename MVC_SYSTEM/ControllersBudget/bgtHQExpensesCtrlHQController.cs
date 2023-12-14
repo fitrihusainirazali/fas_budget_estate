@@ -141,7 +141,7 @@ namespace MVC_SYSTEM.ControllersBudget
 
             var filterCostCenters = new SelectList(cc.GetCostCenters().Select(s => new SelectListItem
             {
-                Value = s.fld_CostCenter,
+                Value = s.fld_CostCenter.TrimStart('0'),
                 Text = s.fld_CostCenter.TrimStart('0') + " - " + s.fld_CostCenterDesc,
                 Selected = !string.IsNullOrEmpty(CostCenter) ? s.fld_CostCenter.Contains(CostCenter) : false
             }), "Value", "Text").ToList();
@@ -170,11 +170,11 @@ namespace MVC_SYSTEM.ControllersBudget
             {
                 //costCenters = cc.GetCostCenters(CostCenter, ProductActivity, Station);
                 if (!string.IsNullOrEmpty(CostCenter))
-                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Equals(CostCenter)).ToList();
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.TrimStart('0').Trim().Equals(CostCenter)).ToList();
                 if (!string.IsNullOrEmpty(ProductActivity))
-                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(3, 2).Equals(ProductActivity)).ToList();
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.TrimStart('0').Trim().Substring(3, 2).Equals(ProductActivity)).ToList();
                 if (!string.IsNullOrEmpty(Station))
-                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(5, 2).Equals(Station)).ToList();
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.TrimStart('0').Trim().Substring(5, 2).Equals(Station)).ToList();
             }
 
             var gls = gl.GetGLs(screen.ScrID);
@@ -479,7 +479,7 @@ namespace MVC_SYSTEM.ControllersBudget
                                 if (row != null)
                                 {
                                     ICell cellCC = row.GetCell(1);
-                                    var ccCode = cellCC.ToString().PadLeft(10, '0');
+                                    var ccCode = cellCC.ToString().TrimStart('0');
 
                                     for (int cellIndex = 2; cellIndex < row.LastCellNum; cellIndex++)
                                     {
@@ -505,7 +505,7 @@ namespace MVC_SYSTEM.ControllersBudget
                                                 {
                                                     abhq_budgeting_year = BudgetYear,
                                                     abhq_cost_center = ccCode,
-                                                    abhq_cost_center_name = cc.GetCostCenterDesc(ccCode),
+                                                    abhq_cost_center_name = cc.GetCostCenterDesc(ccCode.PadLeft(10, '0')),
                                                     abhq_gl_code = glCode,
                                                     abhq_gl_desc = gl.GetGLDesc(glCode),
                                                     abhq_proration = "monthly",
@@ -603,7 +603,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     data.Add(costCenters[i].fld_CostCenter.TrimStart('0'));
                     foreach (var gl in gls)
                     {
-                        var value = GetDataValue(int.Parse(BudgetYear), int.Parse(Version), costCenters[i].fld_CostCenter, gl.fld_GLCode);
+                        var value = GetDataValue(int.Parse(BudgetYear), int.Parse(Version), costCenters[i].fld_CostCenter.TrimStart('0'), gl.fld_GLCode);
                         data.Add(value.ToString("0.00"));
                     }
 

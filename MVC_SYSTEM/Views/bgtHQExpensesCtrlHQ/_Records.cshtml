@@ -23,8 +23,8 @@
                 grid.Column("UploadedDate", "Upload Date", style: "text-center"),
                 grid.Column("Version", "Version", style: "text-center"),
                 grid.Column(GlobalResEstate.hdrAction, canSort: false, style: "text-center text-nowrap col-md-1", format: @<text>
-                        @Html.Raw("<a href='" + @Url.Action("Details", new { BudgetYear = item.BudgetYear, Version = item.Version }) + "' class='btn btn-primary btn-sm' data-modal2=''><i class='fa fa-list'></i></a>")
-                        @Html.Raw("<a href='" + @Url.Action("Download", new { BudgetYear = item.BudgetYear, Version = item.Version }) + "' class='btn btn-success btn-sm'><i class='fa fa-download'></i></a>")
+                        @Html.Raw("<a href='" + @Url.Action("Details", new { BudgetYear = item.BudgetYear, Version = item.Version }) + "' class='btn btn-primary btn-sm' title='View' data-modal2=''><i class='fa fa-list'></i></a>")
+                        @Html.Raw("<a href='" + @Url.Action("Download", new { BudgetYear = item.BudgetYear, Version = item.Version }) + "' class='btn btn-success btn-sm' title='Download'><i class='fa fa-download'></i></a>")
                 </text>)))
     }
     else

@@ -23,6 +23,14 @@
     }
 </style>
 
+<div id="divLoading" style="display:none;">
+    <div class="progressTest">
+        <label>
+            Loading...
+        </label>
+    </div>
+</div>
+
 <section class="content-wrapper main-content clear-fix">
     <div class="well" style="margin-bottom: 20px;">
         @using (Html.BeginForm("Index", "bgtHQExpensesCorp", FormMethod.Get))
@@ -78,7 +86,7 @@
                     @Html.TextBox("file", "", new { type = "file", accept = ".xls,.xlsx" })
                 </div>
                 <div class="col-md-6 text-right" style="margin-bottom:20px;">
-                    <button type="submit" class="btn btn-success">@GlobalResEstate.btnUploadFile.ToUpper()</button>
+                    <button type="submit" onclick=" $('#divLoading').show(); " class="btn btn-success">@GlobalResEstate.btnUploadFile.ToUpper()</button>
                     <a href="@Url.Action("Index", "ExpensesHQ")" class="btn btn-warning">@GlobalResEstate.btnBack.ToUpper()</a>
                 </div>
             </div>

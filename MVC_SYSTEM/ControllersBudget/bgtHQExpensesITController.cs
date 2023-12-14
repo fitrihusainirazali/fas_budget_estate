@@ -142,7 +142,7 @@ namespace MVC_SYSTEM.ControllersBudget
 
             var filterCostCenters = new SelectList(cc.GetCostCenters().Select(s => new SelectListItem
             {
-                Value = s.fld_CostCenter,
+                Value = s.fld_CostCenter.TrimStart('0'), //Alif : new req to remove leading zero
                 Text = s.fld_CostCenter.TrimStart('0') + " - " + s.fld_CostCenterDesc,
                 Selected = !string.IsNullOrEmpty(CostCenter) ? s.fld_CostCenter.Contains(CostCenter) : false
             }), "Value", "Text").ToList();
@@ -171,11 +171,11 @@ namespace MVC_SYSTEM.ControllersBudget
             {
                 //costCenters = cc.GetCostCenters(CostCenter, ProductActivity, Station);
                 if (!string.IsNullOrEmpty(CostCenter))
-                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Equals(CostCenter)).ToList();
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.TrimStart('0').Trim().Equals(CostCenter)).ToList(); //Alif : new req to remove leading zero 
                 if (!string.IsNullOrEmpty(ProductActivity))
-                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(3, 2).Equals(ProductActivity)).ToList();
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.TrimStart('0').Trim().Substring(3, 2).Equals(ProductActivity)).ToList(); //Alif : new req to remove leading zero 
                 if (!string.IsNullOrEmpty(Station))
-                    costCenters = costCenters.Where(c => c.fld_CostCenter.Trim().Substring(5, 2).Equals(Station)).ToList();
+                    costCenters = costCenters.Where(c => c.fld_CostCenter.TrimStart('0').Trim().Substring(5, 2).Equals(Station)).ToList(); //Alif : new req to remove leading zero 
             }
 
             var gls = gl.GetGLs(screen.ScrID);
@@ -285,7 +285,8 @@ namespace MVC_SYSTEM.ControllersBudget
 
             for (int i = 0; i < rawcostcenter.Count(); i++)
             {
-                cccode.Add(rawcostcenter[i].fld_CostCenter.TrimStart(new char[] { '0' }));
+                //cccode.Add(rawcostcenter[i].fld_CostCenter.TrimStart(new char[] { '0' }));
+                cccode.Add(rawcostcenter[i].fld_CostCenter.TrimStart('0')); //Alif : new req to remove leading zero
             }
             var query = from i in dbe.bgt_expenses_IT
                         where !i.abet_Deleted && cccode.Contains(i.abet_cost_center)
@@ -397,7 +398,7 @@ namespace MVC_SYSTEM.ControllersBudget
                 {
                     var data = new List<string>();
                     data.Add((i + 1).ToString());
-                    data.Add(costCenters[i].fld_CostCenter.TrimStart('0'));
+                    data.Add(costCenters[i].fld_CostCenter.TrimStart('0')); //Alif : new req to remove leading zero
                     foreach (var gl in gls)
                     {
                         data.Add(string.Empty);
@@ -482,7 +483,7 @@ namespace MVC_SYSTEM.ControllersBudget
                                 if (row != null)
                                 {
                                     ICell cellCC = row.GetCell(1);
-                                    var ccCode = cellCC.ToString().PadLeft(10, '0');
+                                    var ccCode = cellCC.ToString().TrimStart('0'); //Alif : new req to remove leading zero
 
                                     for (int cellIndex = 2; cellIndex < row.LastCellNum; cellIndex++)
                                     {
@@ -508,7 +509,7 @@ namespace MVC_SYSTEM.ControllersBudget
                                                 {
                                                     abet_budgeting_year = BudgetYear,
                                                     abet_cost_center = ccCode,
-                                                    abet_cost_center_name = cc.GetCostCenterDesc(ccCode),
+                                                    abet_cost_center_name = cc.GetCostCenterDesc(ccCode.PadLeft(10, '0')), //Alif : new req to remove leading zero 
                                                     abet_gl_code = glCode,
                                                     abet_gl_desc = gl.GetGLDesc(glCode),
                                                     abet_proration = "monthly",
@@ -607,7 +608,7 @@ namespace MVC_SYSTEM.ControllersBudget
                     data.Add(costCenters[i].fld_CostCenter.TrimStart('0'));
                     foreach (var gl in gls)
                     {
-                        var value = GetDataValue(int.Parse(BudgetYear), int.Parse(Version), costCenters[i].fld_CostCenter, gl.fld_GLCode);
+                        var value = GetDataValue(int.Parse(BudgetYear), int.Parse(Version), costCenters[i].fld_CostCenter.TrimStart('0'), gl.fld_GLCode); //Alif : new req to remove leading zero 
                         data.Add(value.ToString("0.00"));
                     }
 

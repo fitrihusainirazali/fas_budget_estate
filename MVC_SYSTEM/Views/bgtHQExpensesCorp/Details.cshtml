@@ -386,7 +386,7 @@
                                                                     {
                                                                         for (int j = 0; j < gls.Count; j++)
                                                                         {
-                                                                            var data = Model.Where(m => m.CostCenterCode.Equals(costCenters[i].fld_CostCenter) && m.GLCode.Equals(gls[j].fld_GLCode)).FirstOrDefault();
+                                                                            var data = Model.Where(m => m.CostCenterCode.Equals(costCenters[i].fld_CostCenter.TrimStart('0')) && m.GLCode.Equals(gls[j].fld_GLCode)).FirstOrDefault();
                                                                             if (data == null)
                                                                             {
                                                                                 data = new MVC_SYSTEM.ModelsBudget.ViewModels.ExpensesHQListDetailViewModel();
@@ -552,7 +552,7 @@
                                                                     {
                                                                         for (int k = 0; k < Model.Count; k++)
                                                                         {
-                                                                            if (Model[k].CostCenterCode.Equals(costCenters[i].fld_CostCenter) && Model[k].GLCode.Equals(gls[j].fld_GLCode))
+                                                                            if (Model[k].CostCenterCode.Equals(costCenters[i].fld_CostCenter.TrimStart('0')) && Model[k].GLCode.Equals(gls[j].fld_GLCode))
                                                                             {
                                                                                 decimal data = Model[k].Month1 + Model[k].Month2 + Model[k].Month3 + Model[k].Month4 + Model[k].Month5 + Model[k].Month6 + Model[k].Month7 + Model[k].Month8 + Model[k].Month9 + Model[k].Month10 + Model[k].Month11 + Model[k].Month12;
                                                                                 sum_row[i] += data;
